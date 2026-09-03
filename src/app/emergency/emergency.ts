@@ -1,374 +1,1348 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-interface EmergencyUnit {
+import {
+  UserRoleService
+} from '../services/user-role';
+
+
+/* =====================================================
+   EMERGENCY SERVICE
+===================================================== */
+
+interface EmergencyService {
+
   department: string;
+
   icon: string;
+
   officer: string;
-  status: 'Alert Sent' | 'Acknowledged' | 'Dispatched' | 'En Route' | 'On Scene';
+
+  status:
+    | 'Acknowledged'
+    | 'Alert Sent'
+    | 'Dispatched'
+    | 'En Route'
+    | 'On Scene';
+
   statusClass: string;
+
   time: string;
+
 }
+
+
+/* =====================================================
+   TIMELINE EVENT
+===================================================== */
 
 interface TimelineEvent {
+
   title: string;
+
   description: string;
+
   time: string;
+
   icon: string;
+
 }
 
+
+/* =====================================================
+   EMERGENCY INCIDENT
+===================================================== */
+
+interface EmergencyIncident {
+
+  id: string;
+
+  location: string;
+
+  riskLevel: string;
+
+  reportedBy: string;
+
+  activatedAt: string;
+
+}
+
+
+/* =====================================================
+   COMPONENT
+===================================================== */
+
 @Component({
+
   selector: 'app-emergency',
+
   standalone: true,
-  imports: [CommonModule],
+
+  imports: [
+    CommonModule
+  ],
+
   templateUrl: './emergency.html',
+
   styleUrl: './emergency.css'
+
 })
-export class Emergency implements OnInit, OnDestroy {
+
+
+export class Emergency
+  implements OnInit, OnDestroy {
+
+
+  /* =====================================================
+     EMERGENCY STATE
+  ===================================================== */
 
   emergencyActive = true;
 
-  incidentId = 'AS-' + Math.floor(100000 + Math.random() * 900000);
+  isEmergencyOfficer = false;
 
-  startTime = new Date();
 
-  elapsedSeconds = 0;
+  /*
+   * Display name of currently logged-in post.
+   */
+  currentRoleName =
+    'Authorized Officer';
 
-  private timer?: ReturnType<typeof setInterval>;
-  private simulationTimers: ReturnType<typeof setTimeout>[] = [];
 
-  units: EmergencyUnit[] = [
+  /* =====================================================
+     INCIDENT
+  ===================================================== */
+
+  incident: EmergencyIncident = {
+
+    id: '',
+
+    location:
+      'Mandakini Micro-Catchment, Rudraprayag',
+
+    riskLevel:
+      'HIGH',
+
+    reportedBy:
+      'Authorized Officer',
+
+    activatedAt:
+      ''
+
+  };
+
+
+  /* =====================================================
+     TIMER
+  ===================================================== */
+
+  startTime =
+    new Date();
+
+  elapsedSeconds =
+    0;
+
+  private timer?:
+    ReturnType<typeof setInterval>;
+
+
+  /* =====================================================
+     SIX EMERGENCY SERVICES
+  ===================================================== */
+
+  units: EmergencyService[] = [
+
     {
-      department: 'Police',
-      icon: '🚔',
-      officer: 'Designated Police Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'Police',
+
+      icon:
+        '🚔',
+
+      officer:
+        'Designated Police Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     },
+
+
     {
-      department: 'Medical / Ambulance',
-      icon: '🚑',
-      officer: 'Emergency Medical Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'Medical / Ambulance',
+
+      icon:
+        '🚑',
+
+      officer:
+        'Emergency Medical Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     },
+
+
     {
-      department: 'Fire & Rescue',
-      icon: '🚒',
-      officer: 'Fire & Rescue Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'Fire & Rescue',
+
+      icon:
+        '🚒',
+
+      officer:
+        'Fire & Rescue Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     },
+
+
     {
-      department: 'Disaster Management',
-      icon: '🏢',
-      officer: 'District Emergency Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'Disaster Management',
+
+      icon:
+        '🏢',
+
+      officer:
+        'District Emergency Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     },
+
+
     {
-      department: 'PWD',
-      icon: '🚧',
-      officer: 'PWD Response Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'PWD',
+
+      icon:
+        '🚧',
+
+      officer:
+        'PWD Response Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     },
+
+
     {
-      department: 'Electricity',
-      icon: '⚡',
-      officer: 'Electricity Department Officer',
-      status: 'Alert Sent',
-      statusClass: 'alert',
-      time: this.getCurrentTime()
+
+      department:
+        'Electricity',
+
+      icon:
+        '⚡',
+
+      officer:
+        'Electricity Department Officer',
+
+      status:
+        'Acknowledged',
+
+      statusClass:
+        'acknowledged',
+
+      time:
+        this.getCurrentTime()
+
     }
+
   ];
 
-  timeline: TimelineEvent[] = [
-    {
-      title: 'SOS Activated',
-      description: 'Emergency initiated by the authorized officer.',
-      time: this.getCurrentTime(),
-      icon: '🆘'
-    },
-    {
-      title: 'Emergency Incident Created',
-      description: `Incident ${this.incidentId} created successfully.`,
-      time: this.getCurrentTime(),
-      icon: '📋'
-    },
-    {
-      title: 'Department Alerts Sent',
-      description: 'Designated response officers have been notified.',
-      time: this.getCurrentTime(),
-      icon: '📡'
-    }
-  ];
 
-  constructor(private router: Router) {}
+  /* =====================================================
+     TIMELINE
+  ===================================================== */
+
+  timeline:
+    TimelineEvent[] = [];
+
+
+  /* =====================================================
+     CONSTRUCTOR
+  ===================================================== */
+
+  constructor(
+
+    private router:
+      Router,
+
+    private userRoleService:
+      UserRoleService
+
+  ) {}
+
+
+  /* =====================================================
+     INIT
+  ===================================================== */
 
   ngOnInit(): void {
+
+    this.checkOfficerRole();
+
+    this.createIncident();
+
     this.startLiveTimer();
-    this.startResponseSimulation();
+
   }
+
+
+  /* =====================================================
+     DESTROY
+  ===================================================== */
 
   ngOnDestroy(): void {
+
     if (this.timer) {
-      clearInterval(this.timer);
+
+      clearInterval(
+        this.timer
+      );
+
     }
 
-    this.simulationTimers.forEach(timer => clearTimeout(timer));
   }
 
-  private startLiveTimer(): void {
-    this.timer = setInterval(() => {
-      this.elapsedSeconds = Math.floor(
-        (Date.now() - this.startTime.getTime()) / 1000
-      );
-    }, 1000);
+
+  /* =====================================================
+     CHECK CURRENT ROLE
+  ===================================================== */
+
+  private checkOfficerRole(): void {
+
+    const role =
+      this.userRoleService.getRole();
+
+
+    /*
+     * ONLY emergency role can deploy
+     * and close the incident.
+     */
+
+    this.isEmergencyOfficer =
+      role === 'emergency';
+
+
+    /*
+     * Official post names
+     */
+
+    switch (role) {
+
+      case 'state':
+
+        this.currentRoleName =
+          'State Disaster Management Officer';
+
+        break;
+
+
+      case 'district':
+
+        this.currentRoleName =
+          'District Administration';
+
+        break;
+
+
+      case 'emergency':
+
+        this.currentRoleName =
+          'Emergency Operations Officer';
+
+        break;
+
+
+      case 'field':
+
+        this.currentRoleName =
+          'Field Response Officer';
+
+        break;
+
+
+      case 'analyst':
+
+        this.currentRoleName =
+          'Technical/Data Analyst';
+
+        break;
+
+
+      default:
+
+        this.currentRoleName =
+          'Authorized Officer';
+
+        break;
+
+    }
+
   }
 
-  private startResponseSimulation(): void {
 
-    this.scheduleStatusUpdate(
-      4000,
-      0,
-      'Acknowledged',
-      'Police officer acknowledged the emergency alert.',
-      'Police'
-    );
+  /* =====================================================
+     CREATE INCIDENT
+  ===================================================== */
 
-    this.scheduleStatusUpdate(
-      6000,
-      1,
-      'Acknowledged',
-      'Medical emergency officer acknowledged the alert.',
-      'Medical / Ambulance'
-    );
+  private createIncident(): void {
 
-    this.scheduleStatusUpdate(
-      8000,
-      2,
-      'Acknowledged',
-      'Fire & Rescue officer acknowledged the alert.',
-      'Fire & Rescue'
-    );
+    const now =
+      new Date();
 
-    this.scheduleStatusUpdate(
-      10000,
-      3,
-      'Acknowledged',
-      'District Disaster Management officer acknowledged the alert.',
-      'Disaster Management'
-    );
 
-    this.scheduleStatusUpdate(
-      12000,
-      4,
-      'Acknowledged',
-      'PWD response officer acknowledged the alert.',
-      'PWD'
-    );
+    this.startTime =
+      now;
 
-    this.scheduleStatusUpdate(
-      14000,
-      5,
-      'Acknowledged',
-      'Electricity department officer acknowledged the alert.',
-      'Electricity'
-    );
 
-    this.scheduleStatusUpdate(
-      18000,
-      0,
-      'Dispatched',
-      'Police response unit has been dispatched.',
-      'Police'
-    );
+    const currentTime =
+      this.getCurrentTime();
 
-    this.scheduleStatusUpdate(
-      20000,
-      1,
-      'Dispatched',
-      'Ambulance has been dispatched.',
-      'Medical / Ambulance'
-    );
 
-    this.scheduleStatusUpdate(
-      22000,
-      2,
-      'Dispatched',
-      'Fire & Rescue team has been dispatched.',
-      'Fire & Rescue'
-    );
+    this.incident = {
 
-    this.scheduleStatusUpdate(
-      26000,
-      0,
-      'En Route',
-      'Police response unit is en route.',
-      'Police'
-    );
+      id:
+        this.generateIncidentId(),
 
-    this.scheduleStatusUpdate(
-      28000,
-      1,
-      'En Route',
-      'Ambulance is en route to the incident location.',
-      'Medical / Ambulance'
-    );
+      location:
+        this.getLocation(),
 
-    this.scheduleStatusUpdate(
-      30000,
-      2,
-      'En Route',
-      'Fire & Rescue team is en route.',
-      'Fire & Rescue'
-    );
-  }
+      riskLevel:
+        'HIGH',
 
-  private scheduleStatusUpdate(
-    delay: number,
-    unitIndex: number,
-    status: EmergencyUnit['status'],
-    description: string,
-    department: string
-  ): void {
+      reportedBy:
+        this.getReportedBy(),
 
-    const timer = setTimeout(() => {
+      activatedAt:
+        currentTime
 
-      const unit = this.units[unitIndex];
+    };
 
-      if (!unit) {
-        return;
+
+    /*
+     * IMPORTANT:
+     *
+     * SOS automatically creates an acknowledged
+     * emergency connection with all six departments.
+     */
+
+    this.units =
+      this.units.map(unit => ({
+
+        ...unit,
+
+        status:
+          'Acknowledged',
+
+        statusClass:
+          'acknowledged',
+
+        time:
+          currentTime
+
+      }));
+
+
+    /* =================================================
+       INITIAL TIMELINE
+    ================================================= */
+
+    this.timeline = [
+
+      {
+
+        title:
+          'SOS Activated',
+
+        description:
+          `Emergency initiated by ${this.currentRoleName}.`,
+
+        time:
+          currentTime,
+
+        icon:
+          '🆘'
+
+      },
+
+
+      {
+
+        title:
+          'Emergency Incident Created',
+
+        description:
+          `Incident ${this.incident.id} created successfully.`,
+
+        time:
+          currentTime,
+
+        icon:
+          '📋'
+
+      },
+
+
+      {
+
+        title:
+          'Emergency Departments Acknowledged',
+
+        description:
+          'All six designated emergency departments have acknowledged the emergency alert.',
+
+        time:
+          currentTime,
+
+        icon:
+          '✓'
+
       }
 
-      unit.status = status;
-      unit.statusClass = this.getStatusClass(status);
-      unit.time = this.getCurrentTime();
+    ];
 
-      this.timeline.unshift({
-        title: `${department} — ${status}`,
-        description,
-        time: this.getCurrentTime(),
-        icon: this.getStatusIcon(status)
-      });
-
-    }, delay);
-
-    this.simulationTimers.push(timer);
   }
 
-  getStatusClass(status: string): string {
 
-    switch (status) {
+  /* =====================================================
+     LOCATION
+  ===================================================== */
 
-      case 'Acknowledged':
-        return 'acknowledged';
+  private getLocation(): string {
 
-      case 'Dispatched':
-        return 'dispatched';
+    const user =
+      this.userRoleService.getUser();
 
-      case 'En Route':
-        return 'enroute';
 
-      case 'On Scene':
-        return 'onscene';
+    if (!user) {
 
-      default:
-        return 'alert';
+      return 'Mandakini Micro-Catchment, Rudraprayag';
+
     }
-  }
 
-  getStatusIcon(status: string): string {
 
-    switch (status) {
+    const parts:
+      string[] = [];
 
-      case 'Acknowledged':
-        return '✓';
 
-      case 'Dispatched':
-        return '📤';
+    if (user.tehsil) {
 
-      case 'En Route':
-        return '🚗';
+      parts.push(
+        user.tehsil
+      );
 
-      case 'On Scene':
-        return '📍';
-
-      default:
-        return '🔔';
     }
+
+
+    if (user.district) {
+
+      parts.push(
+        user.district
+      );
+
+    }
+
+
+    if (user.state) {
+
+      parts.push(
+        user.state
+      );
+
+    }
+
+
+    if (parts.length > 0) {
+
+      return parts.join(
+        ', '
+      );
+
+    }
+
+
+    return 'Mandakini Micro-Catchment, Rudraprayag';
+
   }
+
+
+  /* =====================================================
+     REPORTED BY
+  ===================================================== */
+
+  private getReportedBy(): string {
+
+    const user =
+      this.userRoleService.getUser();
+
+
+    if (!user) {
+
+      return this.currentRoleName;
+
+    }
+
+
+    const name =
+      user.fullName ||
+      'Authorized Officer';
+
+
+    return `${name} (${this.currentRoleName})`;
+
+  }
+
+
+  /* =====================================================
+     INCIDENT ID
+  ===================================================== */
+
+  private generateIncidentId(): string {
+
+    const now =
+      new Date();
+
+
+    const year =
+      now.getFullYear();
+
+
+    const month =
+      String(
+        now.getMonth() + 1
+      ).padStart(
+        2,
+        '0'
+      );
+
+
+    const day =
+      String(
+        now.getDate()
+      ).padStart(
+        2,
+        '0'
+      );
+
+
+    const random =
+      Math.floor(
+        100 +
+        Math.random() * 900
+      );
+
+
+    return `AS-${year}${month}${day}-${random}`;
+
+  }
+
+
+  /* =====================================================
+     LIVE TIMER
+  ===================================================== */
+
+  private startLiveTimer(): void {
+
+    this.timer =
+      setInterval(() => {
+
+        this.elapsedSeconds =
+          Math.floor(
+
+            (
+
+              Date.now() -
+
+              this.startTime.getTime()
+
+            ) / 1000
+
+          );
+
+      }, 1000);
+
+  }
+
+
+  /* =====================================================
+     ELAPSED TIME
+  ===================================================== */
 
   get elapsedTime(): string {
 
-    const hours = Math.floor(this.elapsedSeconds / 3600);
+    const hours =
+      Math.floor(
+        this.elapsedSeconds /
+        3600
+      );
 
-    const minutes = Math.floor(
-      (this.elapsedSeconds % 3600) / 60
+
+    const minutes =
+      Math.floor(
+
+        (
+
+          this.elapsedSeconds %
+          3600
+
+        ) / 60
+
+      );
+
+
+    const seconds =
+      this.elapsedSeconds %
+      60;
+
+
+    return (
+
+      `${this.pad(hours)}:` +
+
+      `${this.pad(minutes)}:` +
+
+      `${this.pad(seconds)}`
+
     );
 
-    const seconds = this.elapsedSeconds % 60;
-
-    return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
   }
 
-  private pad(value: number): string {
-    return value.toString().padStart(2, '0');
+
+  /* =====================================================
+     PAD NUMBER
+  ===================================================== */
+
+  private pad(
+    value: number
+  ): string {
+
+    return value
+      .toString()
+      .padStart(
+        2,
+        '0'
+      );
+
   }
+
+
+  /* =====================================================
+     CURRENT TIME
+  ===================================================== */
 
   getCurrentTime(): string {
 
-    return new Date().toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
+    return new Date()
+      .toLocaleTimeString(
+
+        'en-IN',
+
+        {
+
+          hour:
+            '2-digit',
+
+          minute:
+            '2-digit',
+
+          second:
+            '2-digit',
+
+          hour12:
+            true
+
+        }
+
+      );
+
+  }
+
+
+  /* =====================================================
+     ALERT INDIVIDUAL DEPARTMENT
+     
+     ALL FIVE ROLES CAN ALERT.
+     
+     Emergency Operations Officer can ALSO deploy.
+  ===================================================== */
+
+  alertDepartment(
+    unit: EmergencyService
+  ): void {
+
+    /*
+     * Nobody should alert after emergency is closed.
+     */
+
+    if (!this.emergencyActive) {
+
+      return;
+
+    }
+
+
+    /*
+     * If already alerted/deployed,
+     * don't create another alert.
+     */
+
+    if (
+      unit.status !== 'Acknowledged'
+    ) {
+
+      return;
+
+    }
+
+
+    const currentTime =
+      this.getCurrentTime();
+
+
+    unit.status =
+      'Alert Sent';
+
+
+    unit.statusClass =
+      'alert-sent';
+
+
+    unit.time =
+      currentTime;
+
+
+    this.timeline.unshift({
+
+      title:
+        `${unit.department} — Alert Sent`,
+
+      description:
+        `${unit.department} has been individually alerted by ${this.currentRoleName}.`,
+
+      time:
+        currentTime,
+
+      icon:
+        '🔔'
+
     });
 
   }
+
+
+  /* =====================================================
+     DEPLOY SERVICE
+     
+     ONLY EMERGENCY OPERATIONS OFFICER
+  ===================================================== */
+
+  deployService(
+    unit: EmergencyService
+  ): void {
+
+    /*
+     * Security check.
+     */
+
+    if (
+      !this.isEmergencyOfficer
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      !this.emergencyActive
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+     * Deployment is allowed after acknowledgement
+     * or after the department has been individually alerted.
+     */
+
+    if (
+
+      unit.status !==
+        'Acknowledged' &&
+
+      unit.status !==
+        'Alert Sent'
+
+    ) {
+
+      return;
+
+    }
+
+
+    const currentTime =
+      this.getCurrentTime();
+
+
+    unit.status =
+      'Dispatched';
+
+
+    unit.statusClass =
+      'dispatched';
+
+
+    unit.time =
+      currentTime;
+
+
+    this.timeline.unshift({
+
+      title:
+        `${unit.department} — Dispatched`,
+
+      description:
+        `${unit.department} has been deployed by the Emergency Operations Officer.`,
+
+      time:
+        currentTime,
+
+      icon:
+        '📤'
+
+    });
+
+  }
+
+
+  /* =====================================================
+     MOVE TO EN ROUTE
+     
+     ONLY EMERGENCY OPERATIONS OFFICER
+  ===================================================== */
+
+  updateToEnRoute(
+    unit: EmergencyService
+  ): void {
+
+    if (
+      !this.isEmergencyOfficer
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      unit.status !==
+      'Dispatched'
+    ) {
+
+      return;
+
+    }
+
+
+    const currentTime =
+      this.getCurrentTime();
+
+
+    unit.status =
+      'En Route';
+
+
+    unit.statusClass =
+      'enroute';
+
+
+    unit.time =
+      currentTime;
+
+
+    this.timeline.unshift({
+
+      title:
+        `${unit.department} — En Route`,
+
+      description:
+        `${unit.department} response unit is now en route to the incident location.`,
+
+      time:
+        currentTime,
+
+      icon:
+        '🚗'
+
+    });
+
+  }
+
+
+  /* =====================================================
+     MOVE TO ON SCENE
+     
+     ONLY EMERGENCY OPERATIONS OFFICER
+  ===================================================== */
+
+  updateToOnScene(
+    unit: EmergencyService
+  ): void {
+
+    if (
+      !this.isEmergencyOfficer
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      unit.status !==
+      'En Route'
+    ) {
+
+      return;
+
+    }
+
+
+    const currentTime =
+      this.getCurrentTime();
+
+
+    unit.status =
+      'On Scene';
+
+
+    unit.statusClass =
+      'onscene';
+
+
+    unit.time =
+      currentTime;
+
+
+    this.timeline.unshift({
+
+      title:
+        `${unit.department} — On Scene`,
+
+      description:
+        `${unit.department} response unit has reached the incident location.`,
+
+      time:
+        currentTime,
+
+      icon:
+        '📍'
+
+    });
+
+  }
+
+
+  /* =====================================================
+     STATUS CLASS
+  ===================================================== */
+
+  getStatusClass(
+    status: string
+  ): string {
+
+    switch (status) {
+
+      case 'Acknowledged':
+
+        return 'acknowledged';
+
+
+      case 'Alert Sent':
+
+        return 'alert-sent';
+
+
+      case 'Dispatched':
+
+        return 'dispatched';
+
+
+      case 'En Route':
+
+        return 'enroute';
+
+
+      case 'On Scene':
+
+        return 'onscene';
+
+
+      default:
+
+        return 'acknowledged';
+
+    }
+
+  }
+
+
+  /* =====================================================
+     STATUS ICON
+  ===================================================== */
+
+  getStatusIcon(
+    status: string
+  ): string {
+
+    switch (status) {
+
+      case 'Acknowledged':
+
+        return '✓';
+
+
+      case 'Alert Sent':
+
+        return '🔔';
+
+
+      case 'Dispatched':
+
+        return '📤';
+
+
+      case 'En Route':
+
+        return '🚗';
+
+
+      case 'On Scene':
+
+        return '📍';
+
+
+      default:
+
+        return '✓';
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ACKNOWLEDGED COUNT
+  ===================================================== */
 
   get acknowledgedCount(): number {
 
     return this.units.filter(
+
       unit =>
-        unit.status !== 'Alert Sent'
+
+        unit.status ===
+        'Acknowledged' ||
+
+        unit.status ===
+        'Alert Sent' ||
+
+        unit.status ===
+        'Dispatched' ||
+
+        unit.status ===
+        'En Route' ||
+
+        unit.status ===
+        'On Scene'
+
     ).length;
 
   }
+
+
+  /* =====================================================
+     ALERTED COUNT
+  ===================================================== */
+
+  get alertedCount(): number {
+
+    return this.units.filter(
+
+      unit =>
+
+        unit.status ===
+        'Alert Sent' ||
+
+        unit.status ===
+        'Dispatched' ||
+
+        unit.status ===
+        'En Route' ||
+
+        unit.status ===
+        'On Scene'
+
+    ).length;
+
+  }
+
+
+  /* =====================================================
+     DEPLOYED COUNT
+  ===================================================== */
 
   get dispatchedCount(): number {
 
     return this.units.filter(
+
       unit =>
-        unit.status === 'Dispatched' ||
-        unit.status === 'En Route' ||
-        unit.status === 'On Scene'
+
+        unit.status ===
+        'Dispatched' ||
+
+        unit.status ===
+        'En Route' ||
+
+        unit.status ===
+        'On Scene'
+
     ).length;
 
   }
 
+
+  /* =====================================================
+     ON-SCENE COUNT
+  ===================================================== */
+
+  get onSceneCount(): number {
+
+    return this.units.filter(
+
+      unit =>
+        unit.status ===
+        'On Scene'
+
+    ).length;
+
+  }
+
+
+  /* =====================================================
+     CLOSE EMERGENCY
+     
+     ONLY EMERGENCY OPERATIONS OFFICER
+  ===================================================== */
+
   closeEmergency(): void {
 
-    this.emergencyActive = false;
+    /*
+     * Security check.
+     */
+
+    if (
+      !this.isEmergencyOfficer
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      !this.emergencyActive
+    ) {
+
+      return;
+
+    }
+
+
+    this.emergencyActive =
+      false;
+
+
+    const currentTime =
+      this.getCurrentTime();
+
 
     this.timeline.unshift({
-      title: 'Emergency Closed',
-      description: 'Emergency incident was closed by the authorized officer.',
-      time: this.getCurrentTime(),
-      icon: '✓'
+
+      title:
+        'Emergency Closed',
+
+      description:
+        'Emergency incident was closed by the Emergency Operations Officer.',
+
+      time:
+        currentTime,
+
+      icon:
+        '✓'
+
     });
 
   }
 
+
+  /* =====================================================
+     BACK TO DASHBOARD
+  ===================================================== */
+
   backToDashboard(): void {
-    this.router.navigate(['/dashboard']);
+
+    this.router.navigate([
+      '/dashboard'
+    ]);
+
   }
 
 }
