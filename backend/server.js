@@ -47,16 +47,11 @@ app.get('/api/health', (req, res) => {
 // START SERVER
 // ==========================================
 
-const PORT =
-    process.env.PORT || 3000;
 
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
-    console.log(
-        `aquasentinel backend running on http://localhost:${PORT}`
-    );
-
+    console.log(`AquaSentinel backend running on port ${PORT}`);
 });
 const sosRoutes = require('./routes/sos');
 app.use('/api/sos', sosRoutes);
