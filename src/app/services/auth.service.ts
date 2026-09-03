@@ -7,27 +7,19 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private readonly API_URL = 'http://localhost:3000/api/auth';
+  private readonly API_URL =
+    'https://airy-respect-production-9971.up.railway.app/api/auth';
 
   constructor(private http: HttpClient) {}
 
   register(user: any): Observable<any> {
-    return this.http.post(
-      `${this.API_URL}/register`,
-      user
-    );
+    return this.http.post(`${this.API_URL}/register`, user);
   }
 
-  login(
-    email: string,
-    password: string
-  ): Observable<any> {
-    return this.http.post(
-      `${this.API_URL}/login`,
-      {
-        email,
-        password
-      }
-    );
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/login`, {
+      email,
+      password
+    });
   }
 }

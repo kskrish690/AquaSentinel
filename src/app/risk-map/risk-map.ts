@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-risk-map',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './risk-map.html',
   styleUrl: './risk-map.css'
 })
