@@ -1,0 +1,111 @@
+<div class="replay-page">
+
+  <header class="replay-header">
+
+    <div>
+      <span class="eyebrow">aquasentinel • HISTORICAL VALIDATION</span>
+      <h1>Risk Replay</h1>
+      <p>
+        Replay rainfall and environmental conditions to observe
+        how localized risk evolves over time.
+      </p>
+    </div>
+
+    <a routerLink="/dashboard" class="back-btn">
+      ← Dashboard
+    </a>
+
+  </header>
+
+  <main class="replay-container">
+
+    <section class="timeline">
+
+      <span class="eyebrow">SIMULATION TIMELINE</span>
+
+      <div class="time">
+        <strong>{{ currentHour }}:00</strong>
+        <span>June 18 • Historical Event Replay</span>
+      </div>
+
+      <div class="timeline-line">
+        <div class="timeline-progress"></div>
+      </div>
+
+      <div class="timeline-labels">
+        <span>08:00</span>
+        <span>12:00</span>
+        <span>16:00</span>
+        <span>20:00</span>
+      </div>
+
+      <div class="controls">
+
+        <button
+          class="play"
+          (click)="replay()"
+        >
+          ▶ Replay Next Hour
+        </button>
+
+        <button
+          class="reset"
+          (click)="reset()"
+        >
+          Reset
+        </button>
+
+      </div>
+
+    </section>
+
+    <section class="metrics">
+
+      <div class="metric">
+        <span>RAINFALL</span>
+        <strong>{{ rainfall }} mm</strong>
+
+        <div class="bar">
+          <div [style.width.%]="rainfall"></div>
+        </div>
+      </div>
+
+      <div class="metric">
+        <span>SOIL WETNESS</span>
+        <strong>{{ soilWetness }}%</strong>
+
+        <div class="bar">
+          <div [style.width.%]="soilWetness"></div>
+        </div>
+      </div>
+
+      <div class="metric risk">
+        <span>RISK SCORE</span>
+        <strong>{{ riskScore }}/100</strong>
+        <small>{{ getRiskLevel() }}</small>
+
+        <div class="bar">
+          <div [style.width.%]="riskScore"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="explanation">
+
+      <span class="eyebrow">MODEL INTERPRETATION</span>
+
+      <h2>Risk evolution</h2>
+
+      <p>
+        As rainfall increases and soil moisture accumulates,
+        aquasentinel increases the localized risk score.
+        The replay allows officers to understand how the
+        warning threshold develops before an event.
+      </p>
+
+    </section>
+
+  </main>
+
+</div>

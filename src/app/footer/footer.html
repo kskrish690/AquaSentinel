@@ -1,0 +1,225 @@
+<footer class="site-footer">
+
+  <!-- =====================================
+       MAIN FOOTER
+  ====================================== -->
+
+  <div class="footer-container">
+
+
+    <!-- BRAND SECTION -->
+
+    <div class="footer-brand">
+
+      <button
+        type="button"
+        class="footer-logo"
+        (click)="goHome()"
+      >
+        aquasentinel
+      </button>
+
+      <p class="footer-description">
+        Localized, explainable flood intelligence
+        for faster and smarter disaster response.
+      </p>
+
+
+      <!-- PILOT REGION -->
+
+      <button
+        type="button"
+        class="pilot-location"
+        (click)="goRiskMap()"
+      >
+
+        <span class="status-dot"></span>
+
+        <span class="location-text">
+          Mandakini Micro-Catchment
+          <span class="separator">•</span>
+          Rudraprayag, Uttarakhand
+        </span>
+
+        <span class="arrow">→</span>
+
+      </button>
+
+    </div>
+
+
+
+    <!-- =====================================
+         PLATFORM
+    ====================================== -->
+
+    <div class="footer-column">
+
+      <h4>PLATFORM</h4>
+
+
+      <button
+        type="button"
+        (click)="goHome()"
+      >
+        Home
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goDashboard()"
+      >
+        Dashboard
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goRiskMap()"
+      >
+        Field Map
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goAnalysis()"
+      >
+        Full Data Analysis
+      </button>
+
+    </div>
+
+
+
+    <!-- =====================================
+         OPERATIONS
+    ====================================== -->
+
+    <div class="footer-column">
+
+      <h4>OPERATIONS</h4>
+
+
+      <button
+        type="button"
+        (click)="goAlerts()"
+      >
+        Alert Management
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goReplay()"
+      >
+        Historical Replay
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goRiskMap()"
+      >
+        Risk Intelligence
+      </button>
+
+
+      <button
+        type="button"
+        (click)="goDashboard()"
+      >
+        Situation Overview
+      </button>
+
+    </div>
+
+
+
+    <!-- =====================================
+         SYSTEM
+    ====================================== -->
+
+    <div class="footer-column">
+
+      <h4>SYSTEM</h4>
+
+
+      <button
+        type="button"
+        class="system-link"
+        (click)="openSystemStatus()"
+      >
+
+        <span class="status-dot"></span>
+
+        System Operational
+
+      </button>
+
+
+      <button
+        type="button"
+        (click)="openSensors()"
+      >
+        12 / 12 Sensors Online
+      </button>
+
+
+      <button
+        type="button"
+        (click)="openDataPipeline()"
+      >
+        Data Pipeline Active
+      </button>
+
+
+      <button
+        type="button"
+        (click)="openModelConfidence()"
+      >
+        Model Confidence: 86%
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================
+       FOOTER BOTTOM
+  ====================================== -->
+
+  <div class="footer-bottom">
+
+    <button
+      type="button"
+      class="copyright"
+      (click)="goHome()"
+    >
+      © 2026 aquasentinel
+    </button>
+
+
+    <button
+      type="button"
+      class="footer-action"
+      (click)="openOfficerAlerts()"
+    >
+      Officer-approved alerts
+    </button>
+
+
+    <button
+      type="button"
+      class="version"
+      (click)="goHome()"
+    >
+      v1.0 MVP
+    </button>
+
+  </div>
+
+</footer>

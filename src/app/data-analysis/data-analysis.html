@@ -1,0 +1,901 @@
+<div class="analysis-page">
+
+  <!-- =====================================================
+       BACKGROUND
+       ===================================================== -->
+
+  <div class="background-grid"></div>
+
+  <div class="orb orb-one"></div>
+  <div class="orb orb-two"></div>
+  <div class="orb orb-three"></div>
+
+  <div class="particles">
+    <span *ngFor="let p of [1,2,3,4,5,6,7,8,9,10]"></span>
+  </div>
+
+
+  <!-- =====================================================
+       MAIN CONTENT
+       ===================================================== -->
+
+  <main class="analysis-container">
+
+    <!-- ===================================================
+         HEADER
+         =================================================== -->
+
+    <header class="analysis-header">
+
+      <div class="header-left">
+
+        <div class="eyebrow">
+          <span class="live-dot"></span>
+          aquasentinel INTELLIGENCE
+        </div>
+
+        <h1>
+          Full Data
+          <span>Analysis</span>
+        </h1>
+
+        <p>
+          Real-time environmental intelligence for the
+          Mandakini River micro-catchment.
+          Monitor rainfall, soil wetness, terrain,
+          drainage and localized flood risk.
+        </p>
+
+      </div>
+
+
+      <div class="header-status">
+
+        <div class="simulation-badge">
+          <span></span>
+          SIMULATED DATA
+        </div>
+
+        <div class="updated">
+          <small>LAST UPDATED</small>
+          <strong>12:42:18 PM</strong>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ===================================================
+         LIVE CONTROL BAR
+         =================================================== -->
+
+    <section class="control-bar">
+
+      <div class="location-info">
+
+        <div class="location-icon">
+          <span>⌖</span>
+        </div>
+
+        <div>
+          <small>PILOT REGION</small>
+          <strong>Mandakini Micro-Catchment</strong>
+          <p>Rudraprayag, Uttarakhand</p>
+        </div>
+
+      </div>
+
+
+      <div class="system-health">
+
+        <div class="health-wave">
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+        </div>
+
+        <div>
+          <small>SYSTEM STATUS</small>
+          <strong>All systems operational</strong>
+        </div>
+
+        <span class="health-dot"></span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         KPI CARDS
+         =================================================== -->
+
+    <section class="kpi-grid">
+
+
+      <!-- RISK -->
+
+      <article class="kpi-card risk-card">
+
+        <div class="card-top">
+          <span>Current Risk</span>
+
+          <div class="mini-icon danger">
+            !
+          </div>
+        </div>
+
+        <div class="risk-main">
+
+          <div class="risk-score">
+            68
+            <small>/100</small>
+          </div>
+
+          <div class="risk-ring">
+            <div class="ring-inner">
+              <span>HIGH</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="risk-progress">
+          <span></span>
+        </div>
+
+        <p>Risk increasing based on current conditions</p>
+
+      </article>
+
+
+      <!-- RAINFALL -->
+
+      <article class="kpi-card">
+
+        <div class="card-top">
+          <span>Rainfall</span>
+
+          <div class="mini-icon">
+            ≋
+          </div>
+        </div>
+
+        <div class="metric-number">
+          74.6
+          <small>mm</small>
+        </div>
+
+        <div class="metric-status">
+          <span class="pulse-small"></span>
+          Heavy rainfall
+        </div>
+
+        <div class="mini-chart rain-chart">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+      </article>
+
+
+      <!-- SOIL -->
+
+      <article class="kpi-card">
+
+        <div class="card-top">
+          <span>Soil Wetness</span>
+
+          <div class="mini-icon">
+            ◉
+          </div>
+        </div>
+
+        <div class="metric-number">
+          64
+          <small>%</small>
+        </div>
+
+        <div class="circular-progress soil-progress">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="circle-value" cx="50" cy="50" r="42"></circle>
+          </svg>
+        </div>
+
+        <p>Antecedent moisture elevated</p>
+
+      </article>
+
+
+      <!-- SENSORS -->
+
+      <article class="kpi-card">
+
+        <div class="card-top">
+          <span>Active Sensors</span>
+
+          <div class="mini-icon">
+            ◌
+          </div>
+        </div>
+
+        <div class="metric-number">
+          12
+          <small>/12</small>
+        </div>
+
+        <div class="sensor-status">
+          <span class="sensor-pulse"></span>
+          All sensors online
+        </div>
+
+        <div class="sensor-bars">
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+        </div>
+
+      </article>
+
+
+      <!-- VILLAGES -->
+
+      <article class="kpi-card">
+
+        <div class="card-top">
+          <span>Affected Villages</span>
+
+          <div class="mini-icon">
+            ◈
+          </div>
+        </div>
+
+        <div class="metric-number">
+          04
+        </div>
+
+        <div class="village-list">
+          <span>Agastyamuni</span>
+          <span>Tilwara</span>
+          <span>Ukhimath</span>
+          <span>Jakholi</span>
+        </div>
+
+      </article>
+
+
+      <!-- LEAD TIME -->
+
+      <article class="kpi-card">
+
+        <div class="card-top">
+          <span>Estimated Lead Time</span>
+
+          <div class="mini-icon">
+            ◷
+          </div>
+        </div>
+
+        <div class="metric-number">
+          3h
+          <small>40m</small>
+        </div>
+
+        <div class="lead-line">
+          <span></span>
+        </div>
+
+        <p>Time available for response</p>
+
+      </article>
+
+    </section>
+
+
+    <!-- ===================================================
+         MAIN ANALYSIS
+         =================================================== -->
+
+    <section class="main-analysis">
+
+
+      <!-- =================================================
+           RAINFALL CHART
+           ================================================= -->
+
+      <article class="panel chart-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <div class="panel-kicker">ENVIRONMENTAL SIGNAL</div>
+
+            <h2>Rainfall & Risk Trend</h2>
+
+            <p>
+              Correlation between accumulated rainfall
+              and localized risk score.
+            </p>
+          </div>
+
+          <div class="chart-live">
+            <span></span>
+            LIVE
+          </div>
+
+        </div>
+
+
+        <div class="chart-area">
+
+          <div class="y-axis">
+            <span>100</span>
+            <span>80</span>
+            <span>60</span>
+            <span>40</span>
+            <span>20</span>
+            <span>0</span>
+          </div>
+
+
+          <div class="chart">
+
+            <div class="grid-line line-1"></div>
+            <div class="grid-line line-2"></div>
+            <div class="grid-line line-3"></div>
+            <div class="grid-line line-4"></div>
+            <div class="grid-line line-5"></div>
+
+
+            <svg viewBox="0 0 800 300"
+                 preserveAspectRatio="none">
+
+              <defs>
+
+                <linearGradient
+                  id="chartFill"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1">
+
+                  <stop
+                    offset="0%"
+                    stop-opacity=".28" />
+
+                  <stop
+                    offset="100%"
+                    stop-opacity="0" />
+
+                </linearGradient>
+
+              </defs>
+
+
+              <path
+                class="area-path"
+                d="
+                  M0 245
+                  C90 235 110 225 170 210
+                  C230 195 250 180 320 190
+                  C380 200 410 155 470 150
+                  C540 145 560 110 620 125
+                  C680 140 700 80 800 65
+                  L800 300
+                  L0 300
+                  Z
+                "
+                fill="url(#chartFill)">
+              </path>
+
+
+              <path
+                class="risk-path"
+                d="
+                  M0 245
+                  C90 235 110 225 170 210
+                  C230 195 250 180 320 190
+                  C380 200 410 155 470 150
+                  C540 145 560 110 620 125
+                  C680 140 700 80 800 65
+                ">
+              </path>
+
+
+              <circle cx="170" cy="210" r="5"></circle>
+              <circle cx="320" cy="190" r="5"></circle>
+              <circle cx="470" cy="150" r="5"></circle>
+              <circle cx="620" cy="125" r="5"></circle>
+              <circle cx="800" cy="65" r="7"></circle>
+
+            </svg>
+
+
+            <div class="chart-labels">
+              <span>08:00</span>
+              <span>09:00</span>
+              <span>10:00</span>
+              <span>11:00</span>
+              <span>12:00</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- =================================================
+           RISK CONTRIBUTION
+           ================================================= -->
+
+      <article class="panel contribution-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <div class="panel-kicker">MODEL EXPLANATION</div>
+
+            <h2>Risk Contribution</h2>
+
+            <p>
+              Factors currently influencing the
+              localized risk score.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="factor-list">
+
+
+          <div class="factor">
+
+            <div class="factor-info">
+              <span>Rainfall</span>
+              <strong>40%</strong>
+            </div>
+
+            <div class="factor-track">
+              <span style="--width:40%"></span>
+            </div>
+
+          </div>
+
+
+          <div class="factor">
+
+            <div class="factor-info">
+              <span>Soil Wetness</span>
+              <strong>25%</strong>
+            </div>
+
+            <div class="factor-track">
+              <span style="--width:25%"></span>
+            </div>
+
+          </div>
+
+
+          <div class="factor">
+
+            <div class="factor-info">
+              <span>Slope</span>
+              <strong>20%</strong>
+            </div>
+
+            <div class="factor-track">
+              <span style="--width:20%"></span>
+            </div>
+
+          </div>
+
+
+          <div class="factor">
+
+            <div class="factor-info">
+              <span>Drainage</span>
+              <strong>15%</strong>
+            </div>
+
+            <div class="factor-track">
+              <span style="--width:15%"></span>
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <div class="model-note">
+
+          <div class="note-icon">i</div>
+
+          <p>
+            Rainfall is currently the strongest
+            contributor to the elevated risk score.
+          </p>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ===================================================
+         ENVIRONMENTAL INTELLIGENCE
+         =================================================== -->
+
+    <section class="environment-section">
+
+      <div class="section-heading">
+
+        <div>
+          <div class="panel-kicker">
+            TERRAIN INTELLIGENCE
+          </div>
+
+          <h2>Environmental Conditions</h2>
+        </div>
+
+        <span>LIVE SENSOR FUSION</span>
+
+      </div>
+
+
+      <div class="environment-grid">
+
+
+        <!-- SOIL -->
+
+        <article class="environment-card">
+
+          <div class="environment-top">
+            <div class="environment-icon">◉</div>
+
+            <span>SOIL</span>
+          </div>
+
+          <div class="environment-number">
+            64<span>%</span>
+          </div>
+
+          <div class="environment-bar">
+            <span style="--width:64%"></span>
+          </div>
+
+          <div class="environment-bottom">
+            <span>Wetness</span>
+            <strong>Elevated</strong>
+          </div>
+
+        </article>
+
+
+        <!-- TERRAIN -->
+
+        <article class="environment-card">
+
+          <div class="environment-top">
+            <div class="environment-icon">⌁</div>
+
+            <span>TERRAIN</span>
+          </div>
+
+          <div class="environment-number">
+            71<span>%</span>
+          </div>
+
+          <div class="terrain-lines">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+
+          <div class="environment-bottom">
+            <span>Exposure</span>
+            <strong>High</strong>
+          </div>
+
+        </article>
+
+
+        <!-- DRAINAGE -->
+
+        <article class="environment-card">
+
+          <div class="environment-top">
+            <div class="environment-icon">≋</div>
+
+            <span>DRAINAGE</span>
+          </div>
+
+          <div class="environment-number">
+            55<span>%</span>
+          </div>
+
+          <div class="environment-bar">
+            <span style="--width:55%"></span>
+          </div>
+
+          <div class="environment-bottom">
+            <span>Vulnerability</span>
+            <strong>Moderate</strong>
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         DATA TABLE
+         =================================================== -->
+
+    <section class="panel data-panel">
+
+      <div class="panel-header">
+
+        <div>
+          <div class="panel-kicker">
+            SENSOR HISTORY
+          </div>
+
+          <h2>Detailed Environmental Data</h2>
+
+          <p>
+            Recent observations used by the risk engine.
+          </p>
+        </div>
+
+        <button class="export-button">
+          Export Data
+          <span>↗</span>
+        </button>
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>TIME</th>
+              <th>RAINFALL</th>
+              <th>SOIL WETNESS</th>
+              <th>SLOPE</th>
+              <th>DRAINAGE</th>
+              <th>RISK</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+
+
+          <tbody>
+
+            <tr>
+              <td>08:00</td>
+              <td>18.4 mm</td>
+              <td>38%</td>
+              <td>52%</td>
+              <td>31%</td>
+              <td>34</td>
+              <td>
+                <span class="table-status moderate">
+                  MODERATE
+                </span>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>09:00</td>
+              <td>29.7 mm</td>
+              <td>43%</td>
+              <td>57%</td>
+              <td>36%</td>
+              <td>41</td>
+              <td>
+                <span class="table-status moderate">
+                  MODERATE
+                </span>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>10:00</td>
+              <td>42.5 mm</td>
+              <td>49%</td>
+              <td>61%</td>
+              <td>41%</td>
+              <td>49</td>
+              <td>
+                <span class="table-status moderate">
+                  MODERATE
+                </span>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>11:00</td>
+              <td>58.2 mm</td>
+              <td>57%</td>
+              <td>66%</td>
+              <td>48%</td>
+              <td>59</td>
+              <td>
+                <span class="table-status high">
+                  HIGH
+                </span>
+              </td>
+            </tr>
+
+
+            <tr class="current-row">
+              <td>
+                <strong>12:00</strong>
+              </td>
+
+              <td>
+                <strong>74.6 mm</strong>
+              </td>
+
+              <td>
+                <strong>64%</strong>
+              </td>
+
+              <td>
+                <strong>71%</strong>
+              </td>
+
+              <td>
+                <strong>55%</strong>
+              </td>
+
+              <td>
+                <strong>68</strong>
+              </td>
+
+              <td>
+                <span class="table-status high">
+                  HIGH
+                </span>
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         INTELLIGENCE SUMMARY
+         =================================================== -->
+
+    <section class="intelligence-card">
+
+
+      <div class="intelligence-main">
+
+        <div class="intelligence-kicker">
+          <span class="ai-pulse"></span>
+          aquasentinel INTELLIGENCE
+        </div>
+
+        <h2>
+          Action is recommended.
+        </h2>
+
+        <p>
+          Current rainfall intensity combined with elevated
+          soil wetness and terrain exposure indicates an
+          increasing localized flood risk in the Mandakini
+          micro-catchment.
+        </p>
+
+
+        <div class="recommended">
+
+          <div class="recommend-icon">
+            !
+          </div>
+
+          <div>
+
+            <small>RECOMMENDED ACTION</small>
+
+            <strong>
+              Prepare Road R-12 closure protocol and
+              monitor high-exposure settlements.
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="intelligence-side">
+
+        <div class="confidence">
+
+          <div class="confidence-ring">
+
+            <div>
+              <strong>86%</strong>
+              <span>CONFIDENCE</span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="lead-time">
+
+          <small>LEAD TIME</small>
+
+          <strong>3h 40m</strong>
+
+          <span>Estimated response window</span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         FOOTER
+         =================================================== -->
+
+    <footer class="analysis-footer">
+
+      <span>
+        aquasentinel
+      </span>
+
+      <span>
+        Localized Flood Intelligence
+      </span>
+
+      <span>
+        Mandakini Pilot Region
+      </span>
+
+    </footer>
+
+  </main>
+
+</div>

@@ -1,0 +1,12 @@
+<!-- NAVBAR: ONLY ON APP PAGES -->
+<app-navbar *ngIf="!isAuthPage"></app-navbar>
+
+
+<!-- PAGE -->
+<main class="page-content">
+  <router-outlet></router-outlet>
+</main>
+
+
+<!-- FOOTER: ONLY ON APP PAGES -->
+<app-footer *ngIf="!isAuthPage"></app-footer>

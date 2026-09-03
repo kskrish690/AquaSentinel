@@ -1,0 +1,309 @@
+.alerts-page {
+  min-height: 100vh;
+  background: #07151b;
+  color: #e7f0ec;
+  padding: 48px;
+}
+
+.page-header {
+  max-width: 1450px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #62bca5;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 10px 0;
+  font-size: clamp(36px, 5vw, 64px);
+}
+
+.page-header p {
+  color: #8da39e;
+  max-width: 650px;
+  line-height: 1.7;
+}
+
+.back-btn {
+  text-decoration: none;
+  color: #183d31;
+  background: #d8e6c4;
+  padding: 13px 22px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.summary-grid {
+  max-width: 1450px;
+  margin: 45px auto 25px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.summary-card {
+  background: #0d2229;
+  border: 1px solid #193a40;
+  padding: 25px;
+  border-radius: 14px;
+}
+
+.summary-card span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #78918d;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 28px;
+}
+
+.online {
+  color: #62bca5;
+  font-size: 18px !important;
+}
+
+.alerts-panel {
+  max-width: 1450px;
+  margin: auto;
+  background: #0b1d24;
+  border: 1px solid #193a40;
+  border-radius: 18px;
+  padding: 30px;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.panel-heading h2 {
+  margin: 8px 0 0;
+}
+
+.live {
+  color: #62bca5;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.live i {
+  width: 7px;
+  height: 7px;
+  background: #62bca5;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.alert-list {
+  display: grid;
+  gap: 15px;
+}
+
+.alert-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 24px;
+  border: 1px solid #193a40;
+  border-radius: 13px;
+  background: #091920;
+}
+
+.alert-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.risk-badge {
+  padding: 6px 10px;
+  border-radius: 5px;
+  background: #756b32;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.risk-badge.high {
+  background: #795331;
+}
+
+.risk-badge.critical {
+  background: #713b3b;
+}
+
+.alert-id {
+  color: #66817d;
+  font-size: 11px;
+}
+
+.alert-main h3 {
+  margin: 18px 0 5px;
+  font-size: 23px;
+}
+
+.alert-main p {
+  color: #718b87;
+  margin: 0 0 20px;
+}
+
+.alert-data {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 35px;
+}
+
+.alert-data span {
+  display: block;
+  color: #607a76;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.alert-data strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 13px;
+}
+
+.alert-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-width: 110px;
+}
+
+.alert-actions button {
+  padding: 11px 18px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.approve {
+  border: 1px solid #62bca5;
+  background: #62bca5;
+  color: #07151b;
+}
+
+.reject {
+  border: 1px solid #744747;
+  background: transparent;
+  color: #d59b9b;
+}
+
+@media (max-width: 800px) {
+  .alerts-page {
+    padding: 25px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .alert-card {
+    flex-direction: column;
+  }
+
+  .alert-actions {
+    flex-direction: row;
+  }
+}
+/* ================================
+   ALERTS — TYPOGRAPHY
+   ================================ */
+
+.alerts-page {
+  font-size: 17px;
+}
+
+.alerts-page h1 {
+  font-size: 52px;
+}
+
+.alerts-page h2 {
+  font-size: 32px;
+}
+
+.alerts-page h3 {
+  font-size: 24px;
+}
+
+.alerts-page p {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.alerts-page .eyebrow {
+  font-size: 12px;
+}
+
+.alerts-page .back-btn {
+  font-size: 16px;
+}
+
+/* Summary cards */
+
+.alerts-page .summary-card span {
+  font-size: 12px;
+}
+
+.alerts-page .summary-card strong {
+  font-size: 32px;
+}
+
+.alerts-page .online {
+  font-size: 20px !important;
+}
+
+/* Alert cards */
+
+.alerts-page .risk-badge {
+  font-size: 12px;
+}
+
+.alerts-page .alert-id {
+  font-size: 12px;
+}
+
+.alerts-page .alert-main h3 {
+  font-size: 24px;
+}
+
+.alerts-page .alert-main p {
+  font-size: 15px;
+}
+
+.alerts-page .alert-data span {
+  font-size: 11px;
+}
+
+.alerts-page .alert-data strong {
+  font-size: 15px;
+}
+
+/* Buttons */
+
+.alerts-page .alert-actions button {
+  font-size: 15px;
+}

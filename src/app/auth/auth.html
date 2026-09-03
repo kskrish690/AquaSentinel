@@ -1,0 +1,730 @@
+<div class="auth-page">
+
+  <!-- Left visual section -->
+  <section class="visual-panel">
+
+    <div class="visual-top">
+
+      <a routerLink="/" class="brand">
+        <div class="brand-symbol">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div>
+          <h2>aquasentinel</h2>
+          <p>LOCALIZED FLOOD INTELLIGENCE</p>
+        </div>
+      </a>
+
+      <div class="secure-label">
+        <span></span>
+        SECURE ACCESS
+      </div>
+
+    </div>
+
+
+    <div class="visual-content">
+
+      <div class="location-tag">
+        <span></span>
+        MANDAKINI MICRO-CATCHMENT
+      </div>
+
+      <h1>
+        Preparedness<br>
+        starts with<br>
+        <em>better information.</em>
+      </h1>
+
+      <p class="visual-description">
+        A localized decision-support platform helping disaster
+        authorities understand changing flood conditions and
+        respond before risk becomes an emergency.
+      </p>
+
+
+      <!-- Location visual -->
+      <div class="terrain-card">
+
+        <div class="terrain-header">
+          <span>ACTIVE PILOT REGION</span>
+
+          <span class="live">
+            <i></i>
+            MONITORING
+          </span>
+        </div>
+
+        <div class="terrain-visual">
+
+          <div class="mountain mountain-back"></div>
+          <div class="mountain mountain-middle"></div>
+          <div class="mountain mountain-front"></div>
+
+          <div class="river"></div>
+
+          <div class="map-point point-one">
+            <span></span>
+          </div>
+
+          <div class="map-point point-two">
+            <span></span>
+          </div>
+
+          <div class="map-point point-three">
+            <span></span>
+          </div>
+
+        </div>
+
+        <div class="terrain-footer">
+
+          <div>
+            <strong>Rudraprayag</strong>
+            <small>Uttarakhand</small>
+          </div>
+
+          <div class="terrain-divider"></div>
+
+          <div>
+            <strong>12</strong>
+            <small>Sensors</small>
+          </div>
+
+          <div class="terrain-divider"></div>
+
+          <div>
+            <strong>04</strong>
+            <small>Villages</small>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="quote">
+        “Know the risk before the risk becomes an emergency.”
+      </div>
+
+    </div>
+
+
+    <div class="visual-footer">
+      <span>© 2026 aquasentinel</span>
+      <span>Mandakini Pilot Region</span>
+    </div>
+
+  </section>
+
+
+
+  <!-- Right authentication section -->
+  <section class="form-panel">
+
+    <div class="form-container">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+
+        <button
+          type="button"
+          [class.active]="mode === 'login'"
+          (click)="mode = 'login'">
+
+          Sign In
+
+        </button>
+
+        <button
+          type="button"
+          [class.active]="mode === 'signup'"
+          (click)="mode = 'signup'">
+
+          Create Account
+
+        </button>
+
+      </div>
+
+
+      <!-- ================= LOGIN ================= -->
+
+      <div
+        class="form-content"
+        *ngIf="mode === 'login'">
+
+        <div class="heading">
+
+          <span class="heading-number">01</span>
+
+          <div>
+            <h2>Welcome back.</h2>
+
+            <p>
+              Sign in to continue to your operational dashboard.
+            </p>
+          </div>
+
+        </div>
+
+
+        <form
+          (ngSubmit)="login()"
+          #loginForm="ngForm">
+
+
+          <div class="field">
+
+            <label>OFFICIAL EMAIL</label>
+
+            <div class="input-box">
+
+              <span class="field-symbol">@</span>
+
+              <input
+                type="email"
+                name="loginEmail"
+                [(ngModel)]="loginData.email"
+                required
+                email
+                placeholder="name@department.gov.in">
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <div class="label-line">
+
+              <label>PASSWORD</label>
+
+              <button
+                type="button"
+                class="forgot"
+                (click)="forgotPassword()">
+
+                Forgot password?
+
+              </button>
+
+            </div>
+
+            <div class="input-box">
+
+              <span class="field-symbol">●</span>
+
+              <input
+                [type]="showLoginPassword ? 'text' : 'password'"
+                name="loginPassword"
+                [(ngModel)]="loginData.password"
+                required
+                placeholder="Enter your password">
+
+              <button
+                type="button"
+                class="show-button"
+                (click)="showLoginPassword = !showLoginPassword">
+
+                {{ showLoginPassword ? 'HIDE' : 'SHOW' }}
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="login-options">
+
+            <label class="remember">
+
+              <input
+                type="checkbox"
+                name="remember"
+                [(ngModel)]="loginData.remember">
+
+              <span class="checkbox"></span>
+
+              Remember me
+
+            </label>
+
+            <span class="protected">
+              Protected session
+            </span>
+
+          </div>
+
+
+          <button
+            type="submit"
+            class="main-button"
+            [disabled]="!loginForm.valid">
+
+            <span>Continue to Dashboard</span>
+
+            <strong>→</strong>
+
+          </button>
+
+
+          <div class="switch-message">
+
+            Don't have an account?
+
+            <button
+              type="button"
+              (click)="mode = 'signup'">
+
+              Create one
+
+            </button>
+
+          </div>
+
+
+        </form>
+
+      </div>
+
+
+
+      <!-- ================= SIGNUP ================= -->
+
+      <div
+        class="form-content signup-content"
+        *ngIf="mode === 'signup'">
+
+        <div class="heading">
+
+          <span class="heading-number">02</span>
+
+          <div>
+            <h2>Create your account.</h2>
+
+            <p>
+              Register your official access and operational jurisdiction.
+            </p>
+          </div>
+
+        </div>
+
+
+        <form
+          (ngSubmit)="signup()"
+          #signupForm="ngForm">
+
+
+          <!-- Name / Mobile -->
+
+          <div class="two-fields">
+
+            <div class="field">
+
+              <label>FULL NAME</label>
+
+              <div class="input-box">
+
+                <span class="field-symbol">○</span>
+
+                <input
+                  type="text"
+                  name="fullName"
+                  [(ngModel)]="signupData.fullName"
+                  required
+                  placeholder="Full name">
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>MOBILE NUMBER</label>
+
+              <div class="input-box">
+
+                <span class="field-symbol">+91</span>
+
+                <input
+                  type="tel"
+                  name="mobile"
+                  [(ngModel)]="signupData.mobile"
+                  required
+                  pattern="[0-9]{10}"
+                  placeholder="10 digit number">
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Email -->
+
+          <div class="field">
+
+            <label>OFFICIAL EMAIL</label>
+
+            <div class="input-box">
+
+              <span class="field-symbol">@</span>
+
+              <input
+                type="email"
+                name="email"
+                [(ngModel)]="signupData.email"
+                required
+                email
+                placeholder="name@department.gov.in">
+
+            </div>
+
+          </div>
+
+
+          <!-- Designation / Department -->
+
+          <div class="two-fields">
+
+            <div class="field">
+
+              <label>DESIGNATION / POST</label>
+
+              <div class="input-box select-box">
+
+                <select
+                  name="designation"
+                  [(ngModel)]="signupData.designation"
+                  required>
+
+                  <option value="" disabled>
+                    Select designation
+                  </option>
+
+                  <option value="State Disaster Management Officer">
+                    State Disaster Management Officer
+                  </option>
+
+                  <option value="District Administration">
+                    District Administration
+                  </option>
+
+                  <option value="Emergency Operations Officer">
+                    Emergency Operations Officer
+                  </option>
+
+                  <option value="Field Response Officer">
+                    Field Response Officer
+                  </option>
+
+                  <option value="Technical / Data Analyst">
+                    Technical / Data Analyst
+                  </option>
+
+                </select>
+
+                <span class="select-arrow">⌄</span>
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>DEPARTMENT / AGENCY</label>
+
+              <div class="input-box select-box">
+
+                <select
+                  name="department"
+                  [(ngModel)]="signupData.department"
+                  required>
+
+                  <option value="" disabled>
+                    Select department
+                  </option>
+
+                  <option value="Disaster Management">
+                    Disaster Management
+                  </option>
+
+                  <option value="District Administration">
+                    District Administration
+                  </option>
+
+                  <option value="Emergency Operations Centre">
+                    Emergency Operations Centre
+                  </option>
+
+                  <option value="Police / Response">
+                    Police / Response
+                  </option>
+
+                  <option value="Technical / Research">
+                    Technical / Research
+                  </option>
+
+                </select>
+
+                <span class="select-arrow">⌄</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- State / District -->
+
+          <div class="two-fields">
+
+            <div class="field">
+
+              <label>STATE / PROVINCE</label>
+
+              <div class="input-box select-box">
+
+                <select
+                  name="state"
+                  [(ngModel)]="signupData.state"
+                  required>
+
+                  <option value="Uttarakhand">
+                    Uttarakhand
+                  </option>
+
+                  <option value="Himachal Pradesh">
+                    Himachal Pradesh
+                  </option>
+
+                  <option value="Jammu & Kashmir">
+                    Jammu & Kashmir
+                  </option>
+
+                  <option value="Other">
+                    Other
+                  </option>
+
+                </select>
+
+                <span class="select-arrow">⌄</span>
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>DISTRICT</label>
+
+              <div class="input-box select-box">
+
+                <select
+                  name="district"
+                  [(ngModel)]="signupData.district"
+                  required>
+
+                  <option value="Rudraprayag">
+                    Rudraprayag
+                  </option>
+
+                  <option value="Chamoli">
+                    Chamoli
+                  </option>
+
+                  <option value="Uttarkashi">
+                    Uttarkashi
+                  </option>
+
+                  <option value="Dehradun">
+                    Dehradun
+                  </option>
+
+                  <option value="Other">
+                    Other
+                  </option>
+
+                </select>
+
+                <span class="select-arrow">⌄</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Tehsil -->
+
+          <div class="field">
+
+            <label>
+              TEHSIL / BLOCK
+              <span class="optional">OPTIONAL</span>
+            </label>
+
+            <div class="input-box">
+
+              <span class="field-symbol">⌂</span>
+
+              <input
+                type="text"
+                name="tehsil"
+                [(ngModel)]="signupData.tehsil"
+                placeholder="Operational jurisdiction">
+
+            </div>
+
+          </div>
+
+
+          <!-- Password -->
+
+          <div class="two-fields">
+
+            <div class="field">
+
+              <label>PASSWORD</label>
+
+              <div class="input-box">
+
+                <span class="field-symbol">●</span>
+
+                <input
+                  [type]="showSignupPassword ? 'text' : 'password'"
+                  name="password"
+                  [(ngModel)]="signupData.password"
+                  required
+                  minlength="6"
+                  placeholder="Create password">
+
+                <button
+                  type="button"
+                  class="show-button"
+                  (click)="showSignupPassword = !showSignupPassword">
+
+                  {{ showSignupPassword ? 'HIDE' : 'SHOW' }}
+
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>CONFIRM PASSWORD</label>
+
+              <div class="input-box">
+
+                <span class="field-symbol">●</span>
+
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  name="confirmPassword"
+                  [(ngModel)]="signupData.confirmPassword"
+                  required
+                  placeholder="Repeat password">
+
+                <button
+                  type="button"
+                  class="show-button"
+                  (click)="showConfirmPassword = !showConfirmPassword">
+
+                  {{ showConfirmPassword ? 'HIDE' : 'SHOW' }}
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Agreement -->
+
+          <label class="agreement">
+
+            <input
+              type="checkbox"
+              name="terms"
+              [(ngModel)]="signupData.terms"
+              required>
+
+            <span class="checkbox"></span>
+
+            <span>
+              I confirm that the information provided is accurate
+              and that I am authorized to access this system.
+            </span>
+
+          </label>
+
+
+          <button
+            type="submit"
+            class="main-button"
+            [disabled]="!signupForm.valid">
+
+            <span>Create Account</span>
+
+            <strong>→</strong>
+
+          </button>
+
+
+          <div class="switch-message">
+
+            Already registered?
+
+            <button
+              type="button"
+              (click)="mode = 'login'">
+
+              Sign in
+
+            </button>
+
+          </div>
+
+
+        </form>
+
+      </div>
+
+
+      <!-- Bottom information -->
+
+      <div class="form-bottom">
+
+        <div>
+          <span class="bottom-dot"></span>
+          Secure access
+        </div>
+
+        <div>
+          aquasentinel • 2026
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

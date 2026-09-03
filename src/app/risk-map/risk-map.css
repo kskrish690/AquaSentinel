@@ -1,0 +1,303 @@
+.map-page {
+  min-height: 100vh;
+  background: #07151b;
+  color: #e7f0ec;
+  padding: 45px;
+}
+
+.map-header {
+  max-width: 1450px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.eyebrow {
+  color: #62bca5;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 55px;
+  margin: 10px 0;
+}
+
+.map-header p {
+  color: #78918d;
+}
+
+.back-btn {
+  background: #d8e6c4;
+  color: #183d31;
+  padding: 13px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.map-layout {
+  max-width: 1450px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+}
+
+.map-view {
+  min-height: 650px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid #193a40;
+  background:
+    linear-gradient(30deg, transparent 48%, #17383d 49%, transparent 51%),
+    linear-gradient(-30deg, transparent 48%, #17383d 49%, transparent 51%),
+    #0b2228;
+  background-size: 80px 80px;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #07151be8;
+  padding: 14px 18px;
+  border-radius: 9px;
+  z-index: 5;
+}
+
+.map-overlay strong,
+.map-overlay span {
+  display: block;
+}
+
+.map-overlay strong {
+  font-size: 11px;
+}
+
+.map-overlay span {
+  margin-top: 5px;
+  font-size: 10px;
+  color: #62bca5;
+}
+
+.river {
+  position: absolute;
+  width: 100%;
+  height: 130px;
+  background: #174a55;
+  transform: rotate(-27deg);
+  top: 280px;
+  left: -50px;
+  opacity: .7;
+}
+
+.zone {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid #d8e6c4;
+  background: #783d3d;
+  box-shadow: 0 0 45px #783d3d;
+  transition: .3s;
+}
+
+.zone:hover {
+  transform: scale(1.12);
+}
+
+.zone span {
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.zone small {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.zone-one {
+  top: 130px;
+  left: 22%;
+}
+
+.zone-two {
+  top: 360px;
+  left: 48%;
+  background: #735d32;
+  box-shadow: 0 0 40px #735d32;
+}
+
+.zone-three {
+  top: 170px;
+  right: 17%;
+  background: #735d32;
+  box-shadow: 0 0 40px #735d32;
+}
+
+.zone-four {
+  bottom: 80px;
+  left: 28%;
+  background: #365e50;
+  box-shadow: 0 0 35px #365e50;
+}
+
+.map-label {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: #07151be8;
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: #d8e6c4;
+}
+
+.map-sidebar {
+  background: #0b1d24;
+  border: 1px solid #193a40;
+  border-radius: 18px;
+  padding: 25px;
+}
+
+.map-sidebar h2 {
+  margin: 10px 0 25px;
+}
+
+.village {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 17px 0;
+  border-bottom: 1px solid #193a40;
+  cursor: pointer;
+}
+
+.village strong,
+.village span {
+  display: block;
+}
+
+.village span {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #607a76;
+}
+
+.village b {
+  font-size: 20px;
+  color: #62bca5;
+}
+
+.legend {
+  display: grid;
+  gap: 12px;
+  margin-top: 30px;
+  color: #849c98;
+  font-size: 12px;
+}
+
+.legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.critical { background: #783d3d; }
+.high { background: #735d32; }
+.moderate { background: #536b3e; }
+.low { background: #365e50; }
+
+@media (max-width: 900px) {
+  .map-page {
+    padding: 25px;
+  }
+
+  .map-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .map-view {
+    min-height: 500px;
+  }
+}
+/* ================================
+   RISK MAP — TYPOGRAPHY
+   ================================ */
+
+.map-page {
+  font-size: 17px;
+}
+
+.map-page h1 {
+  font-size: 52px;
+}
+
+.map-page h2 {
+  font-size: 30px;
+}
+
+.map-page p {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.map-page .eyebrow {
+  font-size: 12px;
+}
+
+.map-page .back-btn {
+  font-size: 16px;
+}
+
+.map-page .map-overlay strong {
+  font-size: 13px;
+}
+
+.map-page .map-overlay span {
+  font-size: 12px;
+}
+
+.map-page .zone span {
+  font-size: 25px;
+}
+
+.map-page .zone small {
+  font-size: 11px;
+}
+
+.map-page .map-label {
+  font-size: 14px;
+}
+
+.map-page .village strong {
+  font-size: 17px;
+}
+
+.map-page .village span {
+  font-size: 12px;
+}
+
+.map-page .village b {
+  font-size: 22px;
+}
+
+.map-page .legend {
+  font-size: 14px;
+}

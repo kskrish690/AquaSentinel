@@ -1,0 +1,247 @@
+.replay-page {
+  min-height: 100vh;
+  background: #07151b;
+  color: #e7f0ec;
+  padding: 45px;
+}
+
+.replay-header,
+.replay-container {
+  max-width: 1250px;
+  margin: auto;
+}
+
+.replay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.eyebrow {
+  color: #62bca5;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 58px;
+  margin: 10px 0;
+}
+
+.replay-header p {
+  color: #78918d;
+  max-width: 650px;
+  line-height: 1.7;
+}
+
+.back-btn {
+  background: #d8e6c4;
+  color: #183d31;
+  padding: 13px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.replay-container {
+  margin-top: 50px;
+}
+
+.timeline,
+.metric,
+.explanation {
+  background: #0b1d24;
+  border: 1px solid #193a40;
+  border-radius: 17px;
+  padding: 30px;
+}
+
+.time {
+  margin-top: 25px;
+}
+
+.time strong {
+  font-size: 45px;
+}
+
+.time span {
+  color: #718b87;
+  margin-left: 15px;
+}
+
+.timeline-line {
+  height: 5px;
+  background: #1b383d;
+  margin: 35px 0 10px;
+  border-radius: 10px;
+}
+
+.timeline-progress {
+  width: 35%;
+  height: 100%;
+  background: #62bca5;
+  border-radius: 10px;
+  transition: .5s;
+}
+
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #607a76;
+  font-size: 11px;
+}
+
+.controls {
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+}
+
+.controls button {
+  padding: 12px 20px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.play {
+  background: #62bca5;
+  border: 1px solid #62bca5;
+  color: #07151b;
+}
+
+.reset {
+  background: transparent;
+  color: #d8e6c4;
+  border: 1px solid #36534e;
+}
+
+.metrics {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.metric span {
+  font-size: 10px;
+  color: #718b87;
+  letter-spacing: 1.5px;
+}
+
+.metric strong {
+  display: block;
+  font-size: 35px;
+  margin: 15px 0;
+}
+
+.metric small {
+  color: #62bca5;
+  font-weight: 700;
+}
+
+.bar {
+  height: 7px;
+  background: #193a40;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.bar div {
+  height: 100%;
+  background: #62bca5;
+  transition: .5s;
+}
+
+.explanation {
+  margin-top: 18px;
+}
+
+.explanation h2 {
+  font-size: 30px;
+}
+
+.explanation p {
+  max-width: 800px;
+  color: #819792;
+  line-height: 1.8;
+}
+
+@media (max-width: 800px) {
+
+  .replay-page {
+    padding: 25px;
+  }
+
+  .replay-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+}
+/* ================================
+   REPLAY — TYPOGRAPHY
+   ================================ */
+
+.replay-page {
+  font-size: 17px;
+}
+
+.replay-page h1 {
+  font-size: 52px;
+}
+
+.replay-page h2 {
+  font-size: 32px;
+}
+
+.replay-page p {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.replay-page .eyebrow {
+  font-size: 12px;
+}
+
+.replay-page .back-btn {
+  font-size: 16px;
+}
+
+.replay-page .time strong {
+  font-size: 48px;
+}
+
+.replay-page .time span {
+  font-size: 15px;
+}
+
+.replay-page .timeline-labels {
+  font-size: 13px;
+}
+
+.replay-page .controls button {
+  font-size: 16px;
+}
+
+.replay-page .metric span {
+  font-size: 12px;
+}
+
+.replay-page .metric strong {
+  font-size: 38px;
+}
+
+.replay-page .metric small {
+  font-size: 14px;
+}
+
+.replay-page .explanation p {
+  font-size: 18px;
+}

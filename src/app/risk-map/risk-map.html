@@ -1,0 +1,115 @@
+<div class="map-page">
+
+  <header class="map-header">
+
+    <div>
+      <span class="eyebrow">aquasentinel • GIS INTELLIGENCE</span>
+      <h1>Localized Risk Map</h1>
+      <p>
+        Mandakini River Micro-Catchment • Rudraprayag, Uttarakhand
+      </p>
+    </div>
+
+    <a routerLink="/dashboard" class="back-btn">
+      ← Dashboard
+    </a>
+
+  </header>
+
+  <main class="map-layout">
+
+    <section class="map-view">
+
+      <div class="map-overlay">
+        <strong>LIVE RISK LAYER</strong>
+        <span>Updated 2 min ago</span>
+      </div>
+
+      <div class="river"></div>
+
+      <div
+        class="zone zone-one"
+        (click)="selectZone('Silli')"
+      >
+        <span>82</span>
+        <small>SILLI</small>
+      </div>
+
+      <div
+        class="zone zone-two"
+        (click)="selectZone('Agastyamuni')"
+      >
+        <span>67</span>
+        <small>AGASTYAMUNI</small>
+      </div>
+
+      <div
+        class="zone zone-three"
+        (click)="selectZone('Ukhimath')"
+      >
+        <span>54</span>
+        <small>UKHIMATH</small>
+      </div>
+
+      <div
+        class="zone zone-four"
+        (click)="selectZone('Rudraprayag')"
+      >
+        <span>42</span>
+        <small>RUDRAPRAYAG</small>
+      </div>
+
+      <div class="map-label">
+        {{ selectedZone }}
+      </div>
+
+    </section>
+
+    <aside class="map-sidebar">
+
+      <span class="eyebrow">RISK ZONES</span>
+
+      <h2>Current Situation</h2>
+
+      <div
+        class="village"
+        *ngFor="let village of villages"
+        (click)="selectZone(village.name)"
+      >
+        <div>
+          <strong>{{ village.name }}</strong>
+          <span>Micro-catchment</span>
+        </div>
+
+        <b>{{ village.risk }}</b>
+      </div>
+
+      <div class="legend">
+
+        <span>
+          <i class="critical"></i>
+          Critical
+        </span>
+
+        <span>
+          <i class="high"></i>
+          High
+        </span>
+
+        <span>
+          <i class="moderate"></i>
+          Moderate
+        </span>
+
+        <span>
+          <i class="low"></i>
+          Low
+        </span>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+</div>

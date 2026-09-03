@@ -1,0 +1,205 @@
+<nav class="main-navbar">
+
+  <div class="navbar-inner">
+
+    <!-- BRAND -->
+    <a
+      routerLink="/"
+      class="brand"
+      (click)="closeMenu()"
+    >
+      <div class="brand-mark">
+        <span class="wave wave-one"></span>
+        <span class="wave wave-two"></span>
+        <span class="wave wave-three"></span>
+      </div>
+
+      <div class="brand-text">
+        <div class="brand-name">aquasentinel</div>
+        <div class="brand-subtitle">
+          LOCALIZED FLOOD INTELLIGENCE
+        </div>
+      </div>
+    </a>
+
+
+    <!-- MAIN NAVIGATION -->
+    <div class="nav-links">
+
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="nav-icon">⌂</span>
+        Home
+      </a>
+
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+      >
+        <span class="nav-icon">▦</span>
+        Dashboard
+      </a>
+
+      <a
+        routerLink="/risk-map"
+        routerLinkActive="active"
+      >
+        <span class="nav-icon">⌖</span>
+        Field Map
+      </a>
+
+      <a
+        routerLink="/data-analysis"
+        routerLinkActive="active"
+      >
+        <span class="nav-icon">◫</span>
+        Full Analysis
+      </a>
+
+
+    </div>
+
+
+    <!-- RIGHT SIDE -->
+    <div class="navbar-right">
+
+      <!-- SYSTEM STATUS -->
+      <div class="system-status">
+        <span class="status-dot"></span>
+
+        <div>
+          <strong>Operational</strong>
+          <small>System Status</small>
+        </div>
+      </div>
+
+
+      <!-- USER -->
+      <div class="user-wrapper">
+
+        <button
+          class="user-button"
+          type="button"
+          (click)="toggleMenu()"
+        >
+
+          <div class="user-avatar">
+            {{ userInitials }}
+          </div>
+
+          <div class="user-info">
+            <strong>{{ userName }}</strong>
+            <span>{{ roleName }}</span>
+          </div>
+
+          <span class="dropdown-arrow">
+            {{ menuOpen ? '⌃' : '⌄' }}
+          </span>
+
+        </button>
+
+
+        <!-- USER DROPDOWN -->
+        <div
+          class="user-dropdown"
+          *ngIf="menuOpen"
+        >
+
+          <div class="dropdown-header">
+
+            <div class="large-avatar">
+              {{ userInitials }}
+            </div>
+
+            <div>
+              <strong>{{ userName }}</strong>
+              <span>{{ roleName }}</span>
+            </div>
+
+          </div>
+
+
+          <div class="dropdown-location">
+            <span>LOCATION</span>
+            <strong>{{ location }}</strong>
+          </div>
+
+
+          <div class="dropdown-divider"></div>
+
+
+          <a
+            routerLink="/dashboard"
+            (click)="closeMenu()"
+          >
+            <span>▦</span>
+            My Dashboard
+          </a>
+
+          <a
+            routerLink="/data-analysis"
+            (click)="closeMenu()"
+          >
+            <span>◫</span>
+            Data Analysis
+          </a>
+
+
+          <div class="dropdown-divider"></div>
+
+
+          <button
+            type="button"
+            class="logout-button"
+            (click)="logout()"
+          >
+            <span>↪</span>
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- MOBILE BUTTON -->
+    <button
+      class="mobile-menu-button"
+      type="button"
+      (click)="toggleMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+
+  <!-- MOBILE NAV -->
+  <div
+    class="mobile-navigation"
+    *ngIf="menuOpen"
+  >
+
+    <a routerLink="/" (click)="closeMenu()">⌂ Home</a>
+    <a routerLink="/dashboard" (click)="closeMenu()">▦ Dashboard</a>
+    <a routerLink="/risk-map" (click)="closeMenu()">⌖ Field Map</a>
+    <a routerLink="/data-analysis" (click)="closeMenu()">◫ Full Analysis</a>
+    <a routerLink="/replay" (click)="closeMenu()">↻ Replay</a>
+    <a routerLink="/alerts" (click)="closeMenu()">! Alerts</a>
+
+    <button
+      type="button"
+      class="mobile-logout"
+      (click)="logout()"
+    >
+      ↪ Logout
+    </button>
+
+  </div>
+
+</nav>

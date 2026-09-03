@@ -1,0 +1,962 @@
+<main class="dashboard-page">
+
+  <!-- Background -->
+  <div class="dashboard-grid"></div>
+  <div class="ambient-glow glow-left"></div>
+  <div class="ambient-glow glow-right"></div>
+
+<!-- SOS EMERGENCY NOTIFICATION -->
+<div
+  class="sos-notification"
+  *ngIf="sosMessageVisible"
+>
+  <div class="sos-notification-icon">
+    !
+  </div>
+
+  <div class="sos-notification-content">
+    <strong>Emergency Announced</strong>
+    <span>SOS emergency has been announced.</span>
+  </div>
+
+  <button
+    class="sos-close"
+    (click)="sosMessageVisible = false"
+  >
+    ×
+  </button>
+</div>
+  <!-- =================================================
+       TOP HEADER
+       ================================================= -->
+
+  <section class="dashboard-header">
+
+    <div class="header-left">
+
+      <div class="system-label">
+        <span class="live-dot"></span>
+        aquasentinel / OPERATIONS
+      </div>
+
+      <h1>{{ pageTitle }}</h1>
+
+      <p>{{ pageSubtitle }}</p>
+
+    </div>
+
+
+    <div class="header-right">
+
+      <!-- SOS BUTTON -->
+      <button
+        class="sos-button"
+        (click)="triggerSOS()"
+      >
+        SOS
+      </button>
+
+      <div class="user-card">
+
+        <div class="user-avatar">
+          {{ fullName ? fullName.charAt(0).toUpperCase() : 'A' }}
+        </div>
+
+        <div class="user-details">
+
+          <strong>
+            {{ fullName || 'Authorized Officer' }}
+          </strong>
+
+          <span>
+            {{ designation || roleName }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <button
+        class="logout-button"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       LOCATION / ROLE BAR
+       ================================================= -->
+
+  <section class="context-bar">
+
+    <div class="context-item">
+
+      <span class="context-label">
+        OPERATING REGION
+      </span>
+
+      <strong>
+        {{ getLocation() }}
+      </strong>
+
+    </div>
+
+
+    <div class="context-divider"></div>
+
+
+    <div class="context-item">
+
+      <span class="context-label">
+        DEPARTMENT
+      </span>
+
+      <strong>
+        {{ department || 'Disaster Management' }}
+      </strong>
+
+    </div>
+
+
+    <div class="context-divider"></div>
+
+
+    <div class="context-item">
+
+      <span class="context-label">
+        ACCESS ROLE
+      </span>
+
+      <strong>
+        {{ roleName }}
+      </strong>
+
+    </div>
+
+
+    <div class="context-divider"></div>
+
+
+    <div class="system-health">
+
+      <span class="health-indicator"></span>
+
+      <div>
+        <span class="context-label">
+          SYSTEM
+        </span>
+
+        <strong>
+          Operational
+        </strong>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       KPI GRID
+       ================================================= -->
+
+  <section class="kpi-grid">
+
+
+    <!-- RISK -->
+    <div class="kpi-card risk-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          CURRENT RISK
+        </span>
+
+        <span class="kpi-icon">
+          ◈
+        </span>
+
+      </div>
+
+      <div class="kpi-value">
+
+        <strong>
+          {{ riskScore }}
+        </strong>
+
+        <span>/100</span>
+
+      </div>
+
+      <div
+        class="risk-status"
+        [class]="getRiskClass()"
+      >
+        {{ getRiskStatus() }}
+      </div>
+
+      <div class="mini-progress">
+
+        <div
+          class="mini-progress-fill"
+          [style.width.%]="riskScore"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- RAINFALL -->
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          RAINFALL
+        </span>
+
+        <span class="kpi-icon">
+          ≋
+        </span>
+
+      </div>
+
+      <div class="kpi-value">
+
+        <strong>
+          {{ rainfall }}
+        </strong>
+
+        <span>mm</span>
+
+      </div>
+
+      <p class="kpi-description">
+        Recent accumulated rainfall
+      </p>
+
+    </div>
+
+
+    <!-- SOIL -->
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          SOIL WETNESS
+        </span>
+
+        <span class="kpi-icon">
+          ◌
+        </span>
+
+      </div>
+
+      <div class="kpi-value">
+
+        <strong>
+          {{ soilWetness }}
+        </strong>
+
+        <span>%</span>
+
+      </div>
+
+      <div class="circular-mini">
+
+        <svg viewBox="0 0 40 40">
+
+          <circle
+            cx="20"
+            cy="20"
+            r="16"
+            class="circle-bg"
+          ></circle>
+
+          <circle
+            cx="20"
+            cy="20"
+            r="16"
+            class="circle-value"
+            [style.stroke-dashoffset]="100 - soilWetness"
+          ></circle>
+
+        </svg>
+
+      </div>
+
+    </div>
+
+
+    <!-- SENSORS -->
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          SENSOR HEALTH
+        </span>
+
+        <span class="kpi-icon">
+          ◎
+        </span>
+
+      </div>
+
+      <div class="kpi-value">
+
+        <strong>
+          {{ activeSensors }}
+        </strong>
+
+        <span>/{{ totalSensors }}</span>
+
+      </div>
+
+      <p class="sensor-health-text">
+        {{ getSensorHealth() }}% operational
+      </p>
+
+      <div class="sensor-bars">
+
+        <span
+          *ngFor="let sensor of [1,2,3,4,5,6,7,8]"
+          class="sensor-bar"
+        ></span>
+
+      </div>
+
+    </div>
+
+
+    <!-- VILLAGES -->
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          AFFECTED VILLAGES
+        </span>
+
+        <span class="kpi-icon">
+          ●
+        </span>
+
+      </div>
+
+      <div class="kpi-value">
+
+        <strong>
+          {{ affectedVillages }}
+        </strong>
+
+      </div>
+
+      <p class="kpi-description">
+        Areas requiring attention
+      </p>
+
+    </div>
+
+
+    <!-- LEAD TIME -->
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          ESTIMATED LEAD TIME
+        </span>
+
+        <span class="kpi-icon">
+          ◷
+        </span>
+
+      </div>
+
+      <div class="kpi-value lead-time">
+
+        <strong>
+          {{ leadTime }}
+        </strong>
+
+      </div>
+
+      <p class="kpi-description">
+        Before expected escalation
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       MAIN INTELLIGENCE GRID
+       ================================================= -->
+
+  <section class="main-grid">
+
+
+    <!-- =================================================
+         RISK OVERVIEW
+         ================================================= -->
+
+    <div class="panel risk-overview">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-eyebrow">
+            LOCALIZED RISK ENGINE
+          </span>
+
+          <h2>
+            Current Situation
+          </h2>
+
+        </div>
+
+        <span class="panel-time">
+          LIVE
+        </span>
+
+      </div>
+
+
+      <div class="risk-overview-content">
+
+        <div class="large-risk">
+
+          <div class="large-risk-ring">
+
+            <div class="large-risk-inner">
+
+              <strong>
+                {{ riskScore }}
+              </strong>
+
+              <span>
+                RISK SCORE
+              </span>
+
+            </div>
+
+          </div>
+
+          <div>
+
+            <span class="large-risk-label">
+              CURRENT CONDITION
+            </span>
+
+            <h3>
+              {{ getRiskStatus() }}
+            </h3>
+
+            <p>
+              Risk assessment combines rainfall,
+              soil wetness, terrain exposure and
+              drainage vulnerability.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- Factors -->
+
+        <div class="risk-factors">
+
+          <div class="factor-row">
+
+            <div class="factor-info">
+              <span>Rainfall intensity</span>
+              <strong>82%</strong>
+            </div>
+
+            <div class="factor-track">
+
+              <div
+                class="factor-fill rainfall"
+                style="width:82%"
+              ></div>
+
+            </div>
+
+          </div>
+
+
+          <div class="factor-row">
+
+            <div class="factor-info">
+              <span>Soil wetness</span>
+              <strong>{{ soilWetness }}%</strong>
+            </div>
+
+            <div class="factor-track">
+
+              <div
+                class="factor-fill soil"
+                [style.width.%]="soilWetness"
+              ></div>
+
+            </div>
+
+          </div>
+
+
+          <div class="factor-row">
+
+            <div class="factor-info">
+              <span>Terrain exposure</span>
+              <strong>{{ terrainExposure }}%</strong>
+            </div>
+
+            <div class="factor-track">
+
+              <div
+                class="factor-fill terrain"
+                [style.width.%]="terrainExposure"
+              ></div>
+
+            </div>
+
+          </div>
+
+
+          <div class="factor-row">
+
+            <div class="factor-info">
+              <span>Drainage vulnerability</span>
+              <strong>{{ drainageVulnerability }}%</strong>
+            </div>
+
+            <div class="factor-track">
+
+              <div
+                class="factor-fill drainage"
+                [style.width.%]="drainageVulnerability"
+              ></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ACTION CENTRE
+         ================================================= -->
+
+    <div class="panel action-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-eyebrow">
+            OPERATIONAL PRIORITIES
+          </span>
+
+          <h2>
+            Action Centre
+          </h2>
+
+        </div>
+
+        <span class="alert-count">
+          {{ activeAlerts }} ACTIVE
+        </span>
+
+      </div>
+
+
+      <div class="action-list">
+
+
+        <div class="action-item priority">
+
+          <div class="action-number">
+            01
+          </div>
+
+          <div class="action-content">
+
+            <span class="action-tag">
+              PRIORITY
+            </span>
+
+            <strong>
+              Review vulnerable zones
+            </strong>
+
+            <p>
+              {{ affectedVillages }}
+              villages currently require attention.
+            </p>
+
+          </div>
+
+          <span class="action-arrow">
+            →
+          </span>
+
+        </div>
+
+
+        <div class="action-item">
+
+          <div class="action-number">
+            02
+          </div>
+
+          <div class="action-content">
+
+            <span class="action-tag">
+              TRANSPORT
+            </span>
+
+            <strong>
+              Monitor affected roads
+            </strong>
+
+            <p>
+              {{ affectedRoads }}
+              road segments require monitoring.
+            </p>
+
+          </div>
+
+          <span class="action-arrow">
+            →
+          </span>
+
+        </div>
+
+
+        <div class="action-item">
+
+          <div class="action-number">
+            03
+          </div>
+
+          <div class="action-content">
+
+            <span class="action-tag">
+              RESPONSE
+            </span>
+
+            <strong>
+              Review response readiness
+            </strong>
+
+            <p>
+              Estimated lead time:
+              {{ leadTime }}
+            </p>
+
+          </div>
+
+          <span class="action-arrow">
+            →
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <a
+        routerLink="/alerts"
+        class="action-button"
+      >
+        Open Alert Operations
+        <span>→</span>
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       ENVIRONMENT + MAP
+       ================================================= -->
+
+  <section class="lower-grid">
+
+
+    <!-- ENVIRONMENT -->
+
+    <div class="panel environment-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-eyebrow">
+            ENVIRONMENTAL CONDITIONS
+          </span>
+
+          <h2>
+            Catchment Signals
+          </h2>
+
+        </div>
+
+        <a
+          routerLink="/data-analysis"
+          class="panel-link"
+        >
+          Full analysis →
+        </a>
+
+      </div>
+
+
+      <div class="environment-grid">
+
+
+        <div class="environment-item">
+
+          <div class="environment-top">
+
+            <span>Soil</span>
+
+            <strong>
+              {{ soilWetness }}%
+            </strong>
+
+          </div>
+
+          <div class="environment-track">
+
+            <div
+              class="environment-fill soil-fill"
+              [style.width.%]="soilWetness"
+            ></div>
+
+          </div>
+
+          <small>
+            Wetness condition
+          </small>
+
+        </div>
+
+
+        <div class="environment-item">
+
+          <div class="environment-top">
+
+            <span>Terrain</span>
+
+            <strong>
+              {{ terrainExposure }}%
+            </strong>
+
+          </div>
+
+          <div class="environment-track">
+
+            <div
+              class="environment-fill terrain-fill"
+              [style.width.%]="terrainExposure"
+            ></div>
+
+          </div>
+
+          <small>
+            Exposure factor
+          </small>
+
+        </div>
+
+
+        <div class="environment-item">
+
+          <div class="environment-top">
+
+            <span>Drainage</span>
+
+            <strong>
+              {{ drainageVulnerability }}%
+            </strong>
+
+          </div>
+
+          <div class="environment-track">
+
+            <div
+              class="environment-fill drainage-fill"
+              [style.width.%]="drainageVulnerability"
+            ></div>
+
+          </div>
+
+          <small>
+            Vulnerability
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- MAP -->
+
+    <div class="panel map-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-eyebrow">
+            GEOSPATIAL INTELLIGENCE
+          </span>
+
+          <h2>
+            Risk Map
+          </h2>
+
+        </div>
+
+        <a
+          routerLink="/risk-map"
+          class="panel-link"
+        >
+          Open map →
+        </a>
+
+      </div>
+
+
+      <div class="map-preview">
+
+        <div class="map-grid"></div>
+
+        <div class="river-line"></div>
+
+        <div class="risk-zone zone-one">
+          <span></span>
+        </div>
+
+        <div class="risk-zone zone-two">
+          <span></span>
+        </div>
+
+        <div class="risk-zone zone-three">
+          <span></span>
+        </div>
+
+
+        <div class="map-label label-one">
+          Mandakini
+        </div>
+
+        <div class="map-label label-two">
+          Zone B
+        </div>
+
+        <div class="map-label label-three">
+          R-12
+        </div>
+
+
+        <div class="map-overlay">
+
+          <span>
+            PILOT REGION
+          </span>
+
+          <strong>
+            Mandakini Micro-Catchment
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =================================================
+       BOTTOM STATUS
+       ================================================= -->
+
+  <section class="bottom-status">
+
+    <div class="status-block">
+
+      <span>
+        DATA FRESHNESS
+      </span>
+
+      <strong>
+        Live observations available
+      </strong>
+
+    </div>
+
+
+    <div class="status-block">
+
+      <span>
+        MODEL CONFIDENCE
+      </span>
+
+      <strong>
+        {{ confidence }}%
+      </strong>
+
+    </div>
+
+
+    <div class="status-block">
+
+      <span>
+        SENSOR HEALTH
+      </span>
+
+      <strong>
+        {{ activeSensors }}/{{ totalSensors }}
+      </strong>
+
+    </div>
+
+
+    <div class="status-block">
+
+      <span>
+        LAST UPDATED
+      </span>
+
+      <strong>
+        2 min ago
+      </strong>
+
+    </div>
+
+  </section>
+
+
+</main>

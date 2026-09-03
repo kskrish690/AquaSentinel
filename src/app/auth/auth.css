@@ -1,0 +1,1227 @@
+/* =========================================================
+   aquasentinel AUTH
+   Clean Editorial / Government Dashboard Style
+   ========================================================= */
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 46% 54%;
+  background: #f5f1e8;
+  color: #242621;
+  font-family:
+    Inter,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   LEFT VISUAL PANEL
+   ========================================================= */
+
+.visual-panel {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 34px 7%;
+  display: flex;
+  flex-direction: column;
+  background: #242621;
+  color: #f7f3ea;
+}
+
+
+/* subtle paper texture */
+
+.visual-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.8) 0px,
+      rgba(255,255,255,0.8) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.visual-top {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-symbol {
+  position: relative;
+
+  width: 39px;
+  height: 39px;
+
+  border: 1px solid #d9c9b6;
+  border-radius: 50%;
+
+  overflow: hidden;
+}
+
+.brand-symbol span {
+  position: absolute;
+
+  width: 52px;
+  height: 13px;
+
+  left: -7px;
+
+  border: 1px solid #d9c9b6;
+  border-radius: 50%;
+}
+
+.brand-symbol span:nth-child(1) {
+  top: 5px;
+}
+
+.brand-symbol span:nth-child(2) {
+  top: 13px;
+}
+
+.brand-symbol span:nth-child(3) {
+  top: 21px;
+}
+
+.brand h2 {
+  margin: 0;
+
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+.brand p {
+  margin: 3px 0 0;
+
+  color: #a9a797;
+
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+
+.secure-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #aaa99c;
+
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.secure-label span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #91a47e;
+}
+
+
+/* =========================================================
+   LEFT CONTENT
+   ========================================================= */
+
+.visual-content {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  max-width: 570px;
+
+  margin: auto 0;
+  padding: 65px 0 50px;
+
+  animation: visualIn 0.8s ease both;
+}
+
+@keyframes visualIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}
+
+
+.location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #d3c8b8;
+
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.4px;
+}
+
+.location-tag span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #c96b4b;
+}
+
+
+.visual-content h1 {
+  margin: 23px 0 22px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(45px, 4.3vw, 67px);
+  font-weight: 400;
+
+  line-height: 0.99;
+
+  letter-spacing: -3px;
+}
+
+.visual-content h1 em {
+  color: #d68a6d;
+  font-style: italic;
+}
+
+
+.visual-description {
+  max-width: 475px;
+
+  margin: 0;
+
+  color: #a9aaa0;
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   TERRAIN CARD
+   ========================================================= */
+
+.terrain-card {
+  width: 100%;
+
+  margin-top: 38px;
+
+  border: 1px solid rgba(222, 212, 195, 0.17);
+
+  background: #2b2d27;
+
+  overflow: hidden;
+}
+
+
+.terrain-header {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 14px 16px;
+
+  border-bottom: 1px solid rgba(222, 212, 195, 0.12);
+
+  color: #999b91;
+
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 1.2px;
+}
+
+
+.live {
+  color: #9aa88b;
+}
+
+.live i {
+  display: inline-block;
+
+  width: 5px;
+  height: 5px;
+
+  margin-right: 5px;
+
+  border-radius: 50%;
+
+  background: #91a47e;
+}
+
+
+/* =========================================================
+   TERRAIN VISUAL
+   ========================================================= */
+
+.terrain-visual {
+  position: relative;
+
+  height: 125px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      165deg,
+      #3a3d33 0%,
+      #30342e 45%,
+      #272b27 100%
+    );
+}
+
+
+/* mountains */
+
+.mountain {
+  position: absolute;
+
+  bottom: -35px;
+
+  width: 0;
+  height: 0;
+
+  border-left: 150px solid transparent;
+  border-right: 150px solid transparent;
+  border-bottom: 190px solid #45483d;
+}
+
+.mountain-back {
+  left: -50px;
+
+  transform: scale(0.85);
+
+  opacity: 0.45;
+}
+
+.mountain-middle {
+  left: 125px;
+
+  transform: scale(0.72);
+
+  border-bottom-color: #505345;
+
+  opacity: 0.65;
+}
+
+.mountain-front {
+  right: -90px;
+
+  transform: scale(0.9);
+
+  border-bottom-color: #3e4239;
+
+  opacity: 0.8;
+}
+
+
+/* river */
+
+.river {
+  position: absolute;
+
+  width: 150%;
+  height: 20px;
+
+  left: -20%;
+  bottom: 10px;
+
+  border-radius: 50%;
+
+  background: rgba(194, 177, 153, 0.17);
+
+  transform: rotate(-8deg);
+}
+
+
+/* map points */
+
+.map-point {
+  position: absolute;
+
+  width: 11px;
+  height: 11px;
+
+  border: 2px solid #f1e7d8;
+
+  border-radius: 50%;
+
+  background: #c96b4b;
+
+  box-shadow:
+    0 0 0 5px rgba(201, 107, 75, 0.16);
+
+  animation: pointPulse 2.8s ease-in-out infinite;
+}
+
+.map-point span {
+  position: absolute;
+
+  width: 3px;
+  height: 3px;
+
+  top: 2px;
+  left: 2px;
+
+  border-radius: 50%;
+
+  background: white;
+}
+
+.point-one {
+  top: 37px;
+  left: 29%;
+}
+
+.point-two {
+  top: 63px;
+  left: 54%;
+
+  animation-delay: 0.7s;
+}
+
+.point-three {
+  top: 31px;
+  right: 19%;
+
+  animation-delay: 1.3s;
+}
+
+@keyframes pointPulse {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(201, 107, 75, 0.12);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(201, 107, 75, 0.04);
+  }
+
+}
+
+
+/* =========================================================
+   TERRAIN FOOTER
+   ========================================================= */
+
+.terrain-footer {
+  display: flex;
+  align-items: center;
+
+  padding: 15px 17px;
+
+  gap: 20px;
+}
+
+
+.terrain-footer strong {
+  display: block;
+
+  color: #e9e2d7;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.terrain-footer small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #85877e;
+
+  font-size: 8px;
+}
+
+
+.terrain-divider {
+  width: 1px;
+  height: 28px;
+
+  background: #45473f;
+}
+
+
+/* =========================================================
+   QUOTE
+   ========================================================= */
+
+.quote {
+  margin-top: 25px;
+
+  color: #8f9187;
+
+  font-family: Georgia, serif;
+
+  font-size: 12px;
+  font-style: italic;
+}
+
+
+/* =========================================================
+   VISUAL FOOTER
+   ========================================================= */
+
+.visual-footer {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: #73766d;
+
+  font-size: 8px;
+  letter-spacing: 0.4px;
+}
+
+
+/* =========================================================
+   RIGHT FORM PANEL
+   ========================================================= */
+
+.form-panel {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 45px 7%;
+
+  background: #f5f1e8;
+}
+
+
+.form-container {
+  width: 100%;
+  max-width: 570px;
+
+  animation: formIn 0.75s ease 0.1s both;
+}
+
+@keyframes formIn {
+
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+}
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.auth-tabs {
+  display: flex;
+
+  width: max-content;
+
+  margin-bottom: 42px;
+
+  border-bottom: 1px solid #d8d0c4;
+}
+
+.auth-tabs button {
+  position: relative;
+
+  padding: 0 28px 14px 0;
+  margin-right: 28px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #97958b;
+
+  cursor: pointer;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  transition: color 0.25s ease;
+}
+
+.auth-tabs button:last-child {
+  margin-right: 0;
+}
+
+.auth-tabs button::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 28px;
+  bottom: -1px;
+
+  height: 2px;
+
+  background: transparent;
+
+  transition: 0.25s ease;
+}
+
+.auth-tabs button.active {
+  color: #242621;
+}
+
+.auth-tabs button.active::after {
+  background: #c96b4b;
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.heading {
+  display: flex;
+
+  gap: 18px;
+
+  margin-bottom: 34px;
+}
+
+.heading-number {
+  padding-top: 6px;
+
+  color: #c96b4b;
+
+  font-family: Georgia, serif;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.heading h2 {
+  margin: 0;
+
+  color: #242621;
+
+  font-family: Georgia, serif;
+
+  font-size: 32px;
+  font-weight: 400;
+
+  letter-spacing: -1px;
+}
+
+.heading p {
+  max-width: 380px;
+
+  margin: 7px 0 0;
+
+  color: #8b8980;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+form {
+  display: grid;
+
+  gap: 20px;
+}
+
+
+.signup-content form {
+  gap: 14px;
+}
+
+
+.field {
+  width: 100%;
+}
+
+
+.field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #68675f;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+}
+
+
+.optional {
+  margin-left: 5px;
+
+  color: #aaa79d;
+
+  font-weight: 500;
+}
+
+
+.input-box {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 49px;
+
+  border: 1px solid #d6cec1;
+
+  background: #fffdf9;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.input-box:focus-within {
+  border-color: #c96b4b;
+
+  box-shadow:
+    0 0 0 3px rgba(201, 107, 75, 0.08);
+}
+
+
+.field-symbol {
+  width: 45px;
+
+  flex-shrink: 0;
+
+  text-align: center;
+
+  color: #a18f7b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #292a25;
+
+  font-size: 11px;
+}
+
+
+.input-box input::placeholder {
+  color: #b2afa7;
+}
+
+
+.select-box {
+  padding-left: 14px;
+}
+
+
+.select-box select {
+  appearance: none;
+
+  cursor: pointer;
+
+  padding-right: 38px;
+}
+
+
+.select-box select option {
+  color: #242621;
+
+  background: #fffdf9;
+}
+
+
+.select-arrow {
+  position: absolute;
+
+  right: 15px;
+
+  color: #85847b;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   LABEL LINE
+   ========================================================= */
+
+.label-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.label-line label {
+  margin-bottom: 7px;
+}
+
+
+.forgot {
+  border: 0;
+
+  background: transparent;
+
+  color: #b35e41;
+
+  cursor: pointer;
+
+  font-size: 8px;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================================================
+   PASSWORD
+   ========================================================= */
+
+.show-button {
+  margin-right: 13px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #b35e41;
+
+  cursor: pointer;
+
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+
+/* =========================================================
+   TWO COLUMNS
+   ========================================================= */
+
+.two-fields {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+}
+
+
+/* =========================================================
+   LOGIN OPTIONS
+   ========================================================= */
+
+.login-options {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: -2px;
+}
+
+
+.remember {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #77756d;
+
+  cursor: pointer;
+
+  font-size: 9px;
+}
+
+
+.remember input,
+.agreement input {
+  display: none;
+}
+
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #c5bcaf;
+
+  background: #fffdf9;
+
+  transition: 0.2s;
+}
+
+
+.remember input:checked + .checkbox,
+.agreement input:checked + .checkbox {
+  border-color: #c96b4b;
+
+  background: #c96b4b;
+}
+
+
+.protected {
+  color: #aaa69d;
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   MAIN BUTTON
+   ========================================================= */
+
+.main-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 52px;
+
+  padding: 0 18px;
+
+  border: 0;
+
+  background: #242621;
+
+  color: #fffaf2;
+
+  cursor: pointer;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+
+.main-button strong {
+  font-size: 18px;
+  font-weight: 400;
+
+  transition: transform 0.25s ease;
+}
+
+
+.main-button:hover:not(:disabled) {
+  background: #c96b4b;
+
+  transform: translateY(-2px);
+}
+
+
+.main-button:hover:not(:disabled) strong {
+  transform: translateX(5px);
+}
+
+
+.main-button:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SWITCH MESSAGE
+   ========================================================= */
+
+.switch-message {
+  text-align: center;
+
+  color: #96938a;
+
+  font-size: 9px;
+}
+
+
+.switch-message button {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #b45f43;
+
+  cursor: pointer;
+
+  font-size: 9px;
+  font-weight: 750;
+}
+
+
+.switch-message button:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================================================
+   AGREEMENT
+   ========================================================= */
+
+.agreement {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 9px;
+
+  color: #858279;
+
+  cursor: pointer;
+
+  font-size: 8px;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   FORM BOTTOM
+   ========================================================= */
+
+.form-bottom {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-top: 34px;
+  padding-top: 17px;
+
+  border-top: 1px solid #ded7cb;
+
+  color: #aaa69d;
+
+  font-size: 7px;
+  letter-spacing: 0.4px;
+}
+
+
+.form-bottom > div:first-child {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.bottom-dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #78836d;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-panel {
+    min-height: auto;
+
+    padding: 28px 7%;
+  }
+
+  .visual-content {
+    margin: 45px 0 30px;
+
+    padding: 0;
+  }
+
+  .visual-content h1 {
+    font-size: 55px;
+  }
+
+  .terrain-card {
+    max-width: 650px;
+  }
+
+  .visual-footer {
+    margin-top: 15px;
+  }
+
+  .form-panel {
+    min-height: auto;
+
+    padding: 65px 7%;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .visual-panel {
+    padding: 23px 6%;
+  }
+
+  .secure-label {
+    display: none;
+  }
+
+  .brand h2 {
+    font-size: 17px;
+  }
+
+  .visual-content {
+    margin-top: 50px;
+  }
+
+  .visual-content h1 {
+    font-size: 47px;
+
+    letter-spacing: -2px;
+  }
+
+  .visual-description {
+    font-size: 12px;
+  }
+
+  .terrain-card {
+    margin-top: 28px;
+  }
+
+  .terrain-visual {
+    height: 100px;
+  }
+
+  .quote {
+    display: none;
+  }
+
+  .visual-footer {
+    font-size: 7px;
+  }
+
+  .form-panel {
+    padding: 50px 6%;
+  }
+
+  .auth-tabs {
+    margin-bottom: 35px;
+  }
+
+  .heading h2 {
+    font-size: 27px;
+  }
+
+  .two-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .form-bottom {
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+}

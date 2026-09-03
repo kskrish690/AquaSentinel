@@ -1,0 +1,128 @@
+<div class="alerts-page">
+
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">aquasentinel • ALERT ORCHESTRATION</span>
+      <h1>Alert Management</h1>
+      <p>
+        Review, approve and monitor localized flood warnings
+        across the Mandakini micro-catchment.
+      </p>
+    </div>
+
+    <a routerLink="/dashboard" class="back-btn">
+      ← Dashboard
+    </a>
+  </header>
+
+  <section class="summary-grid">
+
+    <div class="summary-card">
+      <span>ACTIVE ALERTS</span>
+      <strong>02</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>PENDING APPROVAL</span>
+      <strong>01</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>AFFECTED VILLAGES</span>
+      <strong>04</strong>
+    </div>
+
+    <div class="summary-card">
+      <span>SYSTEM STATUS</span>
+      <strong class="online">OPERATIONAL</strong>
+    </div>
+
+  </section>
+
+  <section class="alerts-panel">
+
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">LIVE ALERT QUEUE</span>
+        <h2>Officer Review</h2>
+      </div>
+
+      <span class="live">
+        <i></i> LIVE
+      </span>
+    </div>
+
+    <div class="alert-list">
+
+      <article
+        class="alert-card"
+        *ngFor="let alert of alerts"
+      >
+
+        <div class="alert-main">
+
+          <div class="alert-top">
+            <span
+              class="risk-badge"
+              [class.high]="alert.level === 'HIGH'"
+              [class.moderate]="alert.level === 'MODERATE'"
+              [class.critical]="alert.level === 'CRITICAL'"
+            >
+              {{ alert.level }}
+            </span>
+
+            <span class="alert-id">
+              {{ alert.id }}
+            </span>
+          </div>
+
+          <h3>{{ alert.village }}</h3>
+
+          <p>{{ alert.location }}</p>
+
+          <div class="alert-data">
+
+            <div>
+              <span>RISK SCORE</span>
+              <strong>{{ alert.score }}/100</strong>
+            </div>
+
+            <div>
+              <span>RECOMMENDED ACTION</span>
+              <strong>{{ alert.action }}</strong>
+            </div>
+
+            <div>
+              <span>STATUS</span>
+              <strong>{{ alert.status }}</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="alert-actions">
+
+          <button
+            class="approve"
+            (click)="approveAlert(alert)"
+          >
+            Approve
+          </button>
+
+          <button
+            class="reject"
+            (click)="rejectAlert(alert)"
+          >
+            Reject
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>
