@@ -401,7 +401,7 @@ export class Dashboard implements OnInit {
   getGreeting(): string {
 
     if (!this.fullName) {
-      return 'Welcome to aquasentinel';
+      return 'Welcome to aquasentinal';
     }
 
     const firstName =

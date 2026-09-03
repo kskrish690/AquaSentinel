@@ -36,7 +36,7 @@ app.get('/api/health', (req, res) => {
 
         success: true,
 
-        message: 'aquasentinel backend is running.'
+        message: 'aquasentinal backend is running.'
 
     });
 
@@ -51,5 +51,5 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`AquaSentinel backend running on port ${PORT}`);
+    console.log(`aquasentinal backend running on port ${PORT}`);
 });
