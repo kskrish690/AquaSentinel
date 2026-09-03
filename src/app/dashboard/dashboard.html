@@ -1,65 +1,195 @@
 <main class="dashboard-page">
 
-  <!-- Background -->
+  <!-- =====================================================
+       SOS PASSWORD CENTER OVERLAY
+  ====================================================== -->
+
+  <div
+    class="sos-overlay"
+    *ngIf="showSOSPasswordModal"
+  >
+
+    <div
+      class="sos-password-modal"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- LOCK ICON -->
+      <div class="sos-lock-icon">
+        🔐
+      </div>
+
+      <!-- TITLE -->
+      <h2>SOS Authorization</h2>
+
+      <p class="sos-modal-text">
+        Emergency response activation requires
+        authorized confirmation.
+      </p>
+
+      <!-- PASSWORD FORM -->
+      <form
+        class="sos-form"
+        (ngSubmit)="verifySOSPassword()"
+      >
+
+        <label for="sosPassword">
+          Enter SOS Password
+        </label>
+
+        <input
+          id="sosPassword"
+          type="password"
+          [(ngModel)]="sosPassword"
+          name="sosPassword"
+          placeholder="Enter authorization password"
+          autocomplete="off"
+          [disabled]="sosVerifying"
+          autofocus
+        />
+
+        <!-- ERROR MESSAGE -->
+        <div
+          class="sos-error"
+          *ngIf="sosPasswordError"
+        >
+          {{ sosPasswordError }}
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="sos-modal-buttons">
+
+          <button
+            type="button"
+            class="sos-cancel"
+            (click)="cancelSOSAuthorization()"
+            [disabled]="sosVerifying"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="sos-confirm"
+            [disabled]="sosVerifying"
+          >
+            {{ sosVerifying ? 'Verifying...' : 'Activate SOS' }}
+          </button>
+
+        </div>
+
+      </form>
+
+      <!-- SECURITY NOTE -->
+      <div class="sos-security">
+        🔒 Authorized personnel only
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       SOS SUCCESS NOTIFICATION
+  ====================================================== -->
+
+  <div
+    class="sos-notification"
+    *ngIf="sosMessageVisible"
+  >
+
+    <div class="sos-notification-icon">
+      !
+    </div>
+
+    <div class="sos-notification-content">
+
+      <strong>
+        Emergency Announced
+      </strong>
+
+      <span>
+        {{ sosMessage }}
+      </span>
+
+      <small>
+        Redirecting to Emergency Response Center...
+      </small>
+
+    </div>
+
+    <button
+      type="button"
+      class="sos-close"
+      (click)="closeSOSMessage()"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       BACKGROUND
+  ====================================================== -->
+
   <div class="dashboard-grid"></div>
+
   <div class="ambient-glow glow-left"></div>
   <div class="ambient-glow glow-right"></div>
 
-<!-- SOS EMERGENCY NOTIFICATION -->
-<div
-  class="sos-notification"
-  *ngIf="sosMessageVisible"
->
-  <div class="sos-notification-icon">
-    !
-  </div>
 
-  <div class="sos-notification-content">
-    <strong>Emergency Announced</strong>
-    <span>SOS emergency has been announced.</span>
-  </div>
-
-  <button
-    class="sos-close"
-    (click)="sosMessageVisible = false"
-  >
-    ×
-  </button>
-</div>
-  <!-- =================================================
-       TOP HEADER
-       ================================================= -->
+  <!-- =====================================================
+       DASHBOARD HEADER
+  ====================================================== -->
 
   <section class="dashboard-header">
 
     <div class="header-left">
 
       <div class="system-label">
+
         <span class="live-dot"></span>
-        aquasentinal / OPERATIONS
+
+        AQUASENTINEL / OPERATIONS
+
       </div>
 
-      <h1>{{ pageTitle }}</h1>
+      <h1>
+        {{ pageTitle }}
+      </h1>
 
-      <p>{{ pageSubtitle }}</p>
+      <p>
+        {{ pageSubtitle }}
+      </p>
 
     </div>
 
 
     <div class="header-right">
 
-      <!-- SOS BUTTON -->
+      <!-- SOS -->
       <button
+        type="button"
         class="sos-button"
         (click)="triggerSOS()"
       >
         SOS
       </button>
 
+
+      <!-- USER -->
       <div class="user-card">
 
         <div class="user-avatar">
-          {{ fullName ? fullName.charAt(0).toUpperCase() : 'A' }}
+
+          {{
+            fullName
+              ? fullName.charAt(0).toUpperCase()
+              : 'A'
+          }}
+
         </div>
 
         <div class="user-details">
@@ -76,7 +206,10 @@
 
       </div>
 
+
+      <!-- LOGOUT -->
       <button
+        type="button"
         class="logout-button"
         (click)="logout()"
       >
@@ -88,9 +221,9 @@
   </section>
 
 
-  <!-- =================================================
-       LOCATION / ROLE BAR
-       ================================================= -->
+  <!-- =====================================================
+       CONTEXT BAR
+  ====================================================== -->
 
   <section class="context-bar">
 
@@ -147,6 +280,7 @@
       <span class="health-indicator"></span>
 
       <div>
+
         <span class="context-label">
           SYSTEM
         </span>
@@ -154,6 +288,7 @@
         <strong>
           Operational
         </strong>
+
       </div>
 
     </div>
@@ -161,14 +296,14 @@
   </section>
 
 
-  <!-- =================================================
+  <!-- =====================================================
        KPI GRID
-       ================================================= -->
+  ====================================================== -->
 
   <section class="kpi-grid">
 
 
-    <!-- RISK -->
+    <!-- CURRENT RISK -->
     <div class="kpi-card risk-card">
 
       <div class="kpi-top">
@@ -183,15 +318,19 @@
 
       </div>
 
+
       <div class="kpi-value">
 
         <strong>
           {{ riskScore }}
         </strong>
 
-        <span>/100</span>
+        <span>
+          /100
+        </span>
 
       </div>
+
 
       <div
         class="risk-status"
@@ -199,6 +338,7 @@
       >
         {{ getRiskStatus() }}
       </div>
+
 
       <div class="mini-progress">
 
@@ -227,15 +367,19 @@
 
       </div>
 
+
       <div class="kpi-value">
 
         <strong>
           {{ rainfall }}
         </strong>
 
-        <span>mm</span>
+        <span>
+          mm
+        </span>
 
       </div>
+
 
       <p class="kpi-description">
         Recent accumulated rainfall
@@ -244,7 +388,7 @@
     </div>
 
 
-    <!-- SOIL -->
+    <!-- SOIL WETNESS -->
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -259,15 +403,19 @@
 
       </div>
 
+
       <div class="kpi-value">
 
         <strong>
           {{ soilWetness }}
         </strong>
 
-        <span>%</span>
+        <span>
+          %
+        </span>
 
       </div>
+
 
       <div class="circular-mini">
 
@@ -295,7 +443,7 @@
     </div>
 
 
-    <!-- SENSORS -->
+    <!-- SENSOR HEALTH -->
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -310,19 +458,24 @@
 
       </div>
 
+
       <div class="kpi-value">
 
         <strong>
           {{ activeSensors }}
         </strong>
 
-        <span>/{{ totalSensors }}</span>
+        <span>
+          /{{ totalSensors }}
+        </span>
 
       </div>
+
 
       <p class="sensor-health-text">
         {{ getSensorHealth() }}% operational
       </p>
+
 
       <div class="sensor-bars">
 
@@ -336,7 +489,7 @@
     </div>
 
 
-    <!-- VILLAGES -->
+    <!-- AFFECTED VILLAGES -->
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -351,6 +504,7 @@
 
       </div>
 
+
       <div class="kpi-value">
 
         <strong>
@@ -358,6 +512,7 @@
         </strong>
 
       </div>
+
 
       <p class="kpi-description">
         Areas requiring attention
@@ -381,6 +536,7 @@
 
       </div>
 
+
       <div class="kpi-value lead-time">
 
         <strong>
@@ -388,6 +544,7 @@
         </strong>
 
       </div>
+
 
       <p class="kpi-description">
         Before expected escalation
@@ -398,17 +555,14 @@
   </section>
 
 
-  <!-- =================================================
+  <!-- =====================================================
        MAIN INTELLIGENCE GRID
-       ================================================= -->
+  ====================================================== -->
 
   <section class="main-grid">
 
 
-    <!-- =================================================
-         RISK OVERVIEW
-         ================================================= -->
-
+    <!-- RISK OVERVIEW -->
     <div class="panel risk-overview">
 
       <div class="panel-header">
@@ -425,6 +579,7 @@
 
         </div>
 
+
         <span class="panel-time">
           LIVE
         </span>
@@ -433,6 +588,7 @@
 
 
       <div class="risk-overview-content">
+
 
         <div class="large-risk">
 
@@ -451,6 +607,7 @@
             </div>
 
           </div>
+
 
           <div>
 
@@ -473,16 +630,27 @@
         </div>
 
 
-        <!-- Factors -->
+        <!-- RISK FACTORS -->
 
         <div class="risk-factors">
+
+
+          <!-- RAINFALL -->
 
           <div class="factor-row">
 
             <div class="factor-info">
-              <span>Rainfall intensity</span>
-              <strong>82%</strong>
+
+              <span>
+                Rainfall intensity
+              </span>
+
+              <strong>
+                82%
+              </strong>
+
             </div>
+
 
             <div class="factor-track">
 
@@ -496,12 +664,22 @@
           </div>
 
 
+          <!-- SOIL -->
+
           <div class="factor-row">
 
             <div class="factor-info">
-              <span>Soil wetness</span>
-              <strong>{{ soilWetness }}%</strong>
+
+              <span>
+                Soil wetness
+              </span>
+
+              <strong>
+                {{ soilWetness }}%
+              </strong>
+
             </div>
+
 
             <div class="factor-track">
 
@@ -515,12 +693,22 @@
           </div>
 
 
+          <!-- TERRAIN -->
+
           <div class="factor-row">
 
             <div class="factor-info">
-              <span>Terrain exposure</span>
-              <strong>{{ terrainExposure }}%</strong>
+
+              <span>
+                Terrain exposure
+              </span>
+
+              <strong>
+                {{ terrainExposure }}%
+              </strong>
+
             </div>
+
 
             <div class="factor-track">
 
@@ -534,12 +722,22 @@
           </div>
 
 
+          <!-- DRAINAGE -->
+
           <div class="factor-row">
 
             <div class="factor-info">
-              <span>Drainage vulnerability</span>
-              <strong>{{ drainageVulnerability }}%</strong>
+
+              <span>
+                Drainage vulnerability
+              </span>
+
+              <strong>
+                {{ drainageVulnerability }}%
+              </strong>
+
             </div>
+
 
             <div class="factor-track">
 
@@ -559,9 +757,7 @@
     </div>
 
 
-    <!-- =================================================
-         ACTION CENTRE
-         ================================================= -->
+    <!-- ACTION CENTRE -->
 
     <div class="panel action-panel">
 
@@ -579,6 +775,7 @@
 
         </div>
 
+
         <span class="alert-count">
           {{ activeAlerts }} ACTIVE
         </span>
@@ -594,6 +791,7 @@
           <div class="action-number">
             01
           </div>
+
 
           <div class="action-content">
 
@@ -612,6 +810,7 @@
 
           </div>
 
+
           <span class="action-arrow">
             →
           </span>
@@ -624,6 +823,7 @@
           <div class="action-number">
             02
           </div>
+
 
           <div class="action-content">
 
@@ -642,6 +842,7 @@
 
           </div>
 
+
           <span class="action-arrow">
             →
           </span>
@@ -654,6 +855,7 @@
           <div class="action-number">
             03
           </div>
+
 
           <div class="action-content">
 
@@ -672,6 +874,7 @@
 
           </div>
 
+
           <span class="action-arrow">
             →
           </span>
@@ -685,8 +888,13 @@
         routerLink="/alerts"
         class="action-button"
       >
+
         Open Alert Operations
-        <span>→</span>
+
+        <span>
+          →
+        </span>
+
       </a>
 
     </div>
@@ -694,9 +902,9 @@
   </section>
 
 
-  <!-- =================================================
-       ENVIRONMENT + MAP
-       ================================================= -->
+  <!-- =====================================================
+       LOWER GRID
+  ====================================================== -->
 
   <section class="lower-grid">
 
@@ -719,6 +927,7 @@
 
         </div>
 
+
         <a
           routerLink="/data-analysis"
           class="panel-link"
@@ -732,17 +941,22 @@
       <div class="environment-grid">
 
 
+        <!-- SOIL -->
+
         <div class="environment-item">
 
           <div class="environment-top">
 
-            <span>Soil</span>
+            <span>
+              Soil
+            </span>
 
             <strong>
               {{ soilWetness }}%
             </strong>
 
           </div>
+
 
           <div class="environment-track">
 
@@ -753,6 +967,7 @@
 
           </div>
 
+
           <small>
             Wetness condition
           </small>
@@ -760,17 +975,22 @@
         </div>
 
 
+        <!-- TERRAIN -->
+
         <div class="environment-item">
 
           <div class="environment-top">
 
-            <span>Terrain</span>
+            <span>
+              Terrain
+            </span>
 
             <strong>
               {{ terrainExposure }}%
             </strong>
 
           </div>
+
 
           <div class="environment-track">
 
@@ -781,6 +1001,7 @@
 
           </div>
 
+
           <small>
             Exposure factor
           </small>
@@ -788,17 +1009,22 @@
         </div>
 
 
+        <!-- DRAINAGE -->
+
         <div class="environment-item">
 
           <div class="environment-top">
 
-            <span>Drainage</span>
+            <span>
+              Drainage
+            </span>
 
             <strong>
               {{ drainageVulnerability }}%
             </strong>
 
           </div>
+
 
           <div class="environment-track">
 
@@ -808,6 +1034,7 @@
             ></div>
 
           </div>
+
 
           <small>
             Vulnerability
@@ -838,6 +1065,7 @@
 
         </div>
 
+
         <a
           routerLink="/risk-map"
           class="panel-link"
@@ -854,13 +1082,16 @@
 
         <div class="river-line"></div>
 
+
         <div class="risk-zone zone-one">
           <span></span>
         </div>
 
+
         <div class="risk-zone zone-two">
           <span></span>
         </div>
+
 
         <div class="risk-zone zone-three">
           <span></span>
@@ -871,9 +1102,11 @@
           Mandakini
         </div>
 
+
         <div class="map-label label-two">
           Zone B
         </div>
+
 
         <div class="map-label label-three">
           R-12
@@ -899,11 +1132,12 @@
   </section>
 
 
-  <!-- =================================================
+  <!-- =====================================================
        BOTTOM STATUS
-       ================================================= -->
+  ====================================================== -->
 
   <section class="bottom-status">
+
 
     <div class="status-block">
 
@@ -957,6 +1191,5 @@
     </div>
 
   </section>
-
 
 </main>

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -64,6 +65,19 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./alerts/alerts')
         .then(m => m.Alerts)
+  },
+
+
+  // =========================
+  // EMERGENCY RESPONSE CENTER
+  // =========================
+
+  {
+    path: 'emergency',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./emergency/emergency')
+        .then(m => m.Emergency)
   },
 
 

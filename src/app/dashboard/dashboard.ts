@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-
+import { FormsModule } from '@angular/forms';
 import {
   UserRoleService,
   AquaUser
@@ -12,12 +12,13 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink
+    RouterLink,
+    FormsModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
 
   // =====================================================
   // USER INFORMATION
@@ -32,13 +33,14 @@ export class Dashboard implements OnInit {
   district = '';
   tehsil = '';
 
+
   // =====================================================
   // ROLE
   // =====================================================
 
   role = 'district';
-
   roleName = 'District Operations';
+
 
   // =====================================================
   // PAGE CONTENT
@@ -49,46 +51,69 @@ export class Dashboard implements OnInit {
   pageSubtitle =
     'Localized operational intelligence for monitoring flood risk, vulnerable areas and response actions.';
 
-  primaryAction =
-    'View Risk Intelligence';
+  primaryAction = 'View Risk Intelligence';
+
 
   // =====================================================
   // RISK DATA
   // =====================================================
 
   riskScore = 68;
-
   riskLevel = 'ELEVATED';
-
   confidence = 86;
-
   leadTime = '3h 40m';
+
 
   // =====================================================
   // ENVIRONMENTAL DATA
   // =====================================================
 
   rainfall = 74.6;
-
   soilWetness = 64;
-
   terrainExposure = 71;
-
   drainageVulnerability = 55;
+
 
   // =====================================================
   // OPERATIONAL DATA
   // =====================================================
 
   affectedVillages = 4;
-
   affectedRoads = 3;
-
   activeAlerts = 2;
-
   activeSensors = 12;
-
   totalSensors = 12;
+
+
+  // =====================================================
+  // SOS
+  // =====================================================
+
+  sosMessageVisible = false;
+
+  sosMessage =
+    'SOS activated. Emergency response units are being alerted.';
+
+  private sosTimer?: ReturnType<typeof setTimeout>;
+
+
+  // =====================================================
+  // SOS PASSWORD AUTHORIZATION
+  // =====================================================
+
+  /*
+   * Fixed programmer-defined password.
+   * Officer cannot create, change or reset it.
+   */
+  private readonly SOS_PASSWORD = 'Aquas#$';
+
+  showSOSPasswordModal = false;
+
+  sosPassword = '';
+
+  sosPasswordError = '';
+
+  sosVerifying = false;
 
 
   // =====================================================
@@ -106,10 +131,20 @@ export class Dashboard implements OnInit {
   // =====================================================
 
   ngOnInit(): void {
-
     this.loadUser();
-
     this.loadRole();
+  }
+
+
+  // =====================================================
+  // DESTROY
+  // =====================================================
+
+  ngOnDestroy(): void {
+
+    if (this.sosTimer) {
+      clearTimeout(this.sosTimer);
+    }
 
   }
 
@@ -120,30 +155,18 @@ export class Dashboard implements OnInit {
 
   private loadUser(): void {
 
-    this.user =
-      this.userRoleService.getUser();
+    this.user = this.userRoleService.getUser();
 
     if (!this.user) {
       return;
     }
 
-    this.fullName =
-      this.user.fullName || '';
-
-    this.designation =
-      this.user.designation || '';
-
-    this.department =
-      this.user.department || '';
-
-    this.state =
-      this.user.state || '';
-
-    this.district =
-      this.user.district || '';
-
-    this.tehsil =
-      this.user.tehsil || '';
+    this.fullName = this.user.fullName || '';
+    this.designation = this.user.designation || '';
+    this.department = this.user.department || '';
+    this.state = this.user.state || '';
+    this.district = this.user.district || '';
+    this.tehsil = this.user.tehsil || '';
 
   }
 
@@ -154,11 +177,9 @@ export class Dashboard implements OnInit {
 
   private loadRole(): void {
 
-    this.role =
-      this.userRoleService.getRole();
+    this.role = this.userRoleService.getRole();
 
-    this.roleName =
-      this.userRoleService.getRoleName();
+    this.roleName = this.userRoleService.getRoleName();
 
     this.configureDashboard();
 
@@ -173,10 +194,6 @@ export class Dashboard implements OnInit {
 
     switch (this.role) {
 
-      // =================================================
-      // STATE
-      // =================================================
-
       case 'state':
 
         this.pageTitle =
@@ -189,27 +206,16 @@ export class Dashboard implements OnInit {
           'View State Intelligence';
 
         this.riskScore = 64;
-
         this.confidence = 89;
-
         this.affectedVillages = 18;
-
         this.affectedRoads = 11;
-
         this.activeAlerts = 5;
-
         this.activeSensors = 47;
-
         this.totalSensors = 52;
-
         this.leadTime = '4h 10m';
 
         break;
 
-
-      // =================================================
-      // DISTRICT
-      // =================================================
 
       case 'district':
 
@@ -223,27 +229,16 @@ export class Dashboard implements OnInit {
           'View District Intelligence';
 
         this.riskScore = 68;
-
         this.confidence = 86;
-
         this.affectedVillages = 4;
-
         this.affectedRoads = 3;
-
         this.activeAlerts = 2;
-
         this.activeSensors = 12;
-
         this.totalSensors = 12;
-
         this.leadTime = '3h 40m';
 
         break;
 
-
-      // =================================================
-      // EMERGENCY
-      // =================================================
 
       case 'emergency':
 
@@ -257,27 +252,16 @@ export class Dashboard implements OnInit {
           'Open Live Operations';
 
         this.riskScore = 74;
-
         this.confidence = 84;
-
         this.affectedVillages = 4;
-
         this.affectedRoads = 3;
-
         this.activeAlerts = 2;
-
         this.activeSensors = 12;
-
         this.totalSensors = 12;
-
         this.leadTime = '2h 55m';
 
         break;
 
-
-      // =================================================
-      // FIELD
-      // =================================================
 
       case 'field':
 
@@ -291,27 +275,16 @@ export class Dashboard implements OnInit {
           'Open Response View';
 
         this.riskScore = 71;
-
         this.confidence = 81;
-
         this.affectedVillages = 4;
-
         this.affectedRoads = 3;
-
         this.activeAlerts = 2;
-
         this.activeSensors = 12;
-
         this.totalSensors = 12;
-
         this.leadTime = '2h 40m';
 
         break;
 
-
-      // =================================================
-      // ANALYST
-      // =================================================
 
       case 'analyst':
 
@@ -325,27 +298,16 @@ export class Dashboard implements OnInit {
           'Open Data Analysis';
 
         this.riskScore = 68;
-
         this.confidence = 92;
-
         this.affectedVillages = 4;
-
         this.affectedRoads = 3;
-
         this.activeAlerts = 2;
-
         this.activeSensors = 12;
-
         this.totalSensors = 12;
-
         this.leadTime = '3h 40m';
 
         break;
 
-
-      // =================================================
-      // DEFAULT
-      // =================================================
 
       default:
 
@@ -359,7 +321,6 @@ export class Dashboard implements OnInit {
           'View Risk Intelligence';
 
         break;
-
     }
 
   }
@@ -401,7 +362,7 @@ export class Dashboard implements OnInit {
   getGreeting(): string {
 
     if (!this.fullName) {
-      return 'Welcome to aquasentinal';
+      return 'Welcome to AquaSentinel';
     }
 
     const firstName =
@@ -480,11 +441,7 @@ export class Dashboard implements OnInit {
   // =====================================================
 
   openDataAnalysis(): void {
-
-    this.router.navigate([
-      '/data-analysis'
-    ]);
-
+    this.router.navigate(['/data-analysis']);
   }
 
 
@@ -493,11 +450,7 @@ export class Dashboard implements OnInit {
   // =====================================================
 
   openRiskMap(): void {
-
-    this.router.navigate([
-      '/risk-map'
-    ]);
-
+    this.router.navigate(['/risk-map']);
   }
 
 
@@ -506,11 +459,7 @@ export class Dashboard implements OnInit {
   // =====================================================
 
   openAlerts(): void {
-
-    this.router.navigate([
-      '/alerts'
-    ]);
-
+    this.router.navigate(['/alerts']);
   }
 
 
@@ -519,10 +468,127 @@ export class Dashboard implements OnInit {
   // =====================================================
 
   openReplay(): void {
+    this.router.navigate(['/replay']);
+  }
 
-    this.router.navigate([
-      '/replay'
-    ]);
+
+  // =====================================================
+  // SOS BUTTON
+  // =====================================================
+
+  triggerSOS(): void {
+
+    // Cancel previous redirect timer
+    if (this.sosTimer) {
+      clearTimeout(this.sosTimer);
+      this.sosTimer = undefined;
+    }
+
+    // Reset everything
+    this.sosPassword = '';
+    this.sosPasswordError = '';
+    this.sosVerifying = false;
+    this.sosMessageVisible = false;
+
+    // Open centered password overlay
+    this.showSOSPasswordModal = true;
+
+  }
+
+
+  // =====================================================
+  // VERIFY SOS PASSWORD
+  // =====================================================
+
+  verifySOSPassword(): void {
+
+    const enteredPassword =
+      this.sosPassword.trim();
+
+    // Empty password
+    if (!enteredPassword) {
+
+      this.sosPasswordError =
+        'Please enter the SOS authorization password.';
+
+      return;
+
+    }
+
+    this.sosVerifying = true;
+    this.sosPasswordError = '';
+
+
+    // Correct password
+    if (enteredPassword === this.SOS_PASSWORD) {
+
+      this.sosVerifying = false;
+
+      this.showSOSPasswordModal = false;
+
+      this.sosPassword = '';
+
+      this.sosPasswordError = '';
+
+      // Show existing notification
+      this.sosMessageVisible = true;
+
+
+      // Redirect after 3 seconds
+      this.sosTimer = setTimeout(() => {
+
+        this.sosMessageVisible = false;
+
+        this.router.navigate(['/emergency']);
+
+      }, 3000);
+
+      return;
+
+    }
+
+
+    // Wrong password
+    this.sosVerifying = false;
+
+    this.sosPasswordError =
+      'Incorrect SOS authorization password. SOS not activated.';
+
+  }
+
+
+  // =====================================================
+  // CANCEL SOS
+  // =====================================================
+
+  cancelSOSAuthorization(): void {
+
+    this.showSOSPasswordModal = false;
+
+    this.sosPassword = '';
+
+    this.sosPasswordError = '';
+
+    this.sosVerifying = false;
+
+  }
+
+
+  // =====================================================
+  // CLOSE SOS MESSAGE
+  // =====================================================
+
+  closeSOSMessage(): void {
+
+    this.sosMessageVisible = false;
+
+    if (this.sosTimer) {
+
+      clearTimeout(this.sosTimer);
+
+      this.sosTimer = undefined;
+
+    }
 
   }
 
@@ -535,22 +601,15 @@ export class Dashboard implements OnInit {
 
     this.userRoleService.logout();
 
-    this.router.navigate([
-      '/auth'
-    ], {
-      queryParams: {
-        mode: 'login'
+    this.router.navigate(
+      ['/auth'],
+      {
+        queryParams: {
+          mode: 'login'
+        }
       }
-    });
+    );
 
   }
-sosMessageVisible = false;
 
-triggerSOS(): void {
-  this.sosMessageVisible = true;
-
-  setTimeout(() => {
-    this.sosMessageVisible = false;
-  }, 5000);
-}
 }
