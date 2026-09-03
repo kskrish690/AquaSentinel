@@ -53,5 +53,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`AquaSentinel backend running on port ${PORT}`);
 });
-const sosRoutes = require('./routes/sos');
-app.use('/api/sos', sosRoutes);
