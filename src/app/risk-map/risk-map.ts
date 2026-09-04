@@ -80,7 +80,7 @@ export class RiskMap
 
   private weatherTimer: any;
 
-  selectedZone = 'Silli';
+  selectedZone = 'Rudraprayag';
 
   mapStatus = 'INITIALIZING GIS';
   weatherStatus = 'CONNECTING';
