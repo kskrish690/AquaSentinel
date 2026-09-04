@@ -1,115 +1,998 @@
 <div class="map-page">
 
+  <!-- HEADER -->
   <header class="map-header">
 
-    <div>
-      <span class="eyebrow">aquasentinal • GIS INTELLIGENCE</span>
-      <h1>Localized Risk Map</h1>
-      <p>
-        Mandakini River Micro-Catchment • Rudraprayag, Uttarakhand
-      </p>
+    <div class="header-brand">
+
+      <div class="brand-line">
+        <span class="brand-dot"></span>
+        AQUASENTINEL
+        <span class="slash">/</span>
+        GIS INTELLIGENCE
+      </div>
+
+      <h1>
+        Localized Risk Intelligence
+      </h1>
+
     </div>
 
-    <a routerLink="/dashboard" class="back-btn">
-      ← Dashboard
-    </a>
+    <div class="header-actions">
+
+      <div class="feed-status">
+
+        <span
+          class="status-dot"
+          [class.offline]="weatherStatus === 'OFFLINE'"
+        ></span>
+
+        <div>
+          <strong>
+            {{ weatherStatus }}
+          </strong>
+
+          <small>
+            ENVIRONMENTAL DATA FEED
+          </small>
+        </div>
+
+      </div>
+
+      <div class="update-time">
+        UPDATED
+        <strong>
+          {{ lastUpdated }}
+        </strong>
+      </div>
+
+      <a
+        routerLink="/dashboard"
+        class="dashboard-btn"
+      >
+        ← Dashboard
+      </a>
+
+    </div>
 
   </header>
 
+
+  <!-- MAIN -->
   <main class="map-layout">
 
-    <section class="map-view">
 
-      <div class="map-overlay">
-        <strong>LIVE RISK LAYER</strong>
-        <span>Updated 2 min ago</span>
-      </div>
-
-      <div class="river"></div>
+    <!-- MAP -->
+    <section class="map-card">
 
       <div
-        class="zone zone-one"
-        (click)="selectZone('Silli')"
-      >
-        <span>82</span>
-        <small>SILLI</small>
+        id="riskMap"
+        class="leaflet-map"
+      ></div>
+
+
+      <!-- MAP TOP CONTROL -->
+      <div class="map-control-panel">
+
+        <div class="control-title">
+          MAP LAYERS
+        </div>
+
+        <div class="control-group">
+
+          <button
+            type="button"
+            [class.active]="activeBaseMap === 'street'"
+            (click)="updateBaseMap('street')"
+          >
+            STREET
+          </button>
+
+          <button
+            type="button"
+            [class.active]="activeBaseMap === 'terrain'"
+            (click)="updateBaseMap('terrain')"
+          >
+            TERRAIN
+          </button>
+
+        </div>
+
+        <div class="layer-divider"></div>
+
+        <label class="layer-toggle">
+
+          <input
+            type="checkbox"
+            [checked]="showRiskLayer"
+            (change)="toggleRiskLayer()"
+          />
+
+          <span class="toggle-box"></span>
+
+          Risk zones
+
+        </label>
+
+        <label class="layer-toggle">
+
+          <input
+            type="checkbox"
+            [checked]="showWeatherLayer"
+            (change)="toggleWeatherLayer()"
+          />
+
+          <span class="toggle-box"></span>
+
+          Weather intensity
+
+        </label>
+
+        <label class="layer-toggle">
+
+          <input
+            type="checkbox"
+            [checked]="showStudyArea"
+            (change)="toggleStudyArea()"
+          />
+
+          <span class="toggle-box"></span>
+
+          Study area
+
+        </label>
+
       </div>
 
-      <div
-        class="zone zone-two"
-        (click)="selectZone('Agastyamuni')"
-      >
-        <span>67</span>
-        <small>AGASTYAMUNI</small>
+
+      <!-- MAP STATUS -->
+      <div class="map-status-panel">
+
+        <div class="status-title">
+
+          <span class="pulse-dot"></span>
+
+          LIVE RISK LAYER
+
+        </div>
+
+        <strong>
+          {{ mapStatus }}
+        </strong>
+
+        <small>
+          5 MIN REFRESH
+        </small>
+
       </div>
 
-      <div
-        class="zone zone-three"
-        (click)="selectZone('Ukhimath')"
-      >
-        <span>54</span>
-        <small>UKHIMATH</small>
+
+      <!-- ACTIVE REGION -->
+      <div class="active-region-panel">
+
+        <span>
+          ACTIVE REGION
+        </span>
+
+        <strong>
+          {{ selectedZone }}
+        </strong>
+
+        <small>
+          Mandakini study area
+        </small>
+
       </div>
 
-      <div
-        class="zone zone-four"
-        (click)="selectZone('Rudraprayag')"
-      >
-        <span>42</span>
-        <small>RUDRAPRAYAG</small>
-      </div>
 
-      <div class="map-label">
-        {{ selectedZone }}
+      <!-- LEGEND -->
+      <div class="map-legend">
+
+        <div class="legend-heading">
+          RISK INDEX
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot critical"></span>
+          <span>81–100</span>
+          <strong>Critical</strong>
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot high"></span>
+          <span>61–80</span>
+          <strong>High</strong>
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot moderate"></span>
+          <span>31–60</span>
+          <strong>Moderate</strong>
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot low"></span>
+          <span>0–30</span>
+          <strong>Low</strong>
+        </div>
+
       </div>
 
     </section>
 
+
+    <!-- SIDEBAR -->
     <aside class="map-sidebar">
 
-      <span class="eyebrow">RISK ZONES</span>
 
-      <h2>Current Situation</h2>
+      <!-- REGION LIST -->
+      <section class="sidebar-card">
 
-      <div
-        class="village"
-        *ngFor="let village of villages"
-        (click)="selectZone(village.name)"
-      >
-        <div>
-          <strong>{{ village.name }}</strong>
-          <span>Micro-catchment</span>
+        <div class="section-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              RISK ZONES
+            </span>
+
+            <h2>
+              Current Situation
+            </h2>
+
+          </div>
+
+          <span class="zone-count">
+            {{ zones.length }}
+          </span>
+
         </div>
 
-        <b>{{ village.risk }}</b>
-      </div>
 
-      <div class="legend">
+        <div class="zone-list">
 
-        <span>
-          <i class="critical"></i>
-          Critical
-        </span>
+          <button
+            type="button"
+            class="zone-item"
+            *ngFor="let zone of zones"
+            [class.selected]="selectedZone === zone.name"
+            (click)="selectZone(zone.name)"
+          >
 
-        <span>
-          <i class="high"></i>
-          High
-        </span>
+            <div class="zone-left">
 
-        <span>
-          <i class="moderate"></i>
-          Moderate
-        </span>
+              <span
+                class="zone-risk-dot"
+                [class]="getRiskClass(zone.risk)"
+              ></span>
 
-        <span>
-          <i class="low"></i>
-          Low
-        </span>
+              <div>
 
-      </div>
+                <strong>
+                  {{ zone.name }}
+                </strong>
 
-    </aside>
+                <small>
+                  {{ zone.weatherText }}
+                </small>
 
+              </div>
+
+            </div>
+
+            <div class="zone-right">
+
+              <strong>
+                {{ zone.risk }}
+              </strong>
+
+              <span
+                [class]="getRiskClass(zone.risk)"
+              >
+                {{ getRiskLabel(zone.risk) }}
+              </span>
+
+            </div>
+
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- SELECTED RISK -->
+      <section class="risk-card">
+
+        <div class="risk-card-top">
+
+          <div>
+
+            <span class="eyebrow">
+              SELECTED REGION
+            </span>
+
+            <h2>
+              {{ selectedZone }}
+            </h2>
+
+          </div>
+
+          <div
+            class="big-risk"
+            [class]="getRiskClass(selectedZoneData?.risk || 0)"
+          >
+            {{ selectedZoneData?.risk || '--' }}
+          </div>
+
+        </div>
+
+
+        <div class="risk-bar">
+
+          <div
+            class="risk-bar-fill"
+            [style.width.%]="getRiskBarWidth(selectedZoneData?.risk || 0)"
+            [class]="getRiskClass(selectedZoneData?.risk || 0)"
+          ></div>
+
+        </div>
+
+
+        <div class="risk-meta">
+
+          <div>
+
+            <span>
+              CURRENT STATUS
+            </span>
+
+            <strong
+              [class]="getRiskClass(selectedZoneData?.risk || 0)"
+            >
+              {{
+                getRiskLabel(
+                  selectedZoneData?.risk || 0
+                )
+              }}
+            </strong>
+
+          </div>
+
+          <div
+            class="trend"
+            [class]="riskTrend"
+          >
+
+            <span>
+              {{ riskTrendIcon }}
+            </span>
+
+            <strong>
+              {{ riskTrendText }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- WHY AT RISK -->
+      <section class="sidebar-card why-card">
+
+        <div class="section-heading compact">
+
+          <div>
+
+            <span class="eyebrow">
+              RISK EXPLANATION
+            </span>
+
+            <h2>
+              Why this region?
+            </h2>
+
+          </div>
+
+          <span class="brain-icon">
+            ◎
+          </span>
+
+        </div>
+
+
+        <div class="factor-row">
+
+          <div class="factor-info">
+
+            <span>
+              Primary driver
+            </span>
+
+            <strong>
+              {{ primaryRiskFactor }}
+            </strong>
+
+          </div>
+
+          <span class="factor-level high">
+            HIGH
+          </span>
+
+        </div>
+
+
+        <div class="factor-row">
+
+          <div class="factor-info">
+
+            <span>
+              Secondary driver
+            </span>
+
+            <strong>
+              {{ secondaryRiskFactor }}
+            </strong>
+
+          </div>
+
+          <span class="factor-level moderate">
+            WATCH
+          </span>
+
+        </div>
+
+
+        <div class="signal-row">
+
+          <div class="signal-top">
+
+            <span>
+              Rainfall — 40%
+            </span>
+
+            <strong>
+              {{
+                selectedZoneData?.rainfall24h?.toFixed(1)
+              }}
+              mm / 24h
+            </strong>
+
+          </div>
+
+          <div class="signal-track">
+
+            <div
+              class="signal-fill rainfall"
+              [style.width.%]="getRainfall24Width()"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="signal-row">
+
+          <div class="signal-top">
+
+            <span>
+              Soil wetness — 25%
+            </span>
+
+            <strong>
+              {{ soilMoisturePercentage }}%
+            </strong>
+
+          </div>
+
+          <div class="signal-track">
+
+            <div
+              class="signal-fill soil"
+              [style.width.%]="getSoilMoistureWidth()"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="signal-row">
+
+          <div class="signal-top">
+
+            <span>
+              Terrain slope — 20%
+            </span>
+
+            <strong>
+              {{ selectedZoneData?.slope }}°
+            </strong>
+
+          </div>
+
+          <div class="signal-track">
+
+            <div
+              class="signal-fill terrain"
+              [style.width.%]="
+                (selectedZoneData?.slope || 0) / 45 * 100
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="signal-row">
+
+          <div class="signal-top">
+
+            <span>
+              Drainage — 15%
+            </span>
+
+            <strong>
+              {{ selectedZoneData?.drainage }}/100
+            </strong>
+
+          </div>
+
+          <div class="signal-track">
+
+            <div
+              class="signal-fill drainage"
+              [style.width.%]="
+                selectedZoneData?.drainage || 0
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- WEATHER -->
+      <section class="sidebar-card weather-card">
+
+        <div class="section-heading compact">
+
+          <div>
+
+            <span class="eyebrow">
+              LIVE CONDITIONS
+            </span>
+
+            <h2>
+              Weather intelligence
+            </h2>
+
+          </div>
+
+          <span class="live-badge">
+            ● LIVE
+          </span>
+
+        </div>
+
+
+        <div class="weather-hero">
+
+          <div class="temperature">
+
+            <strong>
+              {{
+                formatValue(
+                  selectedWeather.temperature,
+                  '°'
+                )
+              }}
+            </strong>
+
+            <span>
+              C
+            </span>
+
+          </div>
+
+          <div>
+
+            <strong class="weather-description">
+              {{ selectedWeather.weatherText }}
+            </strong>
+
+            <span class="weather-location">
+              {{ selectedZone }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="weather-grid">
+
+          <div class="weather-stat">
+
+            <span class="stat-icon">
+              💧
+            </span>
+
+            <div>
+
+              <small>
+                HUMIDITY
+              </small>
+
+              <strong>
+                {{
+                  formatValue(
+                    selectedWeather.humidity,
+                    '%'
+                  )
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="weather-stat">
+
+            <span class="stat-icon">
+              ☔
+            </span>
+
+            <div>
+
+              <small>
+                RAIN NOW
+              </small>
+
+              <strong>
+                {{
+                  formatValue(
+                    selectedWeather.rainfall,
+                    ' mm'
+                  )
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="weather-stat">
+
+            <span class="stat-icon">
+              ≋
+            </span>
+
+            <div>
+
+              <small>
+                WIND
+              </small>
+
+              <strong>
+                {{
+                  formatValue(
+                    selectedWeather.windSpeed,
+                    ' km/h'
+                  )
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="weather-stat">
+
+            <span class="stat-icon">
+              ◒
+            </span>
+
+            <div>
+
+              <small>
+                SOIL MOISTURE
+              </small>
+
+              <strong>
+                {{ soilMoisturePercentage }}%
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="weather-extra">
+
+          <div>
+
+            <span>
+              Wind gust
+            </span>
+
+            <strong>
+              {{
+                formatValue(
+                  selectedWeather.windGust,
+                  ' km/h'
+                )
+              }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              24h rainfall
+            </span>
+
+            <strong>
+              {{
+                selectedZoneData?.rainfall24h?.toFixed(1)
+              }}
+              mm
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- RAINFALL HISTORY -->
+      <section class="sidebar-card chart-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <span class="eyebrow">
+              PRECIPITATION
+            </span>
+
+            <h2>
+              Last 24 hours
+            </h2>
+
+          </div>
+
+          <strong>
+            {{
+              selectedZoneData?.rainfall24h?.toFixed(1)
+            }}
+            mm
+          </strong>
+
+        </div>
+
+
+        <div class="rain-chart">
+
+          <div
+            class="rain-bar"
+            *ngFor="let point of rainfallHistory"
+            [title]="
+              point.time +
+              ' — ' +
+              point.rainfall.toFixed(1) +
+              ' mm'
+            "
+          >
+
+            <div
+              class="rain-bar-fill"
+              [style.height.%]="
+                point.rainfall /
+                maxRainfallHistory *
+                100
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+        <div class="chart-axis">
+
+          <span>−24h</span>
+          <span>−18h</span>
+          <span>−12h</span>
+          <span>−6h</span>
+          <span>NOW</span>
+
+        </div>
+
+      </section>
+
+
+      <!-- FORECAST -->
+      <section class="sidebar-card forecast-card">
+
+        <div class="chart-header">
+
+          <div>
+
+            <span class="eyebrow">
+              SHORT-TERM FORECAST
+            </span>
+
+            <h2>
+              Next 6 hours
+            </h2>
+
+          </div>
+
+          <span class="forecast-risk">
+            RISK PATH
+          </span>
+
+        </div>
+
+
+        <div class="forecast-list">
+
+          <div
+            class="forecast-row"
+            *ngFor="let item of forecast"
+          >
+
+            <span class="forecast-time">
+              {{ item.time }}
+            </span>
+
+            <div class="forecast-rain">
+
+              <div class="mini-track">
+
+                <div
+                  class="mini-fill"
+                  [style.width.%]="
+                    item.rainfall /
+                    maxForecastRainfall *
+                    100
+                  "
+                ></div>
+
+              </div>
+
+              <span>
+                {{ item.rainfall.toFixed(1) }} mm
+              </span>
+
+            </div>
+
+            <strong
+              [class]="getRiskClass(item.risk)"
+            >
+              {{ item.risk }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- EXPOSURE -->
+      <section class="sidebar-card exposure-card">
+
+        <div class="section-heading compact">
+
+          <div>
+
+            <span class="eyebrow">
+              POTENTIAL EXPOSURE
+            </span>
+
+            <h2>
+              Situation footprint
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="exposure-grid">
+
+          <div class="exposure-stat">
+
+            <span>
+              👥
+            </span>
+
+            <strong>
+              {{
+                formatPopulation(
+                  selectedZoneData?.exposedPopulation || 0
+                )
+              }}
+            </strong>
+
+            <small>
+              population
+            </small>
+
+          </div>
+
+
+          <div class="exposure-stat">
+
+            <span>
+              🛣
+            </span>
+
+            <strong>
+              {{ selectedZoneData?.vulnerableRoads }}
+            </strong>
+
+            <small>
+              road segments
+            </small>
+
+          </div>
+
+
+          <div class="exposure-stat">
+
+            <span>
+              ◈
+            </span>
+
+            <strong>
+              {{ selectedZoneData?.historicalEvents }}
+            </strong>
+
+            <small>
+              historical events
+            </small>
+
+          </div>
+
+
+          <div class="exposure-stat">
+
+            <span>
+              ⛰
+            </span>
+
+            <strong>
+              {{ selectedZoneData?.slope }}°
+            </strong>
+
+            <small>
+              avg. slope input
+            </small>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+</aside>
   </main>
 
 </div>

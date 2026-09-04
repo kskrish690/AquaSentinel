@@ -20,3 +20,240 @@ body {
 body {
   min-height: 100vh;
 }
+/* =========================================================
+   AQUASENTINEL — GLOBAL LARGE & CLEAR TYPOGRAPHY
+   ========================================================= */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Main headings */
+h1 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 750;
+}
+
+h3 {
+  font-size: 1.45rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+/* Paragraphs */
+p {
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* Buttons */
+button,
+.btn,
+a.btn {
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 650;
+}
+
+/* Inputs */
+input,
+select,
+textarea {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Labels */
+label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Navigation */
+nav,
+.navbar,
+.nav-link {
+  font-size: 16px;
+}
+
+.nav-link {
+  font-weight: 600;
+}
+
+/* Cards */
+.card,
+.dashboard-card,
+.sidebar-card,
+.info-card,
+.stat-card {
+  font-size: 16px;
+}
+
+/* Small text — keep readable */
+small,
+.text-small,
+.meta,
+.metadata {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Important numbers / statistics */
+.stat-value,
+.metric-value,
+.risk-score,
+.score {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+/* Section labels */
+.section-title,
+.card-title {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+/* Tables */
+table {
+  font-size: 15px;
+}
+
+th {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+td {
+  font-size: 15px;
+}
+
+/* Badges / status */
+.badge,
+.status,
+.tag,
+.chip {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+/* Footer */
+footer {
+  font-size: 15px;
+}
+
+footer h3,
+footer h4 {
+  font-size: 17px;
+}
+
+footer a {
+  font-size: 15px;
+}
+
+/* =========================================================
+   RISK MAP — EXTRA READABILITY
+   ========================================================= */
+
+.leaflet-map {
+  font-size: 16px;
+}
+
+.map-card,
+.map-overlay,
+.map-control,
+.map-legend {
+  font-size: 15px;
+}
+
+.map-title {
+  font-size: 19px;
+  font-weight: 750;
+}
+
+.map-subtitle {
+  font-size: 15px;
+}
+
+.risk-value {
+  font-size: 2.4rem;
+  font-weight: 850;
+}
+
+.risk-label {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.region-name {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   MOBILE — STILL LARGE AND CLEAR
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.65rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  button,
+  .btn {
+    font-size: 15px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .stat-value,
+  .metric-value,
+  .risk-score {
+    font-size: 1.8rem;
+  }
+}
