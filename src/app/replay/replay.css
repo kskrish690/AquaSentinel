@@ -1,247 +1,647 @@
+/* =========================================================
+   AQUASENTINEL — HISTORICAL REPLAY
+   ========================================================= */
+
+:host {
+  display: block;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .replay-page {
   min-height: 100vh;
-  background: #07151b;
-  color: #e7f0ec;
-  padding: 45px;
+  background: #fdf5c9;
+  color: #17251d;
+  padding: 30px 38px 50px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.replay-header,
-.replay-container {
-  max-width: 1250px;
-  margin: auto;
-}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .replay-header {
+  min-height: 90px;
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: flex-start;
+  gap: 25px;
+  margin-bottom: 28px;
 }
 
 .eyebrow {
-  color: #62bca5;
-  font-size: 10px;
-  letter-spacing: 2px;
-  font-weight: 700;
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #55715d;
+  margin-bottom: 7px;
 }
 
-h1 {
-  font-size: 58px;
-  margin: 10px 0;
+.replay-header h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #17251d;
 }
 
 .replay-header p {
-  color: #78918d;
-  max-width: 650px;
-  line-height: 1.7;
+  margin: 9px 0 0;
+  color: #657369;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-.back-btn {
-  background: #d8e6c4;
-  color: #183d31;
-  padding: 13px 22px;
-  border-radius: 8px;
+.dashboard-btn {
   text-decoration: none;
+  background: #17251d;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.dashboard-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   EVENT SELECTOR
+   ========================================================= */
+
+.event-selector {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(23, 37, 29, 0.09);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 25px rgba(50, 65, 52, 0.07);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.section-heading span {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  color: #26372c;
+}
+
+.section-heading small {
+  color: #77847a;
+  font-size: 12px;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+
+.event-card {
+  text-align: left;
+  border: 1px solid rgba(23, 37, 29, 0.11);
+  background: #fffdf0;
+  border-radius: 13px;
+  padding: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #17251d;
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+  border-color: #657a6b;
+  box-shadow: 0 7px 18px rgba(23, 37, 29, 0.08);
+}
+
+.event-card.active {
+  border: 2px solid #17251d;
+  background: #f4edbd;
+  box-shadow: 0 7px 20px rgba(23, 37, 29, 0.1);
+}
+
+.event-date {
+  font-size: 11px;
+  font-weight: 800;
+  color: #657369;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.event-card strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.35;
+  margin-bottom: 7px;
+}
+
+.event-card small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #77847a;
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+   ========================================================= */
+
+.loading-state,
+.error-state {
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 13px;
   font-weight: 700;
 }
 
-.replay-container {
-  margin-top: 50px;
+.loading-state {
+  background: rgba(255, 255, 255, 0.7);
+  color: #42584a;
 }
 
-.timeline,
-.metric,
-.explanation {
-  background: #0b1d24;
-  border: 1px solid #193a40;
-  border-radius: 17px;
-  padding: 30px;
+.error-state {
+  background: #f8dddd;
+  color: #8d2e2e;
+  border: 1px solid #e8bcbc;
 }
 
-.time {
-  margin-top: 25px;
+
+/* =========================================================
+   EVENT BANNER
+   ========================================================= */
+
+.event-banner {
+  background: #17251d;
+  color: white;
+  border-radius: 18px;
+  padding: 24px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 22px;
+  box-shadow: 0 10px 28px rgba(23, 37, 29, 0.14);
 }
 
-.time strong {
-  font-size: 45px;
+.event-banner .eyebrow {
+  color: #c9d5ca;
 }
 
-.time span {
-  color: #718b87;
-  margin-left: 15px;
+.event-banner h2 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.3;
 }
 
-.timeline-line {
-  height: 5px;
-  background: #1b383d;
-  margin: 35px 0 10px;
-  border-radius: 10px;
+.event-banner p {
+  margin: 7px 0 0;
+  font-size: 12px;
+  color: #b9c5bb;
+}
+
+.data-source {
+  text-align: right;
+  min-width: 180px;
+}
+
+.data-source span {
+  display: block;
+  color: #aebbae;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.data-source strong {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.timeline-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(23, 37, 29, 0.09);
+  border-radius: 18px;
+  padding: 25px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 25px rgba(50, 65, 52, 0.07);
+}
+
+.timeline-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.timeline-label {
+  display: block;
+  color: #68766d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 5px;
+}
+
+.timeline-top strong {
+  font-size: 30px;
+  color: #17251d;
+}
+
+.timeline-date {
+  font-size: 12px;
+  color: #68766d;
+  font-weight: 700;
+}
+
+.timeline {
+  position: relative;
+  height: 8px;
+  background: #d9decf;
+  border-radius: 20px;
+  margin: 5px 2px 8px;
 }
 
 .timeline-progress {
-  width: 35%;
+  position: absolute;
   height: 100%;
-  background: #62bca5;
-  border-radius: 10px;
-  transition: .5s;
+  width: 0;
+  left: 0;
+  top: 0;
+  background: #17251d;
+  border-radius: 20px;
+  transition: width 0.3s ease;
 }
 
-.timeline-labels {
+.timeline-marker {
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #17251d;
+  transition: left 0.3s ease;
+}
+
+.timeline-hours {
   display: flex;
   justify-content: space-between;
-  color: #607a76;
-  font-size: 11px;
+  color: #7b877d;
+  font-size: 10px;
+  margin-top: 10px;
 }
 
 .controls {
-  margin-top: 30px;
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 25px;
 }
 
 .controls button {
-  padding: 12px 20px;
-  border-radius: 7px;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
-.play {
-  background: #62bca5;
-  border: 1px solid #62bca5;
-  color: #07151b;
+.controls button:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
-.reset {
-  background: transparent;
-  color: #d8e6c4;
-  border: 1px solid #36534e;
+.controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.metrics {
-  margin-top: 18px;
+.primary-btn {
+  background: #17251d;
+  color: white;
+}
+
+.secondary-btn {
+  background: #e8ead9;
+  color: #26372c;
+}
+
+.reset-btn {
+  background: #f0dede;
+  color: #813939;
+}
+
+
+/* =========================================================
+   RISK PANEL
+   ========================================================= */
+
+.risk-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 25px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: 230px 1fr;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 22px;
+  border: 1px solid rgba(23, 37, 29, 0.08);
+  box-shadow: 0 8px 25px rgba(50, 65, 52, 0.07);
 }
 
-.metric span {
+.risk-score {
+  text-align: center;
+  border-right: 1px solid #e2e5dc;
+  padding-right: 25px;
+}
+
+.risk-number {
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 900;
+  margin: 7px 0;
+  color: #17251d;
+}
+
+.risk-level {
+  display: inline-block;
+  padding: 6px 13px;
+  border-radius: 20px;
+  background: #f1e9b9;
+  color: #665b22;
   font-size: 10px;
-  color: #718b87;
-  letter-spacing: 1.5px;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
-.metric strong {
+.risk-description h3 {
+  margin: 0 0 9px;
+  font-size: 18px;
+}
+
+.risk-description p {
+  margin: 0;
+  color: #69766d;
+  font-size: 13px;
+  line-height: 1.65;
+  max-width: 700px;
+}
+
+
+/* =========================================================
+   WEATHER GRID
+   ========================================================= */
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.weather-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(23, 37, 29, 0.08);
+  border-radius: 15px;
+  padding: 19px;
+  min-height: 105px;
+  box-shadow: 0 6px 20px rgba(50, 65, 52, 0.05);
+}
+
+.weather-card span {
   display: block;
-  font-size: 35px;
-  margin: 15px 0;
+  font-size: 10px;
+  font-weight: 800;
+  color: #758078;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 13px;
 }
 
-.metric small {
-  color: #62bca5;
-  font-weight: 700;
+.weather-card strong {
+  font-size: 20px;
+  color: #17251d;
 }
 
-.bar {
-  height: 7px;
-  background: #193a40;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 20px;
+
+/* =========================================================
+   DAY SUMMARY
+   ========================================================= */
+
+.summary-section {
+  margin-bottom: 22px;
 }
 
-.bar div {
-  height: 100%;
-  background: #62bca5;
-  transition: .5s;
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
 }
 
-.explanation {
-  margin-top: 18px;
+.summary-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 19px;
+  border: 1px solid rgba(23, 37, 29, 0.08);
+  box-shadow: 0 6px 20px rgba(50, 65, 52, 0.05);
 }
 
-.explanation h2 {
-  font-size: 30px;
+.summary-card span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: #748077;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
 }
 
-.explanation p {
-  max-width: 800px;
-  color: #819792;
-  line-height: 1.8;
+.summary-card strong {
+  display: block;
+  font-size: 20px;
+  color: #17251d;
+  margin-bottom: 6px;
 }
 
-@media (max-width: 800px) {
+.summary-card small {
+  color: #8a948d;
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   DATA NOTE
+   ========================================================= */
+
+.data-note {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px dashed #9ca79e;
+  border-radius: 14px;
+  padding: 17px 19px;
+  margin-top: 25px;
+}
+
+.data-note strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: #35463a;
+}
+
+.data-note p {
+  margin: 0;
+  color: #707b73;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
 
   .replay-page {
     padding: 25px;
   }
 
+  .event-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .weather-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 750px) {
+
+  .replay-page {
+    padding: 18px;
+  }
+
   .replay-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
   }
 
-  .metrics {
+  .replay-header h1 {
+    font-size: 26px;
+  }
+
+  .dashboard-btn {
+    align-self: flex-start;
+  }
+
+  .event-grid {
     grid-template-columns: 1fr;
   }
-}
-/* ================================
-   REPLAY — TYPOGRAPHY
-   ================================ */
 
-.replay-page {
-  font-size: 17px;
-}
+  .event-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.replay-page h1 {
-  font-size: 52px;
-}
+  .data-source {
+    text-align: left;
+  }
 
-.replay-page h2 {
-  font-size: 32px;
-}
+  .risk-panel {
+    grid-template-columns: 1fr;
+  }
 
-.replay-page p {
-  font-size: 18px;
-  line-height: 1.7;
-}
+  .risk-score {
+    border-right: none;
+    border-bottom: 1px solid #e2e5dc;
+    padding-right: 0;
+    padding-bottom: 20px;
+  }
 
-.replay-page .eyebrow {
-  font-size: 12px;
-}
+  .weather-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 
-.replay-page .back-btn {
-  font-size: 16px;
-}
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 
-.replay-page .time strong {
-  font-size: 48px;
 }
 
-.replay-page .time span {
-  font-size: 15px;
-}
 
-.replay-page .timeline-labels {
-  font-size: 13px;
-}
+/* =========================================================
+   RESPONSIVE — SMALL PHONE
+   ========================================================= */
 
-.replay-page .controls button {
-  font-size: 16px;
-}
+@media (max-width: 480px) {
 
-.replay-page .metric span {
-  font-size: 12px;
-}
+  .replay-page {
+    padding: 14px;
+  }
 
-.replay-page .metric strong {
-  font-size: 38px;
-}
+  .event-selector,
+  .timeline-card,
+  .risk-panel {
+    padding: 17px;
+  }
 
-.replay-page .metric small {
-  font-size: 14px;
-}
+  .weather-grid,
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 
-.replay-page .explanation p {
-  font-size: 18px;
+  .timeline-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .controls button {
+    width: 100%;
+  }
+
+  .risk-number {
+    font-size: 50px;
+  }
+
 }

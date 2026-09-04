@@ -4,8 +4,12 @@ import {
   OnDestroy
 } from '@angular/core';
 
+import { RiskApiService } from '../services/risk-api.service';
+import { AlertService } from '../services/alert.services';
+
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+
 import * as L from 'leaflet';
 
 interface ForecastPoint {
@@ -26,7 +30,6 @@ interface RiskZone {
   lat: number;
   lng: number;
 
-  // Baseline / MVP terrain inputs
   baseRisk: number;
   slope: number;
   drainage: number;
@@ -34,7 +37,9 @@ interface RiskZone {
   exposedPopulation: number;
   vulnerableRoads: number;
 
-  // Live values
+  elevation: number;
+  aspect: number;
+
   risk: number;
   rainfall: number;
   rainfall24h: number;
@@ -50,6 +55,7 @@ interface RiskZone {
   weatherText: string;
 
   confidence: number;
+  predictionSource: string;
 
   marker?: L.CircleMarker;
   pulse?: L.CircleMarker;
@@ -110,7 +116,8 @@ export class RiskMap
   rainfallHistory: HistoryPoint[] = [];
 
   zones: RiskZone[] = [
-        {
+
+    {
       name: 'Rudraprayag',
       lat: 30.2844,
       lng: 78.9811,
@@ -121,6 +128,9 @@ export class RiskMap
       historicalEvents: 4,
       exposedPopulation: 3200,
       vulnerableRoads: 2,
+
+      elevation: 895,
+      aspect: 180,
 
       risk: 42,
       rainfall: 0,
@@ -136,9 +146,9 @@ export class RiskMap
       weatherCode: null,
       weatherText: 'Loading...',
 
-      confidence: 60
-    }
-,
+      confidence: 60,
+      predictionSource: 'INITIALIZING'
+    },
 
     {
       name: 'Silli',
@@ -151,6 +161,9 @@ export class RiskMap
       historicalEvents: 8,
       exposedPopulation: 1450,
       vulnerableRoads: 4,
+
+      elevation: 1100,
+      aspect: 165,
 
       risk: 82,
       rainfall: 0,
@@ -166,7 +179,8 @@ export class RiskMap
       weatherCode: null,
       weatherText: 'Loading...',
 
-      confidence: 60
+      confidence: 60,
+      predictionSource: 'INITIALIZING'
     },
 
     {
@@ -180,6 +194,9 @@ export class RiskMap
       historicalEvents: 6,
       exposedPopulation: 2100,
       vulnerableRoads: 5,
+
+      elevation: 1000,
+      aspect: 175,
 
       risk: 67,
       rainfall: 0,
@@ -195,7 +212,8 @@ export class RiskMap
       weatherCode: null,
       weatherText: 'Loading...',
 
-      confidence: 60
+      confidence: 60,
+      predictionSource: 'INITIALIZING'
     },
 
     {
@@ -209,6 +227,9 @@ export class RiskMap
       historicalEvents: 5,
       exposedPopulation: 980,
       vulnerableRoads: 3,
+
+      elevation: 1310,
+      aspect: 190,
 
       risk: 54,
       rainfall: 0,
@@ -224,12 +245,18 @@ export class RiskMap
       weatherCode: null,
       weatherText: 'Loading...',
 
-      confidence: 60
-    },
+      confidence: 60,
+      predictionSource: 'INITIALIZING'
+    }
 
   ];
 
   villages = this.zones;
+
+  constructor(
+    private riskApi: RiskApiService,
+    private alertService: AlertService
+  ) {}
 
   ngAfterViewInit(): void {
 
@@ -252,6 +279,14 @@ export class RiskMap
   }
 
   private initializeMap(): void {
+
+    /*
+     * Ask browser for notification permission.
+     *
+     * This allows AquaSentinel to show a browser
+     * notification when risk crosses above 70.
+     */
+    this.alertService.requestNotificationPermission();
 
     this.map = L.map(
       'riskMap',
@@ -301,12 +336,18 @@ export class RiskMap
     this.addStudyArea();
     this.addRiskZones();
 
-    this.selectZone('Silli');
+    /*
+     * Rudraprayag is the default selected region.
+     */
+    this.selectZone('Rudraprayag');
 
     this.mapStatus = 'GIS ONLINE';
 
     this.loadAllWeather();
 
+    /*
+     * Refresh weather + ML risk every 5 minutes.
+     */
     this.weatherTimer =
       setInterval(
         () => {
@@ -444,6 +485,8 @@ export class RiskMap
         <span>Risk ${zone.risk} · ${this.getRiskLabel(zone.risk)}</span>
         <span>${zone.weatherText}</span>
         <span>24h rainfall: ${zone.rainfall24h.toFixed(1)} mm</span>
+        <span>ML confidence: ${zone.confidence}%</span>
+        <span>Source: ${zone.predictionSource}</span>
       </div>
     `;
 
@@ -593,6 +636,7 @@ export class RiskMap
       this.zones.forEach(
         zone => {
           zone.confidence = 55;
+          zone.predictionSource = 'OFFLINE';
         }
       );
 
@@ -606,10 +650,8 @@ export class RiskMap
 
     const url =
       'https://api.open-meteo.com/v1/forecast' +
-
       `?latitude=${zone.lat}` +
       `&longitude=${zone.lng}` +
-
       '&current=' +
       [
         'temperature_2m',
@@ -620,7 +662,6 @@ export class RiskMap
         'weather_code',
         'soil_moisture_0_to_1cm'
       ].join(',') +
-
       '&hourly=' +
       [
         'temperature_2m',
@@ -630,7 +671,6 @@ export class RiskMap
         'soil_moisture_0_to_1cm',
         'weather_code'
       ].join(',') +
-
       '&past_hours=24' +
       '&forecast_hours=24' +
       '&timezone=Asia%2FKolkata';
@@ -691,6 +731,15 @@ export class RiskMap
       this.getWeatherDescription(
         zone.weatherCode
       );
+
+    const apiElevation =
+      this.safeNumber(
+        data?.elevation
+      );
+
+    if (apiElevation !== null) {
+      zone.elevation = apiElevation;
+    }
 
     const hourly =
       data.hourly;
@@ -759,7 +808,7 @@ export class RiskMap
         0
       );
 
-    this.calculateDynamicRisk(zone);
+    await this.updateRiskFromApi(zone);
 
     if (
       zone.name ===
@@ -843,6 +892,208 @@ export class RiskMap
           );
 
     }
+
+  }
+
+  private updateRiskFromApi(
+    zone: RiskZone
+  ): Promise<void> {
+
+    return new Promise(
+      resolve => {
+
+        const request = {
+          latitude: zone.lat,
+          longitude: zone.lng,
+          elevation: zone.elevation,
+          slope: zone.slope,
+          rainfall: zone.rainfall24h,
+          aspect: zone.aspect,
+          month: new Date().getMonth() + 1
+        };
+
+        this.riskApi
+          .predictRisk(request)
+          .subscribe({
+
+            next: response => {
+
+              zone.risk =
+                Math.max(
+                  0,
+                  Math.min(
+                    100,
+                    Math.round(
+                      response.flood_probability * 100
+                    )
+                  )
+                );
+
+              zone.confidence =
+                Math.max(
+                  0,
+                  Math.min(
+                    100,
+                    Math.round(
+                      response.confidence_pct
+                    )
+                  )
+                );
+
+              zone.predictionSource =
+                response.prediction_source ||
+                'API';
+
+              /*
+               * IMPORTANT:
+               * Check the new ML risk immediately.
+               *
+               * If risk > 70:
+               *     AlertService creates alert
+               *     Browser notification appears
+               *
+               * If risk <= 70:
+               *     Alert lock is reset
+               */
+              this.handleAutomaticAlert(zone);
+
+              resolve();
+
+            },
+
+            error: error => {
+
+              console.error(
+                `ML prediction failed for ${zone.name}:`,
+                error
+              );
+
+              this.calculateDynamicRisk(zone);
+
+              zone.predictionSource =
+                'LOCAL FALLBACK';
+
+              /*
+               * Also check automatic alert
+               * when using fallback risk.
+               */
+              this.handleAutomaticAlert(zone);
+
+              resolve();
+
+            }
+
+          });
+
+      }
+    );
+
+  }
+
+  /**
+   * ============================================
+   * AUTOMATIC ALERT SYSTEM
+   * ============================================
+   *
+   * The threshold itself comes from AlertService.
+   *
+   * Risk <= 70
+   *       ↓
+   * No notification
+   *
+   * Risk > 70
+   *       ↓
+   * AlertService
+   *       ↓
+   * Automatic alert
+   *       ↓
+   * Browser notification
+   */
+
+  private handleAutomaticAlert(
+    zone: RiskZone
+  ): void {
+
+    const risk =
+      Math.round(zone.risk);
+
+    const threshold =
+      this.alertService.getAlertThreshold();
+
+    /*
+     * Risk is 70 or below.
+     * Reset the zone so it can trigger again
+     * if it later crosses above 70.
+     */
+    if (risk <= threshold) {
+
+      this.alertService.resetZoneAlert(
+        zone.name
+      );
+
+      return;
+    }
+
+    /*
+     * Risk is ABOVE 70.
+     *
+     * AlertService will prevent duplicate alerts.
+     */
+    const alert =
+      this.alertService.createAutomaticAlert(
+        'Mandakini Micro-Catchment, Rudraprayag',
+        zone.name,
+        risk,
+        this.getAutomaticAlertAction(risk)
+      );
+
+    /*
+     * Alert was successfully generated.
+     */
+    if (alert) {
+
+      console.warn(
+        `🚨 AQUASENTINEL AUTOMATIC ALERT: ` +
+        `${zone.name} risk ${risk}`
+      );
+
+      /*
+       * If the selected zone triggered the alert,
+       * reset the review state.
+       */
+      if (
+        zone.name ===
+        this.selectedZone
+      ) {
+
+        this.alertReviewed = false;
+
+      }
+
+    }
+
+  }
+
+  /**
+   * Action included with automatic alert.
+   */
+  private getAutomaticAlertAction(
+    risk: number
+  ): string {
+
+    if (risk >= 81) {
+
+      return (
+        'Immediate field verification and ' +
+        'evacuation readiness'
+      );
+
+    }
+
+    return (
+      'Inspect vulnerable roads and prepare ' +
+      'local response teams'
+    );
 
   }
 
@@ -1148,9 +1399,11 @@ export class RiskMap
           this.terrainLayer
         )
       ) {
+
         this.map.removeLayer(
           this.terrainLayer
         );
+
       }
 
       if (
@@ -1158,9 +1411,11 @@ export class RiskMap
           this.streetLayer
         )
       ) {
+
         this.streetLayer.addTo(
           this.map
         );
+
       }
 
     } else {
@@ -1170,9 +1425,11 @@ export class RiskMap
           this.streetLayer
         )
       ) {
+
         this.map.removeLayer(
           this.streetLayer
         );
+
       }
 
       if (
@@ -1180,9 +1437,11 @@ export class RiskMap
           this.terrainLayer
         )
       ) {
+
         this.terrainLayer.addTo(
           this.map
         );
+
       }
 
     }
@@ -1302,6 +1561,7 @@ export class RiskMap
     }
 
     // Forecast is populated by loadWeather().
+
   }
 
   getRiskColor(
@@ -1644,6 +1904,174 @@ export class RiskMap
     }
 
     return 'Antecedent wetness';
+
+  }
+
+  /*
+   * ============================================
+   * DECISION SUPPORT
+   * ============================================
+   */
+
+  get riskExplanation(): string {
+
+    const zone =
+      this.selectedZoneData;
+
+    if (!zone) {
+      return 'Waiting for regional risk data.';
+    }
+
+    const risk =
+      zone.risk;
+
+    const rainfall =
+      zone.rainfall24h;
+
+    const soil =
+      zone.soilMoisture ?? 0;
+
+    const slope =
+      zone.slope;
+
+    const trend =
+      this.riskTrend;
+
+    if (risk >= 81) {
+
+      if (
+        rainfall >= 35 &&
+        soil >= 0.35
+      ) {
+        return 'High rainfall combined with elevated soil wetness is increasing flood susceptibility. Terrain conditions may amplify runoff and reduce available response time.';
+      }
+
+      if (slope >= 38) {
+        return 'Steep terrain is significantly increasing susceptibility. Additional rainfall may rapidly increase runoff and localized hazard exposure.';
+      }
+
+      return 'Multiple environmental signals indicate elevated hazard susceptibility. Continued monitoring and rapid coordination are recommended.';
+
+    }
+
+    if (risk >= 61) {
+
+      if (
+        rainfall >= 20 &&
+        soil >= 0.30
+      ) {
+        return 'Recent rainfall and elevated soil wetness are increasing regional susceptibility. Additional precipitation could push conditions toward a higher-risk state.';
+      }
+
+      if (slope >= 38) {
+        return 'Terrain susceptibility is a major contributor to the current risk level, with steep slopes increasing sensitivity to additional rainfall.';
+      }
+
+      return 'Combined terrain and weather conditions are producing elevated risk. Monitoring should remain active as conditions evolve.';
+
+    }
+
+    if (risk >= 31) {
+
+      if (soil >= 0.35) {
+        return 'Antecedent wetness is increasing regional sensitivity. Current rainfall is limited, but additional precipitation could increase runoff and hazard potential.';
+      }
+
+      if (rainfall >= 10) {
+        return 'Recent rainfall is contributing to a moderate risk state. Monitor precipitation trends and regional conditions for further increases.';
+      }
+
+      if (slope >= 30) {
+        return 'Terrain susceptibility is contributing to the current moderate risk. Additional rainfall could increase localized runoff and exposure.';
+      }
+
+      if (trend === 'rising') {
+        return 'Risk is currently moderate and trending upward. Changing weather conditions may increase regional susceptibility over the next few hours.';
+      }
+
+      return 'Combined terrain and weather signals indicate moderate susceptibility. Continued monitoring is appropriate.';
+
+    }
+
+    return 'Current environmental conditions indicate relatively low hazard susceptibility. Continue routine monitoring for significant weather changes.';
+
+  }
+
+  get recommendedAction(): string {
+
+    const zone =
+      this.selectedZoneData;
+
+    if (!zone) {
+      return 'Awaiting sufficient data before recommending an operational response.';
+    }
+
+    const risk =
+      zone.risk;
+
+    const rainfall =
+      zone.rainfall24h;
+
+    const soil =
+      zone.soilMoisture ?? 0;
+
+    const trend =
+      this.riskTrend;
+
+    if (risk >= 81) {
+
+      return 'Initiate enhanced monitoring and notify the responsible disaster-management team. Review exposed roads and settlements and prepare escalation if conditions deteriorate.';
+
+    }
+
+    if (risk >= 61) {
+
+      return 'Maintain enhanced monitoring, review nearby road and settlement exposure, and keep local response teams informed. Escalate if rainfall or risk continues to increase.';
+
+    }
+
+    if (risk >= 31) {
+
+      if (
+        trend === 'rising' ||
+        soil >= 0.35 ||
+        rainfall >= 10
+      ) {
+
+        return 'Continue enhanced monitoring and review local road conditions. Keep response teams informed and reassess if rainfall intensity increases.';
+
+      }
+
+      return 'Continue routine monitoring and reassess the region if rainfall, soil wetness, or terrain-related indicators increase.';
+
+    }
+
+    return 'Maintain routine monitoring. No immediate escalation is indicated by the current risk estimate.';
+
+  }
+
+  get escalationLevel(): string {
+
+    const zone =
+      this.selectedZoneData;
+
+    if (!zone) {
+      return 'PENDING';
+    }
+
+    if (zone.risk >= 81) {
+      return 'HIGH ESCALATION';
+    }
+
+    if (zone.risk >= 61) {
+      return 'ENHANCED MONITORING';
+    }
+
+    if (zone.risk >= 31) {
+      return 'WATCH';
+    }
+
+    return 'ROUTINE';
 
   }
 

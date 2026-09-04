@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AlertService, AquaAlert } from '../services/alert.services';
 
 @Component({
   selector: 'app-alerts',
@@ -9,43 +10,31 @@ import { RouterLink } from '@angular/router';
   templateUrl: './alerts.html',
   styleUrl: './alerts.css'
 })
-export class Alerts {
+export class Alerts implements OnInit {
 
-  alerts = [
-    {
-      id: 'ALT-001',
-      location: 'Mandakini Micro-Catchment',
-      village: 'Silli',
-      level: 'HIGH',
-      score: 78,
-      action: 'Prepare evacuation advisory',
-      status: 'Pending Approval'
-    },
-    {
-      id: 'ALT-002',
-      location: 'Rudraprayag',
-      village: 'Agastyamuni',
-      level: 'MODERATE',
-      score: 56,
-      action: 'Monitor rainfall and drainage',
-      status: 'Monitoring'
-    },
-    {
-      id: 'ALT-003',
-      location: 'Mandakini Corridor',
-      village: 'Ukhimath',
-      level: 'CRITICAL',
-      score: 88,
-      action: 'Close vulnerable road section',
-      status: 'Approved'
-    }
-  ];
+  alerts: AquaAlert[] = [];
 
-  approveAlert(alert: any) {
-    alert.status = 'Approved';
+  constructor(private alertService: AlertService) {}
+
+  ngOnInit(): void {
+    this.alertService.alerts$.subscribe(alerts => {
+      this.alerts = alerts;
+    });
   }
 
-  rejectAlert(alert: any) {
-    alert.status = 'Rejected';
+  approveAlert(alert: AquaAlert): void {
+    this.alertService.approveAlert(alert.id);
+  }
+
+  rejectAlert(alert: AquaAlert): void {
+    this.alertService.rejectAlert(alert.id);
+  }
+
+  markMonitoring(alert: AquaAlert): void {
+    this.alertService.markMonitoring(alert.id);
+  }
+
+  removeAlert(alert: AquaAlert): void {
+    this.alertService.removeAlert(alert.id);
   }
 }

@@ -1,14 +1,20 @@
 <div class="map-page">
 
+  <!-- ===================================================== -->
   <!-- HEADER -->
+  <!-- ===================================================== -->
+
   <header class="map-header">
 
     <div class="header-brand">
 
       <div class="brand-line">
         <span class="brand-dot"></span>
+
         AQUASENTINEL
+
         <span class="slash">/</span>
+
         GIS INTELLIGENCE
       </div>
 
@@ -17,6 +23,7 @@
       </h1>
 
     </div>
+
 
     <div class="header-actions">
 
@@ -28,6 +35,7 @@
         ></span>
 
         <div>
+
           <strong>
             {{ weatherStatus }}
           </strong>
@@ -35,16 +43,22 @@
           <small>
             ENVIRONMENTAL DATA FEED
           </small>
+
         </div>
 
       </div>
 
+
       <div class="update-time">
+
         UPDATED
+
         <strong>
           {{ lastUpdated }}
         </strong>
+
       </div>
+
 
       <a
         routerLink="/dashboard"
@@ -58,11 +72,18 @@
   </header>
 
 
+
+  <!-- ===================================================== -->
   <!-- MAIN -->
+  <!-- ===================================================== -->
+
   <main class="map-layout">
 
 
+    <!-- =================================================== -->
     <!-- MAP -->
+    <!-- =================================================== -->
+
     <section class="map-card">
 
       <div
@@ -71,12 +92,14 @@
       ></div>
 
 
-      <!-- MAP TOP CONTROL -->
+      <!-- MAP CONTROLS -->
+
       <div class="map-control-panel">
 
         <div class="control-title">
           MAP LAYERS
         </div>
+
 
         <div class="control-group">
 
@@ -88,6 +111,7 @@
             STREET
           </button>
 
+
           <button
             type="button"
             [class.active]="activeBaseMap === 'terrain'"
@@ -98,7 +122,9 @@
 
         </div>
 
+
         <div class="layer-divider"></div>
+
 
         <label class="layer-toggle">
 
@@ -114,6 +140,7 @@
 
         </label>
 
+
         <label class="layer-toggle">
 
           <input
@@ -127,6 +154,7 @@
           Weather intensity
 
         </label>
+
 
         <label class="layer-toggle">
 
@@ -145,7 +173,9 @@
       </div>
 
 
+
       <!-- MAP STATUS -->
+
       <div class="map-status-panel">
 
         <div class="status-title">
@@ -167,7 +197,9 @@
       </div>
 
 
+
       <!-- ACTIVE REGION -->
+
       <div class="active-region-panel">
 
         <span>
@@ -185,35 +217,65 @@
       </div>
 
 
+
       <!-- LEGEND -->
+
       <div class="map-legend">
 
         <div class="legend-heading">
           RISK INDEX
         </div>
 
+
         <div class="legend-item">
+
           <span class="legend-dot critical"></span>
+
           <span>81–100</span>
-          <strong>Critical</strong>
+
+          <strong>
+            Critical
+          </strong>
+
         </div>
 
+
         <div class="legend-item">
+
           <span class="legend-dot high"></span>
+
           <span>61–80</span>
-          <strong>High</strong>
+
+          <strong>
+            High
+          </strong>
+
         </div>
 
+
         <div class="legend-item">
+
           <span class="legend-dot moderate"></span>
+
           <span>31–60</span>
-          <strong>Moderate</strong>
+
+          <strong>
+            Moderate
+          </strong>
+
         </div>
 
+
         <div class="legend-item">
+
           <span class="legend-dot low"></span>
+
           <span>0–30</span>
-          <strong>Low</strong>
+
+          <strong>
+            Low
+          </strong>
+
         </div>
 
       </div>
@@ -221,11 +283,18 @@
     </section>
 
 
+
+    <!-- =================================================== -->
     <!-- SIDEBAR -->
+    <!-- =================================================== -->
+
     <aside class="map-sidebar">
 
 
+      <!-- ================================================= -->
       <!-- REGION LIST -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card">
 
         <div class="section-heading">
@@ -242,11 +311,13 @@
 
           </div>
 
+
           <span class="zone-count">
             {{ zones.length }}
           </span>
 
         </div>
+
 
 
         <div class="zone-list">
@@ -266,6 +337,7 @@
                 [class]="getRiskClass(zone.risk)"
               ></span>
 
+
               <div>
 
                 <strong>
@@ -279,6 +351,8 @@
               </div>
 
             </div>
+
+
 
             <div class="zone-right">
 
@@ -301,7 +375,11 @@
       </section>
 
 
-      <!-- SELECTED RISK -->
+
+      <!-- ================================================= -->
+      <!-- SELECTED RISK + ML -->
+      <!-- ================================================= -->
+
       <section class="risk-card">
 
         <div class="risk-card-top">
@@ -318,9 +396,14 @@
 
           </div>
 
+
           <div
             class="big-risk"
-            [class]="getRiskClass(selectedZoneData?.risk || 0)"
+            [class]="
+              getRiskClass(
+                selectedZoneData?.risk || 0
+              )
+            "
           >
             {{ selectedZoneData?.risk || '--' }}
           </div>
@@ -328,16 +411,30 @@
         </div>
 
 
+
+        <!-- RISK BAR -->
+
         <div class="risk-bar">
 
           <div
             class="risk-bar-fill"
-            [style.width.%]="getRiskBarWidth(selectedZoneData?.risk || 0)"
-            [class]="getRiskClass(selectedZoneData?.risk || 0)"
+            [style.width.%]="
+              getRiskBarWidth(
+                selectedZoneData?.risk || 0
+              )
+            "
+            [class]="
+              getRiskClass(
+                selectedZoneData?.risk || 0
+              )
+            "
           ></div>
 
         </div>
 
+
+
+        <!-- RISK META -->
 
         <div class="risk-meta">
 
@@ -348,7 +445,11 @@
             </span>
 
             <strong
-              [class]="getRiskClass(selectedZoneData?.risk || 0)"
+              [class]="
+                getRiskClass(
+                  selectedZoneData?.risk || 0
+                )
+              "
             >
               {{
                 getRiskLabel(
@@ -358,6 +459,7 @@
             </strong>
 
           </div>
+
 
           <div
             class="trend"
@@ -376,10 +478,172 @@
 
         </div>
 
+
+
+        <!-- ================================================= -->
+        <!-- ML MODEL STATUS -->
+        <!-- ================================================= -->
+
+        <div class="ml-status-panel">
+
+          <div class="ml-status-header">
+
+            <div>
+
+              <span class="eyebrow">
+                PREDICTION ENGINE
+              </span>
+
+              <strong>
+                AquaSentinel ML
+              </strong>
+
+            </div>
+
+
+            <span class="ml-live-badge">
+              ● ACTIVE
+            </span>
+
+          </div>
+
+
+
+          <div class="ml-status-grid">
+
+
+            <!-- CONFIDENCE -->
+
+            <div class="ml-stat">
+
+              <span>
+                MODEL CONFIDENCE
+              </span>
+
+              <strong>
+                {{
+                  selectedZoneData?.confidence || 0
+                }}%
+              </strong>
+
+            </div>
+
+
+
+            <!-- SOURCE -->
+
+            <div class="ml-stat">
+
+              <span>
+                PREDICTION SOURCE
+              </span>
+
+              <strong>
+                {{
+                  selectedZoneData?.predictionSource ||
+                  'CONNECTING'
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- DECISION SUPPORT -->
+        <!-- ================================================= -->
+
+        <div class="decision-support-panel">
+
+          <div class="decision-header">
+
+            <div>
+
+              <span class="eyebrow">
+                DECISION SUPPORT
+              </span>
+
+              <strong>
+                Risk → Explanation → Action
+              </strong>
+
+            </div>
+
+            <span
+              class="decision-level"
+              [class]="
+                getRiskClass(
+                  selectedZoneData?.risk || 0
+                )
+              "
+            >
+              {{ escalationLevel }}
+            </span>
+
+          </div>
+
+
+
+          <!-- RISK EXPLANATION -->
+
+          <div class="decision-block">
+
+            <div class="decision-icon">
+              ◎
+            </div>
+
+            <div>
+
+              <span>
+                WHY THIS RISK?
+              </span>
+
+              <p>
+                {{ riskExplanation }}
+              </p>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- RECOMMENDED ACTION -->
+
+          <div class="decision-block action-block">
+
+            <div class="decision-icon">
+              →
+            </div>
+
+            <div>
+
+              <span>
+                RECOMMENDED ACTION
+              </span>
+
+              <p>
+                {{ recommendedAction }}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </section>
 
 
+
+      <!-- ================================================= -->
       <!-- WHY AT RISK -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card why-card">
 
         <div class="section-heading compact">
@@ -387,7 +651,7 @@
           <div>
 
             <span class="eyebrow">
-              RISK EXPLANATION
+              CONTRIBUTING SIGNALS
             </span>
 
             <h2>
@@ -396,12 +660,16 @@
 
           </div>
 
+
           <span class="brain-icon">
             ◎
           </span>
 
         </div>
 
+
+
+        <!-- PRIMARY DRIVER -->
 
         <div class="factor-row">
 
@@ -417,12 +685,16 @@
 
           </div>
 
+
           <span class="factor-level high">
             HIGH
           </span>
 
         </div>
 
+
+
+        <!-- SECONDARY DRIVER -->
 
         <div class="factor-row">
 
@@ -438,12 +710,16 @@
 
           </div>
 
+
           <span class="factor-level moderate">
             WATCH
           </span>
 
         </div>
 
+
+
+        <!-- RAINFALL -->
 
         <div class="signal-row">
 
@@ -454,25 +730,34 @@
             </span>
 
             <strong>
+
               {{
                 selectedZoneData?.rainfall24h?.toFixed(1)
               }}
+
               mm / 24h
+
             </strong>
 
           </div>
+
 
           <div class="signal-track">
 
             <div
               class="signal-fill rainfall"
-              [style.width.%]="getRainfall24Width()"
+              [style.width.%]="
+                getRainfall24Width()
+              "
             ></div>
 
           </div>
 
         </div>
 
+
+
+        <!-- SOIL -->
 
         <div class="signal-row">
 
@@ -488,17 +773,23 @@
 
           </div>
 
+
           <div class="signal-track">
 
             <div
               class="signal-fill soil"
-              [style.width.%]="getSoilMoistureWidth()"
+              [style.width.%]="
+                getSoilMoistureWidth()
+              "
             ></div>
 
           </div>
 
         </div>
 
+
+
+        <!-- SLOPE -->
 
         <div class="signal-row">
 
@@ -514,12 +805,14 @@
 
           </div>
 
+
           <div class="signal-track">
 
             <div
               class="signal-fill terrain"
               [style.width.%]="
-                (selectedZoneData?.slope || 0) / 45 * 100
+                (selectedZoneData?.slope || 0)
+                / 45 * 100
               "
             ></div>
 
@@ -527,6 +820,9 @@
 
         </div>
 
+
+
+        <!-- DRAINAGE -->
 
         <div class="signal-row">
 
@@ -541,6 +837,7 @@
             </strong>
 
           </div>
+
 
           <div class="signal-track">
 
@@ -558,7 +855,11 @@
       </section>
 
 
+
+      <!-- ================================================= -->
       <!-- WEATHER -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card weather-card">
 
         <div class="section-heading compact">
@@ -575,6 +876,7 @@
 
           </div>
 
+
           <span class="live-badge">
             ● LIVE
           </span>
@@ -582,17 +884,22 @@
         </div>
 
 
+
+        <!-- WEATHER HERO -->
+
         <div class="weather-hero">
 
           <div class="temperature">
 
             <strong>
+
               {{
                 formatValue(
                   selectedWeather.temperature,
                   '°'
                 )
               }}
+
             </strong>
 
             <span>
@@ -601,14 +908,22 @@
 
           </div>
 
+
           <div>
 
             <strong class="weather-description">
-              {{ selectedWeather.weatherText }}
+
+              {{
+                selectedWeather.weatherText
+              }}
+
             </strong>
 
+
             <span class="weather-location">
+
               {{ selectedZone }}
+
             </span>
 
           </div>
@@ -616,7 +931,13 @@
         </div>
 
 
+
+        <!-- WEATHER GRID -->
+
         <div class="weather-grid">
+
+
+          <!-- HUMIDITY -->
 
           <div class="weather-stat">
 
@@ -631,18 +952,23 @@
               </small>
 
               <strong>
+
                 {{
                   formatValue(
                     selectedWeather.humidity,
                     '%'
                   )
                 }}
+
               </strong>
 
             </div>
 
           </div>
 
+
+
+          <!-- RAIN -->
 
           <div class="weather-stat">
 
@@ -657,18 +983,23 @@
               </small>
 
               <strong>
+
                 {{
                   formatValue(
                     selectedWeather.rainfall,
                     ' mm'
                   )
                 }}
+
               </strong>
 
             </div>
 
           </div>
 
+
+
+          <!-- WIND -->
 
           <div class="weather-stat">
 
@@ -683,18 +1014,23 @@
               </small>
 
               <strong>
+
                 {{
                   formatValue(
                     selectedWeather.windSpeed,
                     ' km/h'
                   )
                 }}
+
               </strong>
 
             </div>
 
           </div>
 
+
+
+          <!-- SOIL -->
 
           <div class="weather-stat">
 
@@ -719,7 +1055,11 @@
         </div>
 
 
+
+        <!-- EXTRA WEATHER -->
+
         <div class="weather-extra">
+
 
           <div>
 
@@ -728,15 +1068,19 @@
             </span>
 
             <strong>
+
               {{
                 formatValue(
                   selectedWeather.windGust,
                   ' km/h'
                 )
               }}
+
             </strong>
 
           </div>
+
+
 
           <div>
 
@@ -745,10 +1089,13 @@
             </span>
 
             <strong>
+
               {{
                 selectedZoneData?.rainfall24h?.toFixed(1)
               }}
+
               mm
+
             </strong>
 
           </div>
@@ -758,7 +1105,11 @@
       </section>
 
 
+
+      <!-- ================================================= -->
       <!-- RAINFALL HISTORY -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card chart-card">
 
         <div class="chart-header">
@@ -775,14 +1126,19 @@
 
           </div>
 
+
           <strong>
+
             {{
               selectedZoneData?.rainfall24h?.toFixed(1)
             }}
+
             mm
+
           </strong>
 
         </div>
+
 
 
         <div class="rain-chart">
@@ -801,9 +1157,13 @@
             <div
               class="rain-bar-fill"
               [style.height.%]="
-                point.rainfall /
-                maxRainfallHistory *
-                100
+                maxRainfallHistory
+                  ? (
+                      point.rainfall /
+                      maxRainfallHistory *
+                      100
+                    )
+                  : 0
               "
             ></div>
 
@@ -811,20 +1171,40 @@
 
         </div>
 
+
+
         <div class="chart-axis">
 
-          <span>−24h</span>
-          <span>−18h</span>
-          <span>−12h</span>
-          <span>−6h</span>
-          <span>NOW</span>
+          <span>
+            −24h
+          </span>
+
+          <span>
+            −18h
+          </span>
+
+          <span>
+            −12h
+          </span>
+
+          <span>
+            −6h
+          </span>
+
+          <span>
+            NOW
+          </span>
 
         </div>
 
       </section>
 
 
+
+      <!-- ================================================= -->
       <!-- FORECAST -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card forecast-card">
 
         <div class="chart-header">
@@ -841,11 +1221,13 @@
 
           </div>
 
+
           <span class="forecast-risk">
             RISK PATH
           </span>
 
         </div>
+
 
 
         <div class="forecast-list">
@@ -855,9 +1237,18 @@
             *ngFor="let item of forecast"
           >
 
+
+            <!-- TIME -->
+
             <span class="forecast-time">
+
               {{ item.time }}
+
             </span>
+
+
+
+            <!-- RAINFALL -->
 
             <div class="forecast-rain">
 
@@ -866,24 +1257,41 @@
                 <div
                   class="mini-fill"
                   [style.width.%]="
-                    item.rainfall /
-                    maxForecastRainfall *
-                    100
+                    maxForecastRainfall
+                      ? (
+                          item.rainfall /
+                          maxForecastRainfall *
+                          100
+                        )
+                      : 0
                   "
                 ></div>
 
               </div>
 
+
               <span>
-                {{ item.rainfall.toFixed(1) }} mm
+
+                {{ item.rainfall.toFixed(1) }}
+
+                mm
+
               </span>
 
             </div>
 
+
+
+            <!-- RISK -->
+
             <strong
-              [class]="getRiskClass(item.risk)"
+              [class]="
+                getRiskClass(item.risk)
+              "
             >
+
               {{ item.risk }}
+
             </strong>
 
           </div>
@@ -893,7 +1301,11 @@
       </section>
 
 
+
+      <!-- ================================================= -->
       <!-- EXPOSURE -->
+      <!-- ================================================= -->
+
       <section class="sidebar-card exposure-card">
 
         <div class="section-heading compact">
@@ -913,7 +1325,11 @@
         </div>
 
 
+
         <div class="exposure-grid">
+
+
+          <!-- POPULATION -->
 
           <div class="exposure-stat">
 
@@ -922,11 +1338,13 @@
             </span>
 
             <strong>
+
               {{
                 formatPopulation(
                   selectedZoneData?.exposedPopulation || 0
                 )
               }}
+
             </strong>
 
             <small>
@@ -936,6 +1354,9 @@
           </div>
 
 
+
+          <!-- ROADS -->
+
           <div class="exposure-stat">
 
             <span>
@@ -943,7 +1364,11 @@
             </span>
 
             <strong>
-              {{ selectedZoneData?.vulnerableRoads }}
+
+              {{
+                selectedZoneData?.vulnerableRoads
+              }}
+
             </strong>
 
             <small>
@@ -953,6 +1378,9 @@
           </div>
 
 
+
+          <!-- HISTORY -->
+
           <div class="exposure-stat">
 
             <span>
@@ -960,7 +1388,11 @@
             </span>
 
             <strong>
-              {{ selectedZoneData?.historicalEvents }}
+
+              {{
+                selectedZoneData?.historicalEvents
+              }}
+
             </strong>
 
             <small>
@@ -970,6 +1402,9 @@
           </div>
 
 
+
+          <!-- SLOPE -->
+
           <div class="exposure-stat">
 
             <span>
@@ -977,7 +1412,11 @@
             </span>
 
             <strong>
-              {{ selectedZoneData?.slope }}°
+
+              {{
+                selectedZoneData?.slope
+              }}°
+
             </strong>
 
             <small>
@@ -991,8 +1430,8 @@
       </section>
 
 
+    </aside>
 
-</aside>
   </main>
 
 </div>

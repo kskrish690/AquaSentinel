@@ -3,53 +3,203 @@
   <header class="replay-header">
 
     <div>
-      <span class="eyebrow">aquasentinal • HISTORICAL VALIDATION</span>
-      <h1>Risk Replay</h1>
+      <span class="eyebrow">HISTORICAL REPLAY</span>
+
+      <h1>Weather & Risk Replay</h1>
+
       <p>
-        Replay rainfall and environmental conditions to observe
-        how localized risk evolves over time.
+        Replay historical weather conditions for the
+        Mandakini micro-catchment, Rudraprayag.
       </p>
     </div>
 
-    <a routerLink="/dashboard" class="back-btn">
+    <a routerLink="/dashboard" class="dashboard-btn">
       ← Dashboard
     </a>
 
   </header>
 
-  <main class="replay-container">
 
-    <section class="timeline">
+  <!-- EVENT SELECTION -->
 
-      <span class="eyebrow">SIMULATION TIMELINE</span>
+  <section class="event-selector">
 
-      <div class="time">
-        <strong>{{ currentHour }}:00</strong>
-        <span>June 18 • Historical Event Replay</span>
+    <div class="section-heading">
+
+      <span>SELECT HISTORICAL EVENT</span>
+
+      <small>
+        Historical weather data
+      </small>
+
+    </div>
+
+
+    <div class="event-grid">
+
+      <button
+        *ngFor="let event of historicalEvents"
+        class="event-card"
+        [class.active]="selectedDate === event.date"
+        (click)="selectHistoricalEvent(event.date)"
+      >
+
+        <div class="event-date">
+          {{ event.date }}
+        </div>
+
+        <strong>
+          {{ event.title }}
+        </strong>
+
+        <small>
+          {{ event.description }}
+        </small>
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="loading-state"
+    *ngIf="loading"
+  >
+    Loading historical weather data...
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="error-state"
+    *ngIf="errorMessage"
+  >
+    {{ errorMessage }}
+  </div>
+
+
+  <!-- MAIN REPLAY -->
+
+  <ng-container *ngIf="!loading && weatherData.length">
+
+    <section class="event-banner">
+
+      <div>
+
+        <span class="eyebrow">
+          SELECTED EVENT
+        </span>
+
+        <h2>
+          {{ selectedEventTitle }}
+        </h2>
+
+        <p>
+          {{ selectedDate }} ·
+          Rudraprayag, Uttarakhand
+        </p>
+
       </div>
 
-      <div class="timeline-line">
-        <div class="timeline-progress"></div>
+      <div class="data-source">
+
+        <span>DATA SOURCE</span>
+
+        <strong>Historical Reanalysis</strong>
+
       </div>
 
-      <div class="timeline-labels">
-        <span>08:00</span>
+    </section>
+
+
+    <!-- REPLAY TIMELINE -->
+
+    <section class="timeline-card">
+
+      <div class="timeline-top">
+
+        <div>
+
+          <span class="timeline-label">
+            HISTORICAL TIMELINE
+          </span>
+
+          <strong>
+            {{ currentHour }}
+          </strong>
+
+        </div>
+
+        <div class="timeline-date">
+          {{ selectedDate }}
+        </div>
+
+      </div>
+
+
+      <div class="timeline">
+
+        <div
+          class="timeline-progress"
+          [style.width.%]="replayProgress"
+        ></div>
+
+        <div
+          class="timeline-marker"
+          [style.left.%]="replayProgress"
+        ></div>
+
+      </div>
+
+
+      <div class="timeline-hours">
+
+        <span>00:00</span>
+
+        <span>06:00</span>
+
         <span>12:00</span>
-        <span>16:00</span>
-        <span>20:00</span>
+
+        <span>18:00</span>
+
+        <span>23:00</span>
+
       </div>
+
 
       <div class="controls">
 
         <button
-          class="play"
-          (click)="replay()"
+          class="secondary-btn"
+          (click)="previousHour()"
+          [disabled]="currentIndex === 0"
         >
-          ▶ Replay Next Hour
+          ← Previous Hour
         </button>
 
         <button
-          class="reset"
+          class="primary-btn"
+          (click)="replay()"
+          [disabled]="isReplayFinished"
+        >
+          {{ isReplayFinished ? 'Replay Complete' : 'Next Hour →' }}
+        </button>
+
+        <button
+          class="secondary-btn"
+          (click)="replayAll()"
+          [disabled]="isReplayFinished"
+        >
+          ▶ Auto Replay
+        </button>
+
+        <button
+          class="reset-btn"
           (click)="reset()"
         >
           Reset
@@ -59,53 +209,239 @@
 
     </section>
 
-    <section class="metrics">
 
-      <div class="metric">
-        <span>RAINFALL</span>
-        <strong>{{ rainfall }} mm</strong>
+    <!-- CURRENT RISK -->
 
-        <div class="bar">
-          <div [style.width.%]="rainfall"></div>
+    <section class="risk-panel">
+
+      <div class="risk-score">
+
+        <span class="eyebrow">
+          HISTORICAL RISK
+        </span>
+
+        <div class="risk-number">
+          {{ riskScore }}
         </div>
+
+        <div class="risk-level">
+          {{ getRiskLevel() }}
+        </div>
+
       </div>
 
-      <div class="metric">
-        <span>SOIL WETNESS</span>
-        <strong>{{ soilWetness }}%</strong>
 
-        <div class="bar">
-          <div [style.width.%]="soilWetness"></div>
-        </div>
-      </div>
+      <div class="risk-description">
 
-      <div class="metric risk">
-        <span>RISK SCORE</span>
-        <strong>{{ riskScore }}/100</strong>
-        <small>{{ getRiskLevel() }}</small>
+        <h3>
+          Risk at {{ currentHour }}
+        </h3>
 
-        <div class="bar">
-          <div [style.width.%]="riskScore"></div>
-        </div>
+        <p>
+          AquaSentinel is replaying the environmental
+          conditions recorded for this historical hour.
+          The risk score is calculated from the replayed
+          weather and soil signals.
+        </p>
+
       </div>
 
     </section>
 
-    <section class="explanation">
 
-      <span class="eyebrow">MODEL INTERPRETATION</span>
+    <!-- WEATHER CARDS -->
 
-      <h2>Risk evolution</h2>
+    <section class="weather-grid">
+
+      <div class="weather-card">
+
+        <span>Temperature</span>
+
+        <strong>
+          {{ temperature }}°C
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Condition</span>
+
+        <strong>
+          {{ weatherCondition }}
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Rainfall</span>
+
+        <strong>
+          {{ rainfall }} mm
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Humidity</span>
+
+        <strong>
+          {{ humidity }}%
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Wind</span>
+
+        <strong>
+          {{ windSpeed }} km/h
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Wind Gust</span>
+
+        <strong>
+          {{ windGust }} km/h
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Soil Moisture</span>
+
+        <strong>
+          {{ soilWetness }}%
+        </strong>
+
+      </div>
+
+
+      <div class="weather-card">
+
+        <span>Hourly Precipitation</span>
+
+        <strong>
+          {{ precipitation }} mm
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- DAY SUMMARY -->
+
+    <section class="summary-section">
+
+      <div class="section-heading">
+
+        <span>HISTORICAL DAY SUMMARY</span>
+
+        <small>
+          {{ selectedDate }}
+        </small>
+
+      </div>
+
+
+      <div class="summary-grid">
+
+        <div class="summary-card">
+
+          <span>Total Rainfall</span>
+
+          <strong>
+            {{ totalRainfall | number:'1.1-1' }} mm
+          </strong>
+
+          <small>
+            Full historical day
+          </small>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <span>Maximum Hourly Rainfall</span>
+
+          <strong>
+            {{ maxHourlyRainfall | number:'1.1-1' }} mm
+          </strong>
+
+          <small>
+            Highest hourly precipitation
+          </small>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <span>Replay Position</span>
+
+          <strong>
+            {{ currentIndex + 1 }} / {{ weatherData.length }}
+          </strong>
+
+          <small>
+            Hourly observations
+          </small>
+
+        </div>
+
+
+        <div class="summary-card">
+
+          <span>Location</span>
+
+          <strong>
+            Rudraprayag
+          </strong>
+
+          <small>
+            Mandakini micro-catchment
+          </small>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- DATA DISCLAIMER -->
+
+    <section class="data-note">
+
+      <strong>
+        Historical data note
+      </strong>
 
       <p>
-        As rainfall increases and soil moisture accumulates,
-        aquasentinal increases the localized risk score.
-        The replay allows officers to understand how the
-        warning threshold develops before an event.
+        Weather values are retrieved from Open-Meteo historical
+        reanalysis data for the Rudraprayag coordinates.
+        They represent modelled historical atmospheric and
+        land-surface conditions and should not be presented as
+        direct measurements from a specific local sensor.
       </p>
 
     </section>
 
-  </main>
+  </ng-container>
 
 </div>
