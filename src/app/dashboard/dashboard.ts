@@ -2,10 +2,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+
 import {
   UserRoleService,
   AquaUser
 } from '../services/user-role';
+
+import {
+  RiskApiService,
+  FloodPredictionRequest,
+  FloodPredictionResponse
+} from '../services/risk-api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -49,28 +56,75 @@ export class Dashboard implements OnInit, OnDestroy {
   pageTitle = 'District Flood Intelligence';
 
   pageSubtitle =
-    'Localized operational intelligence for monitoring flood risk, vulnerable areas and response actions.';
+    'Localized operational intelligence for monitoring flood risk across the Mandakini micro-catchment.';
 
   primaryAction = 'View Risk Intelligence';
 
 
   // =====================================================
-  // RISK DATA
+  // ML RISK DATA
   // =====================================================
 
-  riskScore = 68;
-  riskLevel = 'ELEVATED';
+  /*
+   * IMPORTANT:
+   *
+   * These values allow the Dashboard to render immediately.
+   * FastAPI updates them in the background after the page
+   * has already appeared.
+   */
+
+  riskScore = 32;
+
+  riskLevel = 'MODERATE';
+
   confidence = 86;
-  leadTime = '3h 40m';
+
+  floodProbability = 0.32;
+
+  terrainSusceptibility = 0.24;
+
+  predictedFlood = 0;
+
+  monsoonSeason = true;
+
+  topFactors: string[] = [
+    'terrain susceptibility',
+    'rainfall',
+    'antecedent wetness'
+  ];
+
+  /*
+   * Start with usable dashboard state instead of showing
+   * "Calculating..." while Angular waits for FastAPI.
+   */
+  modelConnected = true;
+
+  modelLoading = false;
+
+  modelError = '';
+
+  predictionSource = 'FastAPI ML Risk Engine';
+
+  lastUpdated = 'Loading live data...';
+
+  private predictionInProgress = false;
 
 
   // =====================================================
   // ENVIRONMENTAL DATA
   // =====================================================
 
-  rainfall = 74.6;
-  soilWetness = 64;
-  terrainExposure = 71;
+  /*
+   * These are the initial pilot-region values.
+   * FastAPI/weather data can update them later.
+   */
+
+  rainfall = 2.8;
+
+  soilWetness = 35;
+
+  terrainExposure = 24;
+
   drainageVulnerability = 55;
 
 
@@ -78,11 +132,37 @@ export class Dashboard implements OnInit, OnDestroy {
   // OPERATIONAL DATA
   // =====================================================
 
-  affectedVillages = 4;
-  affectedRoads = 3;
-  activeAlerts = 2;
+  affectedVillages = 2;
+
+  affectedRoads = 2;
+
+  activeAlerts = 1;
+
   activeSensors = 12;
+
   totalSensors = 12;
+
+
+  // =====================================================
+  // LEAD TIME
+  // =====================================================
+
+  leadTime = '4h 10m';
+
+
+  // =====================================================
+  // ML INPUTS
+  // =====================================================
+
+  private readonly latitude = 30.2844;
+
+  private readonly longitude = 78.9811;
+
+  private readonly elevation = 900;
+
+  private readonly slope = 24;
+
+  private readonly aspect = 180;
 
 
   // =====================================================
@@ -101,10 +181,6 @@ export class Dashboard implements OnInit, OnDestroy {
   // SOS PASSWORD AUTHORIZATION
   // =====================================================
 
-  /*
-   * Fixed programmer-defined password.
-   * Officer cannot create, change or reset it.
-   */
   private readonly SOS_PASSWORD = 'Aquas#$';
 
   showSOSPasswordModal = false;
@@ -122,7 +198,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
   constructor(
     private userRoleService: UserRoleService,
-    private router: Router
+    private router: Router,
+    private riskApiService: RiskApiService
   ) {}
 
 
@@ -131,8 +208,31 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   ngOnInit(): void {
+
+    /*
+     * Load everything required for the visible Dashboard
+     * immediately.
+     */
+
     this.loadUser();
+
     this.loadRole();
+
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT wait for FastAPI before rendering the Dashboard.
+     *
+     * The page already has pilot values above.
+     * FastAPI will update them in the background.
+     */
+
+    setTimeout(() => {
+
+      this.loadMLPrediction();
+
+    }, 0);
+
   }
 
 
@@ -143,7 +243,11 @@ export class Dashboard implements OnInit, OnDestroy {
   ngOnDestroy(): void {
 
     if (this.sosTimer) {
+
       clearTimeout(this.sosTimer);
+
+      this.sosTimer = undefined;
+
     }
 
   }
@@ -155,18 +259,32 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private loadUser(): void {
 
-    this.user = this.userRoleService.getUser();
+    this.user =
+      this.userRoleService.getUser();
 
     if (!this.user) {
+
       return;
+
     }
 
-    this.fullName = this.user.fullName || '';
-    this.designation = this.user.designation || '';
-    this.department = this.user.department || '';
-    this.state = this.user.state || '';
-    this.district = this.user.district || '';
-    this.tehsil = this.user.tehsil || '';
+    this.fullName =
+      this.user.fullName || '';
+
+    this.designation =
+      this.user.designation || '';
+
+    this.department =
+      this.user.department || '';
+
+    this.state =
+      this.user.state || '';
+
+    this.district =
+      this.user.district || '';
+
+    this.tehsil =
+      this.user.tehsil || '';
 
   }
 
@@ -177,9 +295,11 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private loadRole(): void {
 
-    this.role = this.userRoleService.getRole();
+    this.role =
+      this.userRoleService.getRole();
 
-    this.roleName = this.userRoleService.getRoleName();
+    this.roleName =
+      this.userRoleService.getRoleName();
 
     this.configureDashboard();
 
@@ -200,19 +320,10 @@ export class Dashboard implements OnInit, OnDestroy {
           'State Situation Intelligence';
 
         this.pageSubtitle =
-          'Monitor flood conditions across districts, identify emerging hotspots and coordinate state-level response.';
+          'Monitor emerging flood conditions and localized hotspots across the pilot region.';
 
         this.primaryAction =
           'View State Intelligence';
-
-        this.riskScore = 64;
-        this.confidence = 89;
-        this.affectedVillages = 18;
-        this.affectedRoads = 11;
-        this.activeAlerts = 5;
-        this.activeSensors = 47;
-        this.totalSensors = 52;
-        this.leadTime = '4h 10m';
 
         break;
 
@@ -223,19 +334,10 @@ export class Dashboard implements OnInit, OnDestroy {
           'District Flood Intelligence';
 
         this.pageSubtitle =
-          'Monitor localized flood risk across villages, roads, shelters and vulnerable micro-catchments.';
+          'Monitor localized flood risk across villages, roads and vulnerable micro-catchments.';
 
         this.primaryAction =
           'View District Intelligence';
-
-        this.riskScore = 68;
-        this.confidence = 86;
-        this.affectedVillages = 4;
-        this.affectedRoads = 3;
-        this.activeAlerts = 2;
-        this.activeSensors = 12;
-        this.totalSensors = 12;
-        this.leadTime = '3h 40m';
 
         break;
 
@@ -246,19 +348,10 @@ export class Dashboard implements OnInit, OnDestroy {
           'Emergency Control Room';
 
         this.pageSubtitle =
-          'Monitor incoming observations, active alerts, sensor health and rapidly changing flood conditions.';
+          'Monitor incoming observations, active risk conditions and emergency response priorities.';
 
         this.primaryAction =
           'Open Live Operations';
-
-        this.riskScore = 74;
-        this.confidence = 84;
-        this.affectedVillages = 4;
-        this.affectedRoads = 3;
-        this.activeAlerts = 2;
-        this.activeSensors = 12;
-        this.totalSensors = 12;
-        this.leadTime = '2h 55m';
 
         break;
 
@@ -269,19 +362,10 @@ export class Dashboard implements OnInit, OnDestroy {
           'Field Response Intelligence';
 
         this.pageSubtitle =
-          'Track active risk zones, evacuation routes, nearby sensors and priority response locations.';
+          'Track active risk zones, vulnerable locations and priority response areas.';
 
         this.primaryAction =
           'Open Response View';
-
-        this.riskScore = 71;
-        this.confidence = 81;
-        this.affectedVillages = 4;
-        this.affectedRoads = 3;
-        this.activeAlerts = 2;
-        this.activeSensors = 12;
-        this.totalSensors = 12;
-        this.leadTime = '2h 40m';
 
         break;
 
@@ -292,19 +376,10 @@ export class Dashboard implements OnInit, OnDestroy {
           'Technical Intelligence';
 
         this.pageSubtitle =
-          'Analyse environmental signals, model confidence, sensor quality and risk-factor contributions.';
+          'Analyse environmental signals, model confidence and risk-factor contributions.';
 
         this.primaryAction =
           'Open Data Analysis';
-
-        this.riskScore = 68;
-        this.confidence = 92;
-        this.affectedVillages = 4;
-        this.affectedRoads = 3;
-        this.activeAlerts = 2;
-        this.activeSensors = 12;
-        this.totalSensors = 12;
-        this.leadTime = '3h 40m';
 
         break;
 
@@ -321,7 +396,418 @@ export class Dashboard implements OnInit, OnDestroy {
           'View Risk Intelligence';
 
         break;
+
     }
+
+  }
+
+
+  // =====================================================
+  // ML PREDICTION
+  // =====================================================
+
+  private loadMLPrediction(): void {
+
+    /*
+     * Prevent duplicate API calls.
+     */
+    if (this.predictionInProgress) {
+
+      return;
+
+    }
+
+    this.predictionInProgress = true;
+
+    /*
+     * IMPORTANT:
+     *
+     * We intentionally DO NOT set:
+     *
+     * modelLoading = true
+     * riskScore = 0
+     * riskLevel = ANALYSING
+     *
+     * because that was the reason the Dashboard initially
+     * showed Calculating / Analysing.
+     *
+     * The existing values remain visible while FastAPI
+     * updates them.
+     */
+
+    this.modelError = '';
+
+    const now = new Date();
+
+
+    const request: FloodPredictionRequest = {
+
+      latitude:
+        this.latitude,
+
+      longitude:
+        this.longitude,
+
+      elevation:
+        this.elevation,
+
+      slope:
+        this.slope,
+
+      /*
+       * IMPORTANT:
+       * Use the current Dashboard rainfall value.
+       *
+       * Previously this was 0.
+       */
+      rainfall:
+        this.rainfall,
+
+      aspect:
+        this.aspect,
+
+      month:
+        now.getMonth() + 1
+
+    };
+
+
+    this.riskApiService
+      .predictRisk(request)
+      .subscribe({
+
+        next: (
+          response: FloodPredictionResponse
+        ) => {
+
+          this.applyMLPrediction(response);
+
+          this.predictionInProgress = false;
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'AquaSentinel Dashboard ML API error:',
+            error
+          );
+
+          /*
+           * IMPORTANT:
+           *
+           * Keep the already-visible pilot data.
+           *
+           * Do NOT wipe the Dashboard back to zero.
+           */
+
+          this.modelLoading = false;
+
+          this.modelConnected = false;
+
+          this.modelError =
+            'Live ML engine unavailable';
+
+          this.lastUpdated =
+            'Live sync unavailable';
+
+          this.predictionInProgress = false;
+
+        }
+
+      });
+
+  }
+
+
+  // =====================================================
+  // APPLY ML RESPONSE
+  // =====================================================
+
+  private applyMLPrediction(
+    response: FloodPredictionResponse
+  ): void {
+
+    this.modelLoading = false;
+
+    this.modelConnected = true;
+
+    this.modelError = '';
+
+
+    // ---------------------------------------------------
+    // FLOOD PROBABILITY
+    // ---------------------------------------------------
+
+    this.floodProbability =
+      Number(
+        response.flood_probability ?? 0
+      );
+
+
+    // ---------------------------------------------------
+    // RISK SCORE
+    // ---------------------------------------------------
+
+    this.riskScore =
+      Math.round(
+        this.floodProbability * 100
+      );
+
+
+    // ---------------------------------------------------
+    // RISK LEVEL
+    // ---------------------------------------------------
+
+    this.riskLevel =
+      (
+        response.risk_level ||
+        this.getRiskStatus()
+      ).toUpperCase();
+
+
+    // ---------------------------------------------------
+    // CONFIDENCE
+    // ---------------------------------------------------
+
+    this.confidence =
+      Math.round(
+        Number(
+          response.confidence_pct ?? 0
+        )
+      );
+
+
+    // ---------------------------------------------------
+    // PREDICTED FLOOD
+    // ---------------------------------------------------
+
+    this.predictedFlood =
+      Number(
+        response.predicted_flood ?? 0
+      );
+
+
+    // ---------------------------------------------------
+    // TERRAIN SUSCEPTIBILITY
+    // ---------------------------------------------------
+
+    this.terrainSusceptibility =
+      Number(
+        response.terrain_susceptibility ?? 0
+      );
+
+
+    // ---------------------------------------------------
+    // MONSOON
+    // ---------------------------------------------------
+
+    this.monsoonSeason =
+      Boolean(
+        response.monsoon_season
+      );
+
+
+    // ---------------------------------------------------
+    // TOP FACTORS
+    // ---------------------------------------------------
+
+    this.topFactors =
+      response.top_factors || [];
+
+
+    // ---------------------------------------------------
+    // ENVIRONMENTAL VALUES
+    // ---------------------------------------------------
+
+    this.terrainExposure =
+      Math.round(
+        this.terrainSusceptibility * 100
+      );
+
+
+    this.soilWetness =
+      this.calculateSoilWetness();
+
+
+    this.drainageVulnerability =
+      this.calculateDrainageVulnerability();
+
+
+    // ---------------------------------------------------
+    // OPERATIONAL VALUES
+    // ---------------------------------------------------
+
+    this.updateOperationalStatus();
+
+
+    // ---------------------------------------------------
+    // LEAD TIME
+    // ---------------------------------------------------
+
+    this.leadTime =
+      this.calculateLeadTime();
+
+
+    // ---------------------------------------------------
+    // SOURCE
+    // ---------------------------------------------------
+
+    this.predictionSource =
+      response.prediction_source ||
+      'FastAPI ML Risk Engine';
+
+
+    // ---------------------------------------------------
+    // LAST UPDATED
+    // ---------------------------------------------------
+
+    this.lastUpdated =
+      new Date().toLocaleTimeString(
+        'en-IN',
+        {
+          hour: '2-digit',
+          minute: '2-digit'
+        }
+      );
+
+  }
+
+
+  // =====================================================
+  // SOIL WETNESS
+  // =====================================================
+
+  private calculateSoilWetness(): number {
+
+    if (this.rainfall >= 100) {
+
+      return 85;
+
+    }
+
+    if (this.rainfall >= 50) {
+
+      return 64;
+
+    }
+
+    if (this.rainfall >= 20) {
+
+      return 48;
+
+    }
+
+    return 35;
+
+  }
+
+
+  // =====================================================
+  // DRAINAGE VULNERABILITY
+  // =====================================================
+
+  private calculateDrainageVulnerability(): number {
+
+    const value =
+      (
+        this.terrainExposure * 0.7
+      ) +
+      (
+        (this.slope / 60) * 100 * 0.3
+      );
+
+    return Math.min(
+      100,
+      Math.max(
+        0,
+        Math.round(value)
+      )
+    );
+
+  }
+
+
+  // =====================================================
+  // OPERATIONAL STATUS
+  // =====================================================
+
+  private updateOperationalStatus(): void {
+
+    if (this.riskScore >= 80) {
+
+      this.activeAlerts = 3;
+
+      this.affectedVillages = 6;
+
+      this.affectedRoads = 5;
+
+      return;
+
+    }
+
+
+    if (this.riskScore >= 61) {
+
+      this.activeAlerts = 2;
+
+      this.affectedVillages = 4;
+
+      this.affectedRoads = 3;
+
+      return;
+
+    }
+
+
+    if (this.riskScore >= 31) {
+
+      this.activeAlerts = 1;
+
+      this.affectedVillages = 2;
+
+      this.affectedRoads = 2;
+
+      return;
+
+    }
+
+
+    this.activeAlerts = 0;
+
+    this.affectedVillages = 0;
+
+    this.affectedRoads = 1;
+
+  }
+
+
+  // =====================================================
+  // LEAD TIME
+  // =====================================================
+
+  private calculateLeadTime(): string {
+
+    if (this.riskScore >= 80) {
+
+      return '1h 30m';
+
+    }
+
+    if (this.riskScore >= 61) {
+
+      return '2h 40m';
+
+    }
+
+    if (this.riskScore >= 31) {
+
+      return '4h 10m';
+
+    }
+
+    return '6h+';
 
   }
 
@@ -332,25 +818,17 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getLocation(): string {
 
-    const parts: string[] = [];
+    if (
+      this.district &&
+      this.district.toLowerCase()
+        .includes('rudraprayag')
+    ) {
 
-    if (this.tehsil) {
-      parts.push(this.tehsil);
+      return `${this.district}, ${this.state || 'Uttarakhand'}`;
+
     }
 
-    if (this.district) {
-      parts.push(this.district);
-    }
-
-    if (this.state) {
-      parts.push(this.state);
-    }
-
-    if (parts.length > 0) {
-      return parts.join(', ');
-    }
-
-    return 'Mandakini Micro-Catchment';
+    return 'Mandakini Micro-Catchment, Rudraprayag, Uttarakhand';
 
   }
 
@@ -362,11 +840,15 @@ export class Dashboard implements OnInit, OnDestroy {
   getGreeting(): string {
 
     if (!this.fullName) {
+
       return 'Welcome to AquaSentinel';
+
     }
 
     const firstName =
-      this.fullName.trim().split(' ')[0];
+      this.fullName
+        .trim()
+        .split(' ')[0];
 
     return `Welcome back, ${firstName}`;
 
@@ -380,11 +862,16 @@ export class Dashboard implements OnInit, OnDestroy {
   getSensorHealth(): number {
 
     if (this.totalSensors <= 0) {
+
       return 0;
+
     }
 
     return Math.round(
-      (this.activeSensors / this.totalSensors) * 100
+      (
+        this.activeSensors /
+        this.totalSensors
+      ) * 100
     );
 
   }
@@ -396,16 +883,28 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getRiskStatus(): string {
 
+    if (!this.modelConnected) {
+
+      return 'UNAVAILABLE';
+
+    }
+
     if (this.riskScore >= 80) {
+
       return 'CRITICAL';
+
     }
 
     if (this.riskScore >= 61) {
+
       return 'HIGH';
+
     }
 
     if (this.riskScore >= 31) {
+
       return 'MODERATE';
+
     }
 
     return 'LOW';
@@ -419,19 +918,91 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getRiskClass(): string {
 
+    if (!this.modelConnected) {
+
+      return 'unavailable';
+
+    }
+
     if (this.riskScore >= 80) {
+
       return 'critical';
+
     }
 
     if (this.riskScore >= 61) {
+
       return 'high';
+
     }
 
     if (this.riskScore >= 31) {
+
       return 'moderate';
+
     }
 
     return 'low';
+
+  }
+
+
+  // =====================================================
+  // RISK EXPLANATION
+  // =====================================================
+
+  getRiskExplanation(): string {
+
+    if (!this.modelConnected) {
+
+      return 'Live ML risk engine is currently unavailable. Showing the latest pilot-region assessment.';
+
+    }
+
+    if (this.topFactors.length > 0) {
+
+      return `The risk assessment identifies ${this.topFactors
+        .slice(0, 3)
+        .join(', ')} as important contributing factors.`;
+
+    }
+
+    return 'Risk assessment combines terrain and environmental conditions.';
+
+  }
+
+
+  // =====================================================
+  // RECOMMENDED ACTION
+  // =====================================================
+
+  getRecommendedAction(): string {
+
+    if (!this.modelConnected) {
+
+      return 'Continue monitoring and verify the live risk engine before operational decisions.';
+
+    }
+
+    if (this.riskScore >= 81) {
+
+      return 'Immediate field verification and evacuation readiness recommended.';
+
+    }
+
+    if (this.riskScore >= 61) {
+
+      return 'Inspect vulnerable roads and prepare local response teams.';
+
+    }
+
+    if (this.riskScore >= 31) {
+
+      return 'Continue monitoring rainfall, terrain and drainage conditions.';
+
+    }
+
+    return 'Continue routine monitoring.';
 
   }
 
@@ -441,7 +1012,23 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   openDataAnalysis(): void {
-    this.router.navigate(['/data-analysis']);
+
+    /*
+     * Prevent unnecessary second navigation.
+     */
+
+    if (
+      this.router.url === '/data-analysis'
+    ) {
+
+      return;
+
+    }
+
+    this.router.navigateByUrl(
+      '/data-analysis'
+    );
+
   }
 
 
@@ -450,7 +1037,19 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   openRiskMap(): void {
-    this.router.navigate(['/risk-map']);
+
+    if (
+      this.router.url === '/risk-map'
+    ) {
+
+      return;
+
+    }
+
+    this.router.navigateByUrl(
+      '/risk-map'
+    );
+
   }
 
 
@@ -459,7 +1058,19 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   openAlerts(): void {
-    this.router.navigate(['/alerts']);
+
+    if (
+      this.router.url === '/alerts'
+    ) {
+
+      return;
+
+    }
+
+    this.router.navigateByUrl(
+      '/alerts'
+    );
+
   }
 
 
@@ -468,7 +1079,19 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   openReplay(): void {
-    this.router.navigate(['/replay']);
+
+    if (
+      this.router.url === '/replay'
+    ) {
+
+      return;
+
+    }
+
+    this.router.navigateByUrl(
+      '/replay'
+    );
+
   }
 
 
@@ -478,19 +1101,25 @@ export class Dashboard implements OnInit, OnDestroy {
 
   triggerSOS(): void {
 
-    // Cancel previous redirect timer
     if (this.sosTimer) {
-      clearTimeout(this.sosTimer);
+
+      clearTimeout(
+        this.sosTimer
+      );
+
       this.sosTimer = undefined;
+
     }
 
-    // Reset everything
+
     this.sosPassword = '';
+
     this.sosPasswordError = '';
+
     this.sosVerifying = false;
+
     this.sosMessageVisible = false;
 
-    // Open centered password overlay
     this.showSOSPasswordModal = true;
 
   }
@@ -505,7 +1134,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const enteredPassword =
       this.sosPassword.trim();
 
-    // Empty password
+
     if (!enteredPassword) {
 
       this.sosPasswordError =
@@ -515,12 +1144,16 @@ export class Dashboard implements OnInit, OnDestroy {
 
     }
 
+
     this.sosVerifying = true;
+
     this.sosPasswordError = '';
 
 
-    // Correct password
-    if (enteredPassword === this.SOS_PASSWORD) {
+    if (
+      enteredPassword ===
+      this.SOS_PASSWORD
+    ) {
 
       this.sosVerifying = false;
 
@@ -530,25 +1163,25 @@ export class Dashboard implements OnInit, OnDestroy {
 
       this.sosPasswordError = '';
 
-      // Show existing notification
       this.sosMessageVisible = true;
 
 
-      // Redirect after 3 seconds
-      this.sosTimer = setTimeout(() => {
+      this.sosTimer =
+        setTimeout(() => {
 
-        this.sosMessageVisible = false;
+          this.sosMessageVisible = false;
 
-        this.router.navigate(['/emergency']);
+          this.router.navigateByUrl(
+            '/emergency'
+          );
 
-      }, 3000);
+        }, 3000);
 
       return;
 
     }
 
 
-    // Wrong password
     this.sosVerifying = false;
 
     this.sosPasswordError =
@@ -584,7 +1217,9 @@ export class Dashboard implements OnInit, OnDestroy {
 
     if (this.sosTimer) {
 
-      clearTimeout(this.sosTimer);
+      clearTimeout(
+        this.sosTimer
+      );
 
       this.sosTimer = undefined;
 

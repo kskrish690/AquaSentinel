@@ -14,12 +14,10 @@
       (click)="$event.stopPropagation()"
     >
 
-      <!-- LOCK ICON -->
       <div class="sos-lock-icon">
         🔐
       </div>
 
-      <!-- TITLE -->
       <h2>SOS Authorization</h2>
 
       <p class="sos-modal-text">
@@ -27,7 +25,6 @@
         authorized confirmation.
       </p>
 
-      <!-- PASSWORD FORM -->
       <form
         class="sos-form"
         (ngSubmit)="verifySOSPassword()"
@@ -48,7 +45,6 @@
           autofocus
         />
 
-        <!-- ERROR MESSAGE -->
         <div
           class="sos-error"
           *ngIf="sosPasswordError"
@@ -56,7 +52,6 @@
           {{ sosPasswordError }}
         </div>
 
-        <!-- BUTTONS -->
         <div class="sos-modal-buttons">
 
           <button
@@ -73,14 +68,17 @@
             class="sos-confirm"
             [disabled]="sosVerifying"
           >
-            {{ sosVerifying ? 'Verifying...' : 'Activate SOS' }}
+            {{
+              sosVerifying
+                ? 'Verifying...'
+                : 'Activate SOS'
+            }}
           </button>
 
         </div>
 
       </form>
 
-      <!-- SECURITY NOTE -->
       <div class="sos-security">
         🔒 Authorized personnel only
       </div>
@@ -137,6 +135,7 @@
   <div class="dashboard-grid"></div>
 
   <div class="ambient-glow glow-left"></div>
+
   <div class="ambient-glow glow-right"></div>
 
 
@@ -169,7 +168,6 @@
 
     <div class="header-right">
 
-      <!-- SOS -->
       <button
         type="button"
         class="sos-button"
@@ -179,7 +177,6 @@
       </button>
 
 
-      <!-- USER -->
       <div class="user-card">
 
         <div class="user-avatar">
@@ -207,7 +204,6 @@
       </div>
 
 
-      <!-- LOGOUT -->
       <button
         type="button"
         class="logout-button"
@@ -277,16 +273,27 @@
 
     <div class="system-health">
 
-      <span class="health-indicator"></span>
+      <span
+        class="health-indicator"
+        [class.offline]="!modelConnected"
+      ></span>
 
       <div>
 
         <span class="context-label">
-          SYSTEM
+          ML ENGINE
         </span>
 
         <strong>
-          Operational
+
+          {{
+            modelLoading
+              ? 'Analysing...'
+              : modelConnected
+                ? 'Connected'
+                : 'Offline'
+          }}
+
         </strong>
 
       </div>
@@ -304,6 +311,7 @@
 
 
     <!-- CURRENT RISK -->
+
     <div class="kpi-card risk-card">
 
       <div class="kpi-top">
@@ -322,7 +330,11 @@
       <div class="kpi-value">
 
         <strong>
-          {{ riskScore }}
+          {{
+            modelLoading
+              ? '--'
+              : riskScore
+          }}
         </strong>
 
         <span>
@@ -349,56 +361,32 @@
 
       </div>
 
-    </div>
-
-
-    <!-- RAINFALL -->
-    <div class="kpi-card">
-
-      <div class="kpi-top">
-
-        <span class="kpi-label">
-          RAINFALL
-        </span>
-
-        <span class="kpi-icon">
-          ≋
-        </span>
-
-      </div>
-
-
-      <div class="kpi-value">
-
-        <strong>
-          {{ rainfall }}
-        </strong>
-
-        <span>
-          mm
-        </span>
-
-      </div>
-
 
       <p class="kpi-description">
-        Recent accumulated rainfall
+
+        {{
+          modelLoading
+            ? 'Running ML prediction...'
+            : 'AquaSentinel ML risk score'
+        }}
+
       </p>
 
     </div>
 
 
-    <!-- SOIL WETNESS -->
+    <!-- FLOOD PROBABILITY -->
+
     <div class="kpi-card">
 
       <div class="kpi-top">
 
         <span class="kpi-label">
-          SOIL WETNESS
+          FLOOD PROBABILITY
         </span>
 
         <span class="kpi-icon">
-          ◌
+          ◉
         </span>
 
       </div>
@@ -407,7 +395,14 @@
       <div class="kpi-value">
 
         <strong>
-          {{ soilWetness }}
+
+          {{
+            modelLoading
+              ? '--'
+              : floodProbability * 100
+                | number:'1.0-0'
+          }}
+
         </strong>
 
         <span>
@@ -417,33 +412,58 @@
       </div>
 
 
-      <div class="circular-mini">
+      <p class="kpi-description">
+        ML-estimated flood probability
+      </p>
 
-        <svg viewBox="0 0 40 40">
+    </div>
 
-          <circle
-            cx="20"
-            cy="20"
-            r="16"
-            class="circle-bg"
-          ></circle>
 
-          <circle
-            cx="20"
-            cy="20"
-            r="16"
-            class="circle-value"
-            [style.stroke-dashoffset]="100 - soilWetness"
-          ></circle>
+    <!-- MODEL CONFIDENCE -->
 
-        </svg>
+    <div class="kpi-card">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">
+          MODEL CONFIDENCE
+        </span>
+
+        <span class="kpi-icon">
+          ◎
+        </span>
 
       </div>
+
+
+      <div class="kpi-value">
+
+        <strong>
+
+          {{
+            modelLoading
+              ? '--'
+              : confidence
+          }}
+
+        </strong>
+
+        <span>
+          %
+        </span>
+
+      </div>
+
+
+      <p class="kpi-description">
+        Prediction confidence
+      </p>
 
     </div>
 
 
     <!-- SENSOR HEALTH -->
+
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -490,6 +510,7 @@
 
 
     <!-- AFFECTED VILLAGES -->
+
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -522,6 +543,7 @@
 
 
     <!-- LEAD TIME -->
+
     <div class="kpi-card">
 
       <div class="kpi-top">
@@ -547,7 +569,7 @@
 
 
       <p class="kpi-description">
-        Before expected escalation
+        Indicative time before escalation
       </p>
 
     </div>
@@ -563,6 +585,7 @@
 
 
     <!-- RISK OVERVIEW -->
+
     <div class="panel risk-overview">
 
       <div class="panel-header">
@@ -570,7 +593,7 @@
         <div>
 
           <span class="panel-eyebrow">
-            LOCALIZED RISK ENGINE
+            AQUASENTINEL ML ENGINE
           </span>
 
           <h2>
@@ -581,7 +604,15 @@
 
 
         <span class="panel-time">
-          LIVE
+
+          {{
+            modelLoading
+              ? 'ANALYSING'
+              : modelConnected
+                ? 'ML CONNECTED'
+                : 'OFFLINE'
+          }}
+
         </span>
 
       </div>
@@ -597,7 +628,13 @@
             <div class="large-risk-inner">
 
               <strong>
-                {{ riskScore }}
+
+                {{
+                  modelLoading
+                    ? '--'
+                    : riskScore
+                }}
+
               </strong>
 
               <span>
@@ -620,9 +657,7 @@
             </h3>
 
             <p>
-              Risk assessment combines rainfall,
-              soil wetness, terrain exposure and
-              drainage vulnerability.
+              {{ getRiskExplanation() }}
             </p>
 
           </div>
@@ -630,7 +665,7 @@
         </div>
 
 
-        <!-- RISK FACTORS -->
+        <!-- ML FACTORS -->
 
         <div class="risk-factors">
 
@@ -642,11 +677,11 @@
             <div class="factor-info">
 
               <span>
-                Rainfall intensity
+                Rainfall
               </span>
 
               <strong>
-                82%
+                {{ rainfall }} mm
               </strong>
 
             </div>
@@ -656,7 +691,11 @@
 
               <div
                 class="factor-fill rainfall"
-                style="width:82%"
+                [style.width.%]="
+                  rainfall > 100
+                    ? 100
+                    : rainfall
+                "
               ></div>
 
             </div>
@@ -700,7 +739,7 @@
             <div class="factor-info">
 
               <span>
-                Terrain exposure
+                Terrain susceptibility
               </span>
 
               <strong>
@@ -749,6 +788,7 @@
             </div>
 
           </div>
+
 
         </div>
 
@@ -941,6 +981,44 @@
       <div class="environment-grid">
 
 
+        <!-- RAINFALL -->
+
+        <div class="environment-item">
+
+          <div class="environment-top">
+
+            <span>
+              Rainfall
+            </span>
+
+            <strong>
+              {{ rainfall }} mm
+            </strong>
+
+          </div>
+
+
+          <div class="environment-track">
+
+            <div
+              class="environment-fill rainfall-fill"
+              [style.width.%]="
+                rainfall > 100
+                  ? 100
+                  : rainfall
+              "
+            ></div>
+
+          </div>
+
+
+          <small>
+            ML prediction input
+          </small>
+
+        </div>
+
+
         <!-- SOIL -->
 
         <div class="environment-item">
@@ -969,7 +1047,7 @@
 
 
           <small>
-            Wetness condition
+            Supporting indicator
           </small>
 
         </div>
@@ -1003,7 +1081,7 @@
 
 
           <small>
-            Exposure factor
+            ML terrain susceptibility
           </small>
 
         </div>
@@ -1037,7 +1115,7 @@
 
 
           <small>
-            Vulnerability
+            Supporting indicator
           </small>
 
         </div>
@@ -1104,12 +1182,12 @@
 
 
         <div class="map-label label-two">
-          Zone B
+          Silli
         </div>
 
 
         <div class="map-label label-three">
-          R-12
+          Agastyamuni
         </div>
 
 
@@ -1122,6 +1200,10 @@
           <strong>
             Mandakini Micro-Catchment
           </strong>
+
+          <small>
+            Rudraprayag, Uttarakhand
+          </small>
 
         </div>
 
@@ -1142,11 +1224,19 @@
     <div class="status-block">
 
       <span>
-        DATA FRESHNESS
+        ML ENGINE
       </span>
 
       <strong>
-        Live observations available
+
+        {{
+          modelLoading
+            ? 'Analysing'
+            : modelConnected
+              ? 'Connected'
+              : 'Offline'
+        }}
+
       </strong>
 
     </div>
@@ -1159,7 +1249,11 @@
       </span>
 
       <strong>
-        {{ confidence }}%
+        {{
+          modelLoading
+            ? '--'
+            : confidence
+        }}%
       </strong>
 
     </div>
@@ -1185,11 +1279,12 @@
       </span>
 
       <strong>
-        2 min ago
+        {{ lastUpdated }}
       </strong>
 
     </div>
 
   </section>
+
 
 </main>

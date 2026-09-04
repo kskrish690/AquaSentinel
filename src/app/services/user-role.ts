@@ -16,8 +16,8 @@ export interface AquaUser {
 })
 export class UserRoleService {
 
-  private readonly USER_KEY = 'aquasentinalUser';
-  private readonly SESSION_KEY = 'aquasentinalSession';
+  private readonly USER_KEY = 'AquaSentinalUser';
+  private readonly SESSION_KEY = 'AquaSentinalSession';
 
 
   // =========================

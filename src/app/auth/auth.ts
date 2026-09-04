@@ -137,7 +137,7 @@ export class Auth {
 
           alert(
             'Unable to connect to the authentication server. ' +
-            'Please make sure the aquasentinal backend is running.'
+            'Please make sure the AquaSentinal backend is running.'
           );
 
         } else {
@@ -293,7 +293,7 @@ export class Auth {
 
           alert(
             'Unable to connect to the authentication server. ' +
-            'Please make sure the aquasentinal backend is running.'
+            'Please make sure the AquaSentinal backend is running.'
           );
 
         } else {

@@ -2126,3 +2126,223 @@
   }
 
 }
+/* =====================================================
+   GLOBAL FONT SIZE BOOST
+   Keeps the existing AquaSentinel design
+   but makes everything much clearer
+   ===================================================== */
+
+/* Main dashboard text */
+.dashboard-page {
+  font-size: 14px;
+}
+
+/* Header */
+.system-label {
+  font-size: 11px;
+}
+
+.dashboard-header h1 {
+  font-size: clamp(32px, 3.2vw, 46px);
+}
+
+.header-left p {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* User card */
+.user-details strong {
+  font-size: 13px;
+}
+
+.user-details span {
+  font-size: 11px;
+}
+
+/* Buttons */
+.sos-button {
+  font-size: 15px;
+}
+
+.logout-button {
+  font-size: 12px;
+}
+
+/* Context bar */
+.context-label {
+  font-size: 10px;
+}
+
+.context-item strong,
+.system-health strong {
+  font-size: 13px;
+}
+
+/* KPI cards */
+.kpi-label {
+  font-size: 10px;
+}
+
+.kpi-icon {
+  font-size: 16px;
+}
+
+.kpi-value strong {
+  font-size: 34px;
+}
+
+.kpi-value span {
+  font-size: 11px;
+}
+
+.kpi-description {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* Risk status */
+.risk-status {
+  font-size: 9px;
+}
+
+/* Main panels */
+.panel-eyebrow {
+  font-size: 9px;
+}
+
+.panel-header h2 {
+  font-size: 20px;
+}
+
+.panel-time,
+.alert-count {
+  font-size: 9px;
+}
+
+.panel-link {
+  font-size: 11px;
+}
+
+/* Risk overview */
+.large-risk-label {
+  font-size: 9px;
+}
+
+.large-risk h3 {
+  font-size: 25px;
+}
+
+.large-risk p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* Risk factors */
+.factor-info span,
+.factor-info strong {
+  font-size: 11px;
+}
+
+/* Action centre */
+.action-number {
+  font-size: 10px;
+}
+
+.action-tag {
+  font-size: 8px;
+}
+
+.action-content strong {
+  font-size: 12px;
+}
+
+.action-content p {
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.action-arrow {
+  font-size: 17px;
+}
+
+.action-button {
+  font-size: 11px;
+}
+
+/* Environment */
+.environment-top span {
+  font-size: 10px;
+}
+
+.environment-top strong {
+  font-size: 11px;
+}
+
+.environment-item small {
+  font-size: 9px;
+}
+
+/* Map */
+.map-label {
+  font-size: 8px;
+}
+
+.map-overlay span {
+  font-size: 8px;
+}
+
+.map-overlay strong {
+  font-size: 10px;
+}
+
+/* Bottom status */
+.status-block span {
+  font-size: 8px;
+}
+
+.status-block strong {
+  font-size: 10px;
+}
+
+/* SOS modal */
+.sos-password-modal h2 {
+  font-size: 24px;
+}
+
+.sos-modal-text {
+  font-size: 12px;
+}
+
+.sos-form label {
+  font-size: 10px;
+}
+
+.sos-form input {
+  font-size: 14px;
+}
+
+.sos-error {
+  font-size: 10px;
+}
+
+.sos-modal-buttons button {
+  font-size: 11px;
+}
+
+.sos-security {
+  font-size: 9px;
+}
+
+/* SOS notification */
+.sos-notification-content strong {
+  font-size: 13px;
+}
+
+.sos-notification-content span {
+  font-size: 11px;
+}
+
+.sos-notification-content small {
+  font-size: 9px;
+}

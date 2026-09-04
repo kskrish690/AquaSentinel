@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "aquasentinal": {
+    "AquaSentinal": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "aquasentinal:build:production"
+              "buildTarget": "AquaSentinal:build:production"
             },
             "development": {
-              "buildTarget": "aquasentinal:build:development"
+              "buildTarget": "AquaSentinal:build:development"
             }
           },
           "defaultConfiguration": "development"
