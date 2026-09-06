@@ -14,14 +14,21 @@ import {
   FloodPredictionResponse
 } from '../services/risk-api.service';
 
+import {
+  EmergencyApiService
+} from '../services/emergency-api.service';
+
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+
   imports: [
     CommonModule,
     RouterLink,
     FormsModule
   ],
+
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -66,11 +73,8 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
 
   /*
-   * IMPORTANT:
-   *
-   * These values allow the Dashboard to render immediately.
-   * FastAPI updates them in the background after the page
-   * has already appeared.
+   * These values allow the Dashboard to render
+   * immediately before the ML API responds.
    */
 
   riskScore = 32;
@@ -93,10 +97,6 @@ export class Dashboard implements OnInit, OnDestroy {
     'antecedent wetness'
   ];
 
-  /*
-   * Start with usable dashboard state instead of showing
-   * "Calculating..." while Angular waits for FastAPI.
-   */
   modelConnected = true;
 
   modelLoading = false;
@@ -113,11 +113,6 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
   // ENVIRONMENTAL DATA
   // =====================================================
-
-  /*
-   * These are the initial pilot-region values.
-   * FastAPI/weather data can update them later.
-   */
 
   rainfall = 2.8;
 
@@ -199,7 +194,8 @@ export class Dashboard implements OnInit, OnDestroy {
   constructor(
     private userRoleService: UserRoleService,
     private router: Router,
-    private riskApiService: RiskApiService
+    private riskApiService: RiskApiService,
+    private emergencyApiService: EmergencyApiService
   ) {}
 
 
@@ -209,22 +205,13 @@ export class Dashboard implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    /*
-     * Load everything required for the visible Dashboard
-     * immediately.
-     */
-
     this.loadUser();
 
     this.loadRole();
 
     /*
-     * IMPORTANT:
-     *
-     * Do NOT wait for FastAPI before rendering the Dashboard.
-     *
-     * The page already has pilot values above.
-     * FastAPI will update them in the background.
+     * Do not wait for the ML API before displaying
+     * the Dashboard.
      */
 
     setTimeout(() => {
@@ -244,7 +231,9 @@ export class Dashboard implements OnInit, OnDestroy {
 
     if (this.sosTimer) {
 
-      clearTimeout(this.sosTimer);
+      clearTimeout(
+        this.sosTimer
+      );
 
       this.sosTimer = undefined;
 
@@ -408,9 +397,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private loadMLPrediction(): void {
 
-    /*
-     * Prevent duplicate API calls.
-     */
     if (this.predictionInProgress) {
 
       return;
@@ -418,22 +404,6 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     this.predictionInProgress = true;
-
-    /*
-     * IMPORTANT:
-     *
-     * We intentionally DO NOT set:
-     *
-     * modelLoading = true
-     * riskScore = 0
-     * riskLevel = ANALYSING
-     *
-     * because that was the reason the Dashboard initially
-     * showed Calculating / Analysing.
-     *
-     * The existing values remain visible while FastAPI
-     * updates them.
-     */
 
     this.modelError = '';
 
@@ -454,12 +424,6 @@ export class Dashboard implements OnInit, OnDestroy {
       slope:
         this.slope,
 
-      /*
-       * IMPORTANT:
-       * Use the current Dashboard rainfall value.
-       *
-       * Previously this was 0.
-       */
       rainfall:
         this.rainfall,
 
@@ -495,11 +459,7 @@ export class Dashboard implements OnInit, OnDestroy {
           );
 
           /*
-           * IMPORTANT:
-           *
-           * Keep the already-visible pilot data.
-           *
-           * Do NOT wipe the Dashboard back to zero.
+           * Keep the existing pilot values visible.
            */
 
           this.modelLoading = false;
@@ -1013,10 +973,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
   openDataAnalysis(): void {
 
-    /*
-     * Prevent unnecessary second navigation.
-     */
-
     if (
       this.router.url === '/data-analysis'
     ) {
@@ -1135,6 +1091,10 @@ export class Dashboard implements OnInit, OnDestroy {
       this.sosPassword.trim();
 
 
+    // ===================================================
+    // EMPTY PASSWORD
+    // ===================================================
+
     if (!enteredPassword) {
 
       this.sosPasswordError =
@@ -1150,48 +1110,130 @@ export class Dashboard implements OnInit, OnDestroy {
     this.sosPasswordError = '';
 
 
+    // ===================================================
+    // PASSWORD VALIDATION
+    // ===================================================
+
     if (
-      enteredPassword ===
+      enteredPassword !==
       this.SOS_PASSWORD
     ) {
 
       this.sosVerifying = false;
 
-      this.showSOSPasswordModal = false;
-
-      this.sosPassword = '';
-
-      this.sosPasswordError = '';
-
-      this.sosMessageVisible = true;
-
-
-      this.sosTimer =
-        setTimeout(() => {
-
-          this.sosMessageVisible = false;
-
-          this.router.navigateByUrl(
-            '/emergency'
-          );
-
-        }, 3000);
+      this.sosPasswordError =
+        'Incorrect SOS authorization password. SOS not activated.';
 
       return;
 
     }
 
 
+    // ===================================================
+    // PASSWORD CORRECT
+    // ===================================================
+
+    this.showSOSPasswordModal = false;
+
+    this.sosPassword = '';
+
+    this.sosPasswordError = '';
+
+    this.sosMessageVisible = true;
+
+
+    // ===================================================
+    // REMOTE SOS NOTIFICATION
+    //
+    // LAPTOP
+    //    ↓
+    // RAILWAY BACKEND
+    //    ↓
+    // FIREBASE ADMIN
+    //    ↓
+    // FCM
+    //    ↓
+    // PHONE
+    // ===================================================
+
+    this.emergencyApiService
+      .triggerSOS({
+
+        source:
+          'District Control Room',
+
+        location:
+          this.getLocation(),
+
+        riskScore:
+          this.riskScore,
+
+        riskLevel:
+          this.riskLevel,
+
+        timestamp:
+          new Date().toISOString()
+
+      })
+      .subscribe({
+
+        next: (response) => {
+
+          console.log(
+            '🚨 AquaSentinel SOS notification sent:',
+            response
+          );
+
+          this.sosMessage =
+            'SOS activated. Emergency response units and registered phones have been alerted.';
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '❌ AquaSentinel SOS notification failed:',
+            error
+          );
+
+          /*
+           * Keep the SOS UI active even if the remote
+           * notification fails. The Emergency page
+           * will still open.
+           */
+
+          this.sosMessage =
+            'SOS activated. Emergency page opened, but phone notification could not be delivered.';
+
+        }
+
+      });
+
+
     this.sosVerifying = false;
 
-    this.sosPasswordError =
-      'Incorrect SOS authorization password. SOS not activated.';
+
+    // ===================================================
+    // OPEN EMERGENCY PAGE
+    // ===================================================
+
+    this.sosTimer =
+      setTimeout(() => {
+
+        this.sosMessageVisible = false;
+
+        this.router.navigateByUrl(
+          '/emergency'
+        );
+
+      }, 3000);
 
   }
 
 
   // =====================================================
-  // CANCEL SOS
+  // CANCEL SOS AUTHORIZATION
   // =====================================================
 
   cancelSOSAuthorization(): void {

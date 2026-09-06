@@ -8,8 +8,11 @@ import { Observable } from 'rxjs';
 })
 export class EmergencyApiService {
 
+  private readonly API_BASE_URL =
+    'https://airy-respect-production-9e05.up.railway.app';
+
   private readonly API_URL =
-    'http://localhost:3000/api/emergency';
+    `${this.API_BASE_URL}/api/emergency`;
 
   private socket: Socket;
 
@@ -18,7 +21,7 @@ export class EmergencyApiService {
   ) {
 
     this.socket = io(
-      'http://localhost:3000',
+      this.API_BASE_URL,
       {
         transports: ['websocket', 'polling']
       }
@@ -104,6 +107,36 @@ export class EmergencyApiService {
 
     return this.http.post(
       `${this.API_URL}/close`,
+      data
+    );
+
+  }
+
+
+  // =====================================================
+  // REGISTER FIREBASE PUSH TOKEN
+  // =====================================================
+
+  registerPushToken(token: string): Observable<any> {
+
+    return this.http.post(
+      `${this.API_URL}/push/register`,
+      {
+        token
+      }
+    );
+
+  }
+
+
+  // =====================================================
+  // TRIGGER SOS PUSH NOTIFICATION
+  // =====================================================
+
+  triggerSOS(data: any = {}): Observable<any> {
+
+    return this.http.post(
+      `${this.API_URL}/push/sos`,
       data
     );
 

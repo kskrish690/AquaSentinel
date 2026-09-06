@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
+const emergencyRoutes = require('./routes/emergency');
 
 const app = express();
 
@@ -27,6 +28,16 @@ app.use(
 
 
 // ==========================================
+// EMERGENCY / FIREBASE PUSH ROUTES
+// ==========================================
+
+app.use(
+    '/api/emergency',
+    emergencyRoutes
+);
+
+
+// ==========================================
 // HEALTH CHECK
 // ==========================================
 
@@ -47,9 +58,12 @@ app.get('/api/health', (req, res) => {
 // START SERVER
 // ==========================================
 
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`AquaSentinal backend running on port ${PORT}`);
+
+    console.log(
+        `AquaSentinal backend running on port ${PORT}`
+    );
+
 });
