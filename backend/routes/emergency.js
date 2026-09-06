@@ -14,30 +14,35 @@ const router = express.Router();
 
 
 // =====================================================
-// FIREBASE ADMIN INITIALIZATION
+// FIREBASE INITIALIZATION
 // =====================================================
 
 if (getApps().length === 0) {
     initializeApp({
         credential: cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            projectId:
+                process.env.FIREBASE_PROJECT_ID,
+
+            clientEmail:
+                process.env.FIREBASE_CLIENT_EMAIL,
+
             privateKey:
-                process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+                process.env.FIREBASE_PRIVATE_KEY
+                    ?.replace(/\\n/g, '\n')
         })
     });
 }
 
 
 // =====================================================
-// STORE REGISTERED PHONE TOKENS
+// REGISTERED PHONE DEVICES
 // =====================================================
 
 const pushTokens = new Set();
 
 
 // =====================================================
-// REGISTER PHONE PUSH TOKEN
+// REGISTER PHONE FOR SOS NOTIFICATIONS
 // =====================================================
 
 router.post('/push/register', (req, res) => {
@@ -47,7 +52,8 @@ router.post('/push/register', (req, res) => {
     if (!token) {
         return res.status(400).json({
             success: false,
-            message: 'FCM token is required.'
+            message:
+                'FCM token is required.'
         });
     }
 
@@ -59,21 +65,26 @@ router.post('/push/register', (req, res) => {
 
     return res.json({
         success: true,
-        message: 'Phone notification registered successfully.'
+        message:
+            'Phone notification registered successfully.'
     });
-
 });
 
 
 // =====================================================
-// SEND SOS PUSH NOTIFICATION
+// SEND SOS NOTIFICATION
 // =====================================================
 
 router.post('/push/sos', async (req, res) => {
 
     try {
 
+        // -------------------------------------------------
+        // CHECK REGISTERED DEVICES
+        // -------------------------------------------------
+
         if (pushTokens.size === 0) {
+
             return res.status(400).json({
                 success: false,
                 message:
@@ -82,49 +93,59 @@ router.post('/push/sos', async (req, res) => {
         }
 
 
-        // =================================================
-        // GET DEPARTMENT FROM OFFICER REQUEST
-        // =================================================
+        // -------------------------------------------------
+        // SOS INFORMATION
+        // -------------------------------------------------
 
         const department =
             req.body.department ||
             'District Administration';
 
-
         const source =
             req.body.source ||
             'District Control Room';
 
-
         const location =
             req.body.location ||
             'Mandakini Micro-Catchment, Rudraprayag, Uttarakhand';
-
 
         const riskLevel =
             req.body.riskLevel ||
             'UNKNOWN';
 
 
-        // =================================================
-        // NOTIFICATION CONTENT
-        // =================================================
+        // -------------------------------------------------
+        // NOTIFICATION TITLE
+        // -------------------------------------------------
 
         const notificationTitle =
             '🚨 AquaSentinel SOS Alert';
 
 
-        const notificationBody =
-            `Sent by: ${department}. Emergency SOS has been activated from the ${source}.`;
+        // -------------------------------------------------
+        // NOTIFICATION MESSAGE
+        //
+        // THIS IS WHAT WILL BE WRITTEN
+        // DIRECTLY INSIDE THE PHONE NOTIFICATION.
+        // -------------------------------------------------
 
+        const notificationBody =
+            `🚨 SOS FROM: ${department}\n` +
+            `Location: ${location}\n` +
+            `Risk Level: ${riskLevel}`;
+
+
+        // -------------------------------------------------
+        // GET ALL REGISTERED TOKENS
+        // -------------------------------------------------
 
         const tokens =
             Array.from(pushTokens);
 
 
-        // =================================================
-        // FCM MESSAGE
-        // =================================================
+        // -------------------------------------------------
+        // FIREBASE MESSAGE
+        // -------------------------------------------------
 
         const message = {
 
@@ -135,9 +156,12 @@ router.post('/push/sos', async (req, res) => {
 
                 body:
                     notificationBody
-
             },
 
+
+            // -------------------------------------------------
+            // DATA PAYLOAD
+            // -------------------------------------------------
 
             data: {
 
@@ -158,9 +182,12 @@ router.post('/push/sos', async (req, res) => {
 
                 route:
                     '/emergency'
-
             },
 
+
+            // -------------------------------------------------
+            // WEB PUSH
+            // -------------------------------------------------
 
             webpush: {
 
@@ -194,9 +221,7 @@ router.post('/push/sos', async (req, res) => {
 
                         route:
                             '/emergency'
-
                     }
-
                 },
 
 
@@ -204,42 +229,39 @@ router.post('/push/sos', async (req, res) => {
 
                     link:
                         '/emergency'
-
                 }
-
             }
-
         };
 
 
-        // =================================================
-        // SEND TO ALL REGISTERED PHONES
-        // =================================================
+        // -------------------------------------------------
+        // SEND NOTIFICATION
+        // -------------------------------------------------
 
         const response =
             await getMessaging()
                 .sendEachForMulticast({
-
                     tokens,
-
                     ...message
-
                 });
 
+
+        // -------------------------------------------------
+        // LOG RESULT
+        // -------------------------------------------------
 
         console.log(
             `SOS notification sent: ${response.successCount} successful, ${response.failureCount} failed`
         );
-
 
         console.log(
             `SOS sent by department: ${department}`
         );
 
 
-        // =================================================
+        // -------------------------------------------------
         // REMOVE INVALID TOKENS
-        // =================================================
+        // -------------------------------------------------
 
         response.responses.forEach(
             (result, index) => {
@@ -263,22 +285,18 @@ router.post('/push/sos', async (req, res) => {
                             tokens[index]
                         );
 
-
                         console.log(
                             'Removed invalid FCM token from registered devices.'
                         );
-
                     }
-
                 }
-
             }
         );
 
 
-        // =================================================
-        // RESPONSE
-        // =================================================
+        // -------------------------------------------------
+        // SUCCESS RESPONSE
+        // -------------------------------------------------
 
         return res.json({
 
@@ -296,10 +314,14 @@ router.post('/push/sos', async (req, res) => {
 
             department:
                 department
-
         });
 
+
     } catch (error) {
+
+        // -------------------------------------------------
+        // ERROR HANDLING
+        // -------------------------------------------------
 
         console.error(
             'Firebase SOS notification error:',
@@ -317,11 +339,8 @@ router.post('/push/sos', async (req, res) => {
 
             error:
                 error.message
-
         });
-
     }
-
 });
 
 
