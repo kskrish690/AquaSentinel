@@ -8,16 +8,23 @@ import {
 } from '@angular/router';
 
 import { AuthService } from '../services/auth.service';
-import { UserRoleService, AquaUser } from '../services/user-role';
+import {
+  UserRoleService,
+  AquaUser
+} from '../services/user-role';
+
+import { NotificationService } from '../services/notification.services';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
     RouterLink
   ],
+
   templateUrl: './auth.html',
   styleUrl: './auth.css'
 })
@@ -29,11 +36,13 @@ export class Auth {
   showSignupPassword = false;
   showConfirmPassword = false;
 
+
   loginData = {
     email: '',
     password: '',
     remember: false
   };
+
 
   signupData = {
     fullName: '',
@@ -49,13 +58,16 @@ export class Auth {
     terms: false
   };
 
+
   loading = false;
+
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private userRoleService: UserRoleService
+    private userRoleService: UserRoleService,
+    private notificationService: NotificationService
   ) {
 
     this.route.queryParams.subscribe(params => {
@@ -71,20 +83,28 @@ export class Auth {
   }
 
 
-  // =========================
+  // =====================================================
   // LOGIN
-  // =========================
+  // =====================================================
 
   login(): void {
 
-    if (!this.loginData.email || !this.loginData.password) {
+    if (
+      !this.loginData.email ||
+      !this.loginData.password
+    ) {
 
-      alert('Please enter your official email and password.');
+      this.notificationService.warning(
+        'Please enter your official email and password.',
+        'Login Details Required'
+      );
 
       return;
     }
 
+
     this.loading = true;
+
 
     this.authService.login(
       this.loginData.email.trim(),
@@ -95,56 +115,79 @@ export class Auth {
 
         this.loading = false;
 
-        if (response.success && response.user) {
 
-          const user: AquaUser = response.user;
+        if (
+          response.success &&
+          response.user
+        ) {
 
-          // Store ONLY user profile information
+          const user: AquaUser =
+            response.user;
+
+
+          // Store user profile
           this.userRoleService.setUser(user);
+
 
           // Create login session
           this.userRoleService.createSession();
 
-          alert(`Welcome back, ${user.fullName}!`);
 
-          this.router.navigate(['/dashboard']);
+          this.notificationService.success(
+            `Welcome back, ${user.fullName}.`,
+            'Login Successful'
+          );
+
+
+          this.router.navigate([
+            '/dashboard'
+          ]);
 
         } else {
 
-          alert(
+          this.notificationService.error(
             response.message ||
-            'Login failed. Please try again.'
+            'Login failed. Please try again.',
+            'Login Failed'
           );
 
         }
 
       },
 
+
       error: (error) => {
 
         this.loading = false;
 
-        console.error('Login error:', error);
+
+        console.error(
+          'Login error:',
+          error
+        );
+
 
         if (error.status === 401) {
 
-          alert(
+          this.notificationService.error(
             error.error?.message ||
-            'Invalid official email or password.'
+            'Invalid official email or password.',
+            'Invalid Credentials'
           );
 
         } else if (error.status === 0) {
 
-          alert(
-            'Unable to connect to the authentication server. ' +
-            'Please make sure the AquaSentinal backend is running.'
+          this.notificationService.error(
+            'Unable to connect to the authentication server. Please try again.',
+            'Connection Failed'
           );
 
         } else {
 
-          alert(
+          this.notificationService.error(
             error.error?.message ||
-            'Something went wrong during login.'
+            'Something went wrong during login.',
+            'Login Error'
           );
 
         }
@@ -156,9 +199,9 @@ export class Auth {
   }
 
 
-  // =========================
+  // =====================================================
   // SIGNUP
-  // =========================
+  // =====================================================
 
   signup(): void {
 
@@ -173,7 +216,10 @@ export class Auth {
       !this.signupData.password
     ) {
 
-      alert('Please fill in all required fields.');
+      this.notificationService.warning(
+        'Please complete all required fields.',
+        'Required Information'
+      );
 
       return;
     }
@@ -184,7 +230,10 @@ export class Auth {
       this.signupData.confirmPassword
     ) {
 
-      alert('Passwords do not match.');
+      this.notificationService.error(
+        'The passwords you entered do not match.',
+        'Password Mismatch'
+      );
 
       return;
     }
@@ -192,18 +241,22 @@ export class Auth {
 
     if (!this.signupData.terms) {
 
-      alert(
-        'Please accept the terms and conditions to continue.'
+      this.notificationService.warning(
+        'Please accept the terms and conditions to continue.',
+        'Terms Required'
       );
 
       return;
     }
 
 
-    if (this.signupData.password.length < 6) {
+    if (
+      this.signupData.password.length < 6
+    ) {
 
-      alert(
-        'Password must be at least 6 characters long.'
+      this.notificationService.warning(
+        'Your password must contain at least 6 characters.',
+        'Password Too Short'
       );
 
       return;
@@ -212,23 +265,32 @@ export class Auth {
 
     const user = {
 
-      fullName: this.signupData.fullName.trim(),
+      fullName:
+        this.signupData.fullName.trim(),
 
-      mobile: this.signupData.mobile.trim(),
+      mobile:
+        this.signupData.mobile.trim(),
 
-      email: this.signupData.email.trim(),
+      email:
+        this.signupData.email.trim(),
 
-      designation: this.signupData.designation.trim(),
+      designation:
+        this.signupData.designation.trim(),
 
-      department: this.signupData.department.trim(),
+      department:
+        this.signupData.department.trim(),
 
-      state: this.signupData.state.trim(),
+      state:
+        this.signupData.state.trim(),
 
-      district: this.signupData.district.trim(),
+      district:
+        this.signupData.district.trim(),
 
-      tehsil: this.signupData.tehsil.trim(),
+      tehsil:
+        this.signupData.tehsil.trim(),
 
-      password: this.signupData.password
+      password:
+        this.signupData.password
 
     };
 
@@ -236,91 +298,109 @@ export class Auth {
     this.loading = true;
 
 
-    this.authService.register(user).subscribe({
+    this.authService
+      .register(user)
+      .subscribe({
 
-      next: (response) => {
+        next: (response) => {
 
-        this.loading = false;
+          this.loading = false;
 
-        if (response.success) {
 
-          alert(
-            'Account created successfully. Please login to continue.'
-          );
+          if (response.success) {
 
-          // Clear signup password fields
-          this.signupData.password = '';
-          this.signupData.confirmPassword = '';
+            this.notificationService.success(
+              'Your account has been created. Please sign in to continue.',
+              'Account Created'
+            );
 
-          // Switch to login
-          this.mode = 'login';
 
-          // Also update URL
-          this.router.navigate(
-            ['/auth'],
-            {
-              queryParams: {
-                mode: 'login'
+            // Clear passwords
+            this.signupData.password = '';
+            this.signupData.confirmPassword = '';
+
+
+            // Switch to login
+            this.mode = 'login';
+
+
+            // Update URL
+            this.router.navigate(
+              ['/auth'],
+              {
+                queryParams: {
+                  mode: 'login'
+                }
               }
-            }
+            );
+
+          } else {
+
+            this.notificationService.error(
+              response.message ||
+              'Unable to create your account.',
+              'Registration Failed'
+            );
+
+          }
+
+        },
+
+
+        error: (error) => {
+
+          this.loading = false;
+
+
+          console.error(
+            'Signup error:',
+            error
           );
 
-        } else {
 
-          alert(
-            response.message ||
-            'Unable to create account.'
-          );
+          if (error.status === 409) {
+
+            this.notificationService.warning(
+              error.error?.message ||
+              'An account with this email or mobile number already exists.',
+              'Account Already Exists'
+            );
+
+          } else if (error.status === 0) {
+
+            this.notificationService.error(
+              'Unable to connect to the authentication server. Please try again.',
+              'Connection Failed'
+            );
+
+          } else {
+
+            this.notificationService.error(
+              error.error?.message ||
+              'Something went wrong while creating your account.',
+              'Registration Error'
+            );
+
+          }
 
         }
 
-      },
-
-      error: (error) => {
-
-        this.loading = false;
-
-        console.error('Signup error:', error);
-
-        if (error.status === 409) {
-
-          alert(
-            error.error?.message ||
-            'An account with this email or mobile number already exists.'
-          );
-
-        } else if (error.status === 0) {
-
-          alert(
-            'Unable to connect to the authentication server. ' +
-            'Please make sure the AquaSentinal backend is running.'
-          );
-
-        } else {
-
-          alert(
-            error.error?.message ||
-            'Something went wrong while creating your account.'
-          );
-
-        }
-
-      }
-
-    });
+      });
 
   }
 
 
-  // =========================
+  // =====================================================
   // FORGOT PASSWORD
-  // =========================
+  // =====================================================
 
   forgotPassword(): void {
 
-    alert(
-      'Password recovery will be connected to the authentication backend.'
+    this.notificationService.info(
+      'Password recovery will be connected to the authentication backend.',
+      'Password Recovery'
     );
 
   }
+
 }

@@ -1,12 +1,107 @@
-<!-- NAVBAR: ONLY ON APP PAGES -->
-<app-navbar *ngIf="!isAuthPage"></app-navbar>
+<!-- =====================================================
+     NAVBAR
+     ===================================================== -->
+
+<app-navbar
+  *ngIf="!isAuthPage">
+</app-navbar>
 
 
-<!-- PAGE -->
+<!-- =====================================================
+     SOS NOTIFICATION ACTIVATION
+     ===================================================== -->
+
+<button
+  *ngIf="showNotificationButton && !isAuthPage"
+  type="button"
+  class="sos-notification-button"
+  (click)="enableSOSNotifications()"
+>
+  <span class="notification-button-icon">🔔</span>
+
+  <span>
+    Enable SOS Notifications
+  </span>
+</button>
+
+
+<!-- =====================================================
+     PREMIUM GLOBAL NOTIFICATION
+     ===================================================== -->
+
+<div
+  *ngIf="notification"
+  class="premium-notification"
+  [class.notification-success]="notification.type === 'success'"
+  [class.notification-error]="notification.type === 'error'"
+  [class.notification-warning]="notification.type === 'warning'"
+  [class.notification-info]="notification.type === 'info'"
+>
+
+  <div class="notification-icon">
+
+    <span *ngIf="notification.type === 'success'">
+      ✓
+    </span>
+
+    <span *ngIf="notification.type === 'error'">
+      !
+    </span>
+
+    <span *ngIf="notification.type === 'warning'">
+      !
+    </span>
+
+    <span *ngIf="notification.type === 'info'">
+      i
+    </span>
+
+  </div>
+
+
+  <div class="notification-content">
+
+    <div class="notification-title">
+      {{ notification.title }}
+    </div>
+
+    <div class="notification-message">
+      {{ notification.message }}
+    </div>
+
+  </div>
+
+
+  <button
+    type="button"
+    class="notification-close"
+    (click)="closeNotification()"
+    aria-label="Close notification"
+  >
+    ×
+  </button>
+
+
+  <div class="notification-progress"></div>
+
+</div>
+
+
+<!-- =====================================================
+     PAGE
+     ===================================================== -->
+
 <main class="page-content">
+
   <router-outlet></router-outlet>
+
 </main>
 
 
-<!-- FOOTER: ONLY ON APP PAGES -->
-<app-footer *ngIf="!isAuthPage"></app-footer>
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<app-footer
+  *ngIf="!isAuthPage">
+</app-footer>
