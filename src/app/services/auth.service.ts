@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
   private readonly API_URL =
-    'https://airy-respect-production-9971.up.railway.app/api/auth';
+  'https://airy-respect-production-9e05.up.railway.app/api/auth';
 
   constructor(private http: HttpClient) {}
 
