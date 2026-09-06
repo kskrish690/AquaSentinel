@@ -1154,6 +1154,9 @@ export class Dashboard implements OnInit, OnDestroy {
     // FCM
     //    ↓
     // PHONE
+    //
+    // The department of the currently logged-in
+    // officer is included in the SOS request.
     // ===================================================
 
     this.emergencyApiService
@@ -1161,6 +1164,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
         source:
           'District Control Room',
+
+        department:
+          this.department ||
+          'District Administration',
 
         location:
           this.getLocation(),

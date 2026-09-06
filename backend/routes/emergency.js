@@ -22,7 +22,8 @@ if (getApps().length === 0) {
         credential: cert({
             projectId: process.env.FIREBASE_PROJECT_ID,
             clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+            privateKey:
+                process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
         })
     });
 }
@@ -40,6 +41,7 @@ const pushTokens = new Set();
 // =====================================================
 
 router.post('/push/register', (req, res) => {
+
     const { token } = req.body;
 
     if (!token) {
@@ -59,6 +61,7 @@ router.post('/push/register', (req, res) => {
         success: true,
         message: 'Phone notification registered successfully.'
     });
+
 });
 
 
@@ -67,40 +70,145 @@ router.post('/push/register', (req, res) => {
 // =====================================================
 
 router.post('/push/sos', async (req, res) => {
+
     try {
+
         if (pushTokens.size === 0) {
             return res.status(400).json({
                 success: false,
-                message: 'No phone is registered for SOS notifications.'
+                message:
+                    'No phone is registered for SOS notifications.'
             });
         }
 
-        const tokens = Array.from(pushTokens);
+
+        // =================================================
+        // GET DEPARTMENT FROM OFFICER REQUEST
+        // =================================================
+
+        const department =
+            req.body.department ||
+            'District Administration';
+
+
+        const source =
+            req.body.source ||
+            'District Control Room';
+
+
+        const location =
+            req.body.location ||
+            'Mandakini Micro-Catchment, Rudraprayag, Uttarakhand';
+
+
+        const riskLevel =
+            req.body.riskLevel ||
+            'UNKNOWN';
+
+
+        // =================================================
+        // NOTIFICATION CONTENT
+        // =================================================
+
+        const notificationTitle =
+            '🚨 AquaSentinel SOS Alert';
+
+
+        const notificationBody =
+            `Sent by: ${department}. Emergency SOS has been activated from the ${source}.`;
+
+
+        const tokens =
+            Array.from(pushTokens);
+
+
+        // =================================================
+        // FCM MESSAGE
+        // =================================================
 
         const message = {
+
             notification: {
-                title: '🚨 AquaSentinel SOS Alert',
+
+                title:
+                    notificationTitle,
+
                 body:
-                    'Emergency SOS has been activated from the District Control Room.'
+                    notificationBody
+
             },
+
 
             data: {
-                type: 'SOS',
-                route: '/emergency'
+
+                type:
+                    'SOS',
+
+                department:
+                    String(department),
+
+                source:
+                    String(source),
+
+                location:
+                    String(location),
+
+                riskLevel:
+                    String(riskLevel),
+
+                route:
+                    '/emergency'
+
             },
 
+
             webpush: {
+
                 notification: {
-                    title: '🚨 AquaSentinel SOS Alert',
+
+                    title:
+                        notificationTitle,
+
                     body:
-                        'Emergency SOS has been activated from the District Control Room.',
-                    icon: '/favicon.ico'
+                        notificationBody,
+
+                    icon:
+                        '/favicon.ico',
+
+                    data: {
+
+                        type:
+                            'SOS',
+
+                        department:
+                            String(department),
+
+                        source:
+                            String(source),
+
+                        location:
+                            String(location),
+
+                        riskLevel:
+                            String(riskLevel),
+
+                        route:
+                            '/emergency'
+
+                    }
+
                 },
 
+
                 fcmOptions: {
-                    link: '/emergency'
+
+                    link:
+                        '/emergency'
+
                 }
+
             }
+
         };
 
 
@@ -108,10 +216,15 @@ router.post('/push/sos', async (req, res) => {
         // SEND TO ALL REGISTERED PHONES
         // =================================================
 
-        const response = await getMessaging().sendEachForMulticast({
-            tokens,
-            ...message
-        });
+        const response =
+            await getMessaging()
+                .sendEachForMulticast({
+
+                    tokens,
+
+                    ...message
+
+                });
 
 
         console.log(
@@ -119,33 +232,71 @@ router.post('/push/sos', async (req, res) => {
         );
 
 
+        console.log(
+            `SOS sent by department: ${department}`
+        );
+
+
         // =================================================
         // REMOVE INVALID TOKENS
         // =================================================
 
-        response.responses.forEach((result, index) => {
-            if (!result.success) {
-                const errorCode = result.error?.code || '';
+        response.responses.forEach(
+            (result, index) => {
 
-                if (
-                    errorCode.includes('registration-token-not-registered') ||
-                    errorCode.includes('invalid-registration-token')
-                ) {
-                    pushTokens.delete(tokens[index]);
+                if (!result.success) {
 
-                    console.log(
-                        'Removed invalid FCM token from registered devices.'
-                    );
+                    const errorCode =
+                        result.error?.code || '';
+
+
+                    if (
+                        errorCode.includes(
+                            'registration-token-not-registered'
+                        ) ||
+                        errorCode.includes(
+                            'invalid-registration-token'
+                        )
+                    ) {
+
+                        pushTokens.delete(
+                            tokens[index]
+                        );
+
+
+                        console.log(
+                            'Removed invalid FCM token from registered devices.'
+                        );
+
+                    }
+
                 }
-            }
-        });
 
+            }
+        );
+
+
+        // =================================================
+        // RESPONSE
+        // =================================================
 
         return res.json({
-            success: true,
-            message: 'SOS notification sent.',
-            sent: response.successCount,
-            failed: response.failureCount
+
+            success:
+                true,
+
+            message:
+                'SOS notification sent.',
+
+            sent:
+                response.successCount,
+
+            failed:
+                response.failureCount,
+
+            department:
+                department
+
         });
 
     } catch (error) {
@@ -155,12 +306,22 @@ router.post('/push/sos', async (req, res) => {
             error
         );
 
+
         return res.status(500).json({
-            success: false,
-            message: 'Failed to send SOS notification.',
-            error: error.message
+
+            success:
+                false,
+
+            message:
+                'Failed to send SOS notification.',
+
+            error:
+                error.message
+
         });
+
     }
+
 });
 
 
