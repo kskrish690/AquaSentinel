@@ -202,7 +202,7 @@ export class Replay implements OnInit {
 
 
       console.log(
-        'AquaSentinel historical API request:'
+        'AquaSentinal historical API request:'
       );
 
       console.log(url);
@@ -259,7 +259,7 @@ export class Replay implements OnInit {
 
 
       console.log(
-        'AquaSentinel historical weather response:',
+        'AquaSentinal historical weather response:',
         data
       );
 
@@ -286,7 +286,7 @@ export class Replay implements OnInit {
 
       /*
        * Convert API response into our
-       * AquaSentinel weather structure.
+       * AquaSentinal weather structure.
        */
 
       this.weatherData =
@@ -454,7 +454,7 @@ export class Replay implements OnInit {
 
 
       console.log(
-        'AquaSentinel replay loaded:',
+        'AquaSentinal replay loaded:',
         this.weatherData.length,
         'hourly records'
       );
@@ -463,7 +463,7 @@ export class Replay implements OnInit {
     } catch (error: any) {
 
       console.error(
-        'AquaSentinel historical weather error:',
+        'AquaSentinal historical weather error:',
         error
       );
 

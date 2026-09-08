@@ -350,7 +350,7 @@ export class AlertService {
     try {
 
       localStorage.setItem(
-        'aquasentinel_alerts',
+        'AquaSentinal_alerts',
         JSON.stringify(alerts)
       );
 
@@ -368,7 +368,7 @@ export class AlertService {
 
       const saved =
         localStorage.getItem(
-          'aquasentinel_alerts'
+          'AquaSentinal_alerts'
         );
 
       if (!saved) {
@@ -432,7 +432,7 @@ export class AlertService {
 
     const notification =
       new Notification(
-        `🚨 AquaSentinel ${alert.level} Alert`,
+        `🚨 AquaSentinal ${alert.level} Alert`,
         {
           body:
             `${alert.village}: Risk score ${alert.score}.\n` +
@@ -440,7 +440,7 @@ export class AlertService {
 
           icon: '/favicon.ico',
 
-          tag: `aquasentinel-${alert.village}`,
+          tag: `AquaSentinal-${alert.village}`,
 
           requireInteraction:
             alert.level === 'CRITICAL'
@@ -478,7 +478,7 @@ export class AlertService {
         .then(permission => {
 
           console.log(
-            'AquaSentinel notification permission:',
+            'AquaSentinal notification permission:',
             permission
           );
 

@@ -108,7 +108,7 @@ export class App {
 
 
       console.log(
-        'AquaSentinel FCM token received.'
+        'AquaSentinal FCM token received.'
       );
 
 
@@ -119,7 +119,7 @@ export class App {
           next: (response) => {
 
             console.log(
-              'Phone registered for AquaSentinel SOS:',
+              'Phone registered for AquaSentinal SOS:',
               response
             );
 

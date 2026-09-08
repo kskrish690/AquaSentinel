@@ -454,7 +454,7 @@ export class Dashboard implements OnInit, OnDestroy {
         error: (error) => {
 
           console.error(
-            'AquaSentinel Dashboard ML API error:',
+            'AquaSentinal Dashboard ML API error:',
             error
           );
 
@@ -801,7 +801,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
     if (!this.fullName) {
 
-      return 'Welcome to AquaSentinel';
+      return 'Welcome to AquaSentinal';
 
     }
 
@@ -1187,7 +1187,7 @@ export class Dashboard implements OnInit, OnDestroy {
         next: (response) => {
 
           console.log(
-            '🚨 AquaSentinel SOS notification sent:',
+            '🚨 AquaSentinal SOS notification sent:',
             response
           );
 
@@ -1200,7 +1200,7 @@ export class Dashboard implements OnInit, OnDestroy {
         error: (error) => {
 
           console.error(
-            '❌ AquaSentinel SOS notification failed:',
+            '❌ AquaSentinal SOS notification failed:',
             error
           );
 

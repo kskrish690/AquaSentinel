@@ -283,7 +283,7 @@ export class RiskMap
     /*
      * Ask browser for notification permission.
      *
-     * This allows AquaSentinel to show a browser
+     * This allows AquaSentinal to show a browser
      * notification when risk crosses above 70.
      */
     this.alertService.requestNotificationPermission();
@@ -1053,7 +1053,7 @@ export class RiskMap
     if (alert) {
 
       console.warn(
-        `🚨 AQUASENTINEL AUTOMATIC ALERT: ` +
+        `🚨 AquaSentinal AUTOMATIC ALERT: ` +
         `${zone.name} risk ${risk}`
       );
 

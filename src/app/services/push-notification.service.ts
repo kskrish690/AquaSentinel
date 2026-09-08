@@ -116,13 +116,13 @@ export class PushNotificationService {
         (payload) => {
 
           console.log(
-            '🚨 AquaSentinel foreground SOS received:',
+            '🚨 AquaSentinal foreground SOS received:',
             payload
           );
 
           const title =
             payload.notification?.title ||
-            '🚨 AquaSentinel SOS Alert';
+            '🚨 AquaSentinal SOS Alert';
 
           const body =
             payload.notification?.body ||
@@ -166,7 +166,7 @@ export class PushNotificationService {
       // =====================================================
 
       console.log(
-        'AquaSentinel push notifications are ready.'
+        'AquaSentinal push notifications are ready.'
       );
 
       return token;

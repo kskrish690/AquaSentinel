@@ -36,7 +36,7 @@ export class NotificationService {
       success: 'Success',
       error: 'Something went wrong',
       warning: 'Attention',
-      info: 'AquaSentinel'
+      info: 'AquaSentinal'
     };
 
     this.notificationSubject.next({
@@ -66,7 +66,7 @@ export class NotificationService {
     this.show(message, 'warning', title);
   }
 
-  info(message: string, title = 'AquaSentinel'): void {
+  info(message: string, title = 'AquaSentinal'): void {
     this.show(message, 'info', title);
   }
 

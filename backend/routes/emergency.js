@@ -119,7 +119,7 @@ router.post('/push/sos', async (req, res) => {
         // -------------------------------------------------
 
         const notificationTitle =
-            '🚨 AquaSentinel SOS Alert';
+            '🚨 AquaSentinal SOS Alert';
 
 
         // -------------------------------------------------

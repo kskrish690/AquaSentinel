@@ -7,9 +7,9 @@ importScripts(
 
 firebase.initializeApp({
   apiKey: "AIzaSyCQvCNUaJnX8IhyBHRJSbMZDDVIk0ccEq0",
-  authDomain: "aquasentinel-5b215.firebaseapp.com",
-  projectId: "aquasentinel-5b215",
-  storageBucket: "aquasentinel-5b215.firebasestorage.app",
+  authDomain: "AquaSentinal-5b215.firebaseapp.com",
+  projectId: "AquaSentinal-5b215",
+  storageBucket: "AquaSentinal-5b215.firebasestorage.app",
   messagingSenderId: "419886773980",
   appId: "1:419886773980:web:bb1909925cbc1e49712619"
 });
@@ -20,7 +20,7 @@ messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Background message:', payload);
 
   const notificationTitle =
-    payload.notification?.title || '🚨 AquaSentinel SOS Alert';
+    payload.notification?.title || '🚨 AquaSentinal SOS Alert';
 
   const notificationOptions = {
     body:
