@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 
 import { initializeApp } from 'firebase/app';
@@ -28,101 +29,252 @@ export class PushNotificationService {
 
     this.messaging =
       getMessaging(firebaseApp);
+
   }
+
+
+  // =====================================================
+  // ENABLE PUSH NOTIFICATIONS
+  // =====================================================
 
   async enableNotifications(): Promise<string | null> {
 
     try {
 
-      // =====================================================
-      // CHECK NOTIFICATION SUPPORT
-      // =====================================================
+      // ===================================================
+      // 1. CHECK HTTPS
+      // ===================================================
+
+      if (
+        location.protocol !== 'https:' &&
+        location.hostname !== 'localhost' &&
+        location.hostname !== '127.0.0.1'
+      ) {
+
+        console.error(
+          '❌ FCM requires HTTPS or localhost.'
+        );
+
+        return null;
+
+      }
+
+
+      // ===================================================
+      // 2. CHECK NOTIFICATION SUPPORT
+      // ===================================================
 
       if (!('Notification' in window)) {
 
         console.error(
-          'This browser does not support notifications.'
+          '❌ This browser does not support notifications.'
         );
 
         return null;
+
       }
 
 
-      // =====================================================
-      // REQUEST NOTIFICATION PERMISSION
-      // =====================================================
+      // ===================================================
+      // 3. CHECK SERVICE WORKER SUPPORT
+      // ===================================================
 
-      const permission =
-        await Notification.requestPermission();
+      if (!('serviceWorker' in navigator)) {
 
-      if (permission !== 'granted') {
-
-        console.warn(
-          'Notification permission was not granted.'
+        console.error(
+          '❌ This browser does not support Service Workers.'
         );
 
         return null;
+
       }
 
 
-      // =====================================================
-      // REGISTER FIREBASE SERVICE WORKER
-      // =====================================================
+      // ===================================================
+      // 4. CHECK NOTIFICATION PERMISSION
+      // ===================================================
 
-      const serviceWorkerRegistration =
-        await navigator.serviceWorker.register(
-          '/firebase-messaging-sw.js'
-        );
+      let permission =
+        Notification.permission;
 
       console.log(
-        'Firebase messaging service worker registered.'
+        '🔔 Current notification permission:',
+        permission
       );
 
 
-      // =====================================================
-      // GET FCM TOKEN
-      // =====================================================
+      // Ask only if permission has not been decided yet
+
+      if (permission === 'default') {
+
+        permission =
+          await Notification.requestPermission();
+
+        console.log(
+          '🔔 Notification permission after request:',
+          permission
+        );
+
+      }
+
+
+      // ===================================================
+      // 5. CHECK PERMISSION
+      // ===================================================
+
+      if (permission !== 'granted') {
+
+        console.error(
+          '❌ Notification permission was not granted.'
+        );
+
+        console.error(
+          'Permission:',
+          permission
+        );
+
+        return null;
+
+      }
+
+
+      // ===================================================
+      // 6. REGISTER FIREBASE SERVICE WORKER
+      // ===================================================
+
+      console.log(
+        '🔧 Registering Firebase messaging service worker...'
+      );
+
+      const serviceWorkerRegistration =
+        await navigator.serviceWorker.register(
+          '/firebase-messaging-sw.js',
+          {
+            scope: '/'
+          }
+        );
+
+      console.log(
+        '✅ Firebase messaging service worker registered:',
+        serviceWorkerRegistration
+      );
+
+
+      // ===================================================
+      // 7. WAIT FOR SERVICE WORKER TO BECOME ACTIVE
+      // ===================================================
+
+      console.log(
+        '⏳ Waiting for active Service Worker...'
+      );
+
+
+      const activeRegistration =
+        await navigator.serviceWorker.ready;
+
+
+      console.log(
+        '✅ Active Service Worker:',
+        activeRegistration
+      );
+
+
+      // ===================================================
+      // 8. VERIFY ACTIVE SERVICE WORKER
+      // ===================================================
+
+      if (!activeRegistration.active) {
+
+        console.error(
+          '❌ Service Worker is not active.'
+        );
+
+        return null;
+
+      }
+
+
+      console.log(
+        '✅ Service Worker is active.'
+      );
+
+
+      // ===================================================
+      // 9. GET FCM TOKEN
+      // ===================================================
+
+      console.log(
+        '🔑 Requesting FCM token...'
+      );
+
 
       const token =
         await getToken(
           this.messaging,
           {
-            vapidKey: firebaseVapidKey,
-            serviceWorkerRegistration
+            vapidKey:
+              firebaseVapidKey,
+
+            serviceWorkerRegistration:
+              activeRegistration
           }
         );
+
+
+      // ===================================================
+      // 10. CHECK TOKEN
+      // ===================================================
 
       if (!token) {
 
         console.error(
-          'Firebase did not return a notification token.'
+          '❌ Firebase did not return an FCM token.'
         );
 
         return null;
+
       }
 
+
+      // ===================================================
+      // 11. TOKEN SUCCESS
+      // ===================================================
+
       console.log(
-        'FCM phone token:',
+        '========================================'
+      );
+
+      console.log(
+        '✅ AquaSentinal FCM TOKEN READY'
+      );
+
+      console.log(
         token
       );
 
+      console.log(
+        '========================================'
+      );
 
-      // =====================================================
-      // FOREGROUND FCM MESSAGE HANDLER
-      // =====================================================
+
+      // ===================================================
+      // 12. FOREGROUND MESSAGE HANDLER
+      // ===================================================
 
       onMessage(
         this.messaging,
         (payload) => {
 
           console.log(
-            '🚨 AquaSentinal foreground SOS received:',
+            '🚨 AquaSentinal foreground FCM message:',
             payload
           );
+
 
           const title =
             payload.notification?.title ||
             '🚨 AquaSentinal SOS Alert';
+
 
           const body =
             payload.notification?.body ||
@@ -130,7 +282,7 @@ export class PushNotificationService {
 
 
           // =================================================
-          // SHOW NOTIFICATION WHEN APP IS OPEN
+          // SHOW FOREGROUND NOTIFICATION
           // =================================================
 
           if (
@@ -148,37 +300,85 @@ export class PushNotificationService {
                 }
               );
 
-            } catch (notificationError) {
+            } catch (error) {
 
               console.error(
-                'Failed to display foreground notification:',
-                notificationError
+                '❌ Failed to display foreground notification:',
+                error
               );
+
             }
+
           }
 
         }
       );
 
 
-      // =====================================================
-      // SUCCESS
-      // =====================================================
+      // ===================================================
+      // 13. SUCCESS
+      // ===================================================
 
       console.log(
-        'AquaSentinal push notifications are ready.'
+        '========================================'
       );
+
+      console.log(
+        '🎉 AquaSentinal push notifications are READY'
+      );
+
+      console.log(
+        '========================================'
+      );
+
 
       return token;
 
-    } catch (error) {
+
+    } catch (error: any) {
+
+      // ===================================================
+      // ERROR HANDLING
+      // ===================================================
 
       console.error(
-        'Firebase push notification setup failed:',
+        '========================================'
+      );
+
+      console.error(
+        '❌ FIREBASE PUSH NOTIFICATION SETUP FAILED'
+      );
+
+      console.error(
+        'Error:',
         error
       );
 
+      console.error(
+        'Error name:',
+        error?.name
+      );
+
+      console.error(
+        'Error code:',
+        error?.code
+      );
+
+      console.error(
+        'Error message:',
+        error?.message
+      );
+
+      console.error(
+        '========================================'
+      );
+
+
       return null;
+
     }
+
   }
+
 }
+
