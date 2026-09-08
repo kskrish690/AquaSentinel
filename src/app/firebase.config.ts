@@ -1,8 +1,8 @@
 export const firebaseConfig = {
   apiKey: "AIzaSyCQvCNUaJnX8IhyBHRJSbMZDDVIk0ccEq0",
-  authDomain: "AquaSentinal-5b215.firebaseapp.com",
-  projectId: "AquaSentinal-5b215",
-  storageBucket: "AquaSentinal-5b215.firebasestorage.app",
+  authDomain: "AquaSentinel-5b215.firebaseapp.com",
+  projectId: "AquaSentinel-5b215",
+  storageBucket: "AquaSentinel-5b215.firebasestorage.app",
   messagingSenderId: "419886773980",
   appId: "1:419886773980:web:bb1909925cbc1e49712619",
   measurementId: "G-N18J9RCE08"
