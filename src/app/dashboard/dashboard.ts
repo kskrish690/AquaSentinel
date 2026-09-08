@@ -18,6 +18,10 @@ import {
   EmergencyApiService
 } from '../services/emergency-api.service';
 
+import {
+  PushNotificationService
+} from '../services/push-notification.service';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -71,11 +75,6 @@ export class Dashboard implements OnInit, OnDestroy {
   // =====================================================
   // ML RISK DATA
   // =====================================================
-
-  /*
-   * These values allow the Dashboard to render
-   * immediately before the ML API responds.
-   */
 
   riskScore = 32;
 
@@ -173,6 +172,17 @@ export class Dashboard implements OnInit, OnDestroy {
 
 
   // =====================================================
+  // SOS FCM STATUS
+  // =====================================================
+
+  fcmTokenReady = false;
+
+  fcmRegistrationLoading = false;
+
+  fcmRegistrationError = '';
+
+
+  // =====================================================
   // SOS PASSWORD AUTHORIZATION
   // =====================================================
 
@@ -195,7 +205,8 @@ export class Dashboard implements OnInit, OnDestroy {
     private userRoleService: UserRoleService,
     private router: Router,
     private riskApiService: RiskApiService,
-    private emergencyApiService: EmergencyApiService
+    private emergencyApiService: EmergencyApiService,
+    private pushNotificationService: PushNotificationService
   ) {}
 
 
@@ -208,11 +219,6 @@ export class Dashboard implements OnInit, OnDestroy {
     this.loadUser();
 
     this.loadRole();
-
-    /*
-     * Do not wait for the ML API before displaying
-     * the Dashboard.
-     */
 
     setTimeout(() => {
 
@@ -409,7 +415,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
     const now = new Date();
 
-
     const request: FloodPredictionRequest = {
 
       latitude:
@@ -450,17 +455,12 @@ export class Dashboard implements OnInit, OnDestroy {
 
         },
 
-
         error: (error) => {
 
           console.error(
             'AquaSentinal Dashboard ML API error:',
             error
           );
-
-          /*
-           * Keep the existing pilot values visible.
-           */
 
           this.modelLoading = false;
 
@@ -495,41 +495,21 @@ export class Dashboard implements OnInit, OnDestroy {
 
     this.modelError = '';
 
-
-    // ---------------------------------------------------
-    // FLOOD PROBABILITY
-    // ---------------------------------------------------
-
     this.floodProbability =
       Number(
         response.flood_probability ?? 0
       );
-
-
-    // ---------------------------------------------------
-    // RISK SCORE
-    // ---------------------------------------------------
 
     this.riskScore =
       Math.round(
         this.floodProbability * 100
       );
 
-
-    // ---------------------------------------------------
-    // RISK LEVEL
-    // ---------------------------------------------------
-
     this.riskLevel =
       (
         response.risk_level ||
         this.getRiskStatus()
       ).toUpperCase();
-
-
-    // ---------------------------------------------------
-    // CONFIDENCE
-    // ---------------------------------------------------
 
     this.confidence =
       Math.round(
@@ -538,90 +518,43 @@ export class Dashboard implements OnInit, OnDestroy {
         )
       );
 
-
-    // ---------------------------------------------------
-    // PREDICTED FLOOD
-    // ---------------------------------------------------
-
     this.predictedFlood =
       Number(
         response.predicted_flood ?? 0
       );
-
-
-    // ---------------------------------------------------
-    // TERRAIN SUSCEPTIBILITY
-    // ---------------------------------------------------
 
     this.terrainSusceptibility =
       Number(
         response.terrain_susceptibility ?? 0
       );
 
-
-    // ---------------------------------------------------
-    // MONSOON
-    // ---------------------------------------------------
-
     this.monsoonSeason =
       Boolean(
         response.monsoon_season
       );
 
-
-    // ---------------------------------------------------
-    // TOP FACTORS
-    // ---------------------------------------------------
-
     this.topFactors =
       response.top_factors || [];
-
-
-    // ---------------------------------------------------
-    // ENVIRONMENTAL VALUES
-    // ---------------------------------------------------
 
     this.terrainExposure =
       Math.round(
         this.terrainSusceptibility * 100
       );
 
-
     this.soilWetness =
       this.calculateSoilWetness();
-
 
     this.drainageVulnerability =
       this.calculateDrainageVulnerability();
 
-
-    // ---------------------------------------------------
-    // OPERATIONAL VALUES
-    // ---------------------------------------------------
-
     this.updateOperationalStatus();
-
-
-    // ---------------------------------------------------
-    // LEAD TIME
-    // ---------------------------------------------------
 
     this.leadTime =
       this.calculateLeadTime();
 
-
-    // ---------------------------------------------------
-    // SOURCE
-    // ---------------------------------------------------
-
     this.predictionSource =
       response.prediction_source ||
       'FastAPI ML Risk Engine';
-
-
-    // ---------------------------------------------------
-    // LAST UPDATED
-    // ---------------------------------------------------
 
     this.lastUpdated =
       new Date().toLocaleTimeString(
@@ -707,7 +640,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
     }
 
-
     if (this.riskScore >= 61) {
 
       this.activeAlerts = 2;
@@ -720,7 +652,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
     }
 
-
     if (this.riskScore >= 31) {
 
       this.activeAlerts = 1;
@@ -732,7 +663,6 @@ export class Dashboard implements OnInit, OnDestroy {
       return;
 
     }
-
 
     this.activeAlerts = 0;
 
@@ -1076,6 +1006,70 @@ export class Dashboard implements OnInit, OnDestroy {
 
     this.sosMessageVisible = false;
 
+
+    // ===================================================
+    // START FCM REGISTRATION
+    // ===================================================
+
+    this.fcmRegistrationLoading = true;
+
+    this.fcmRegistrationError = '';
+
+    console.log(
+      '🔔 Enable SOS clicked — starting FCM registration...'
+    );
+
+
+    this.pushNotificationService
+      .enableNotifications()
+      .then((token) => {
+
+        this.fcmRegistrationLoading = false;
+
+        if (token) {
+
+          this.fcmTokenReady = true;
+
+          console.log(
+            '✅ SOS FCM token ready:',
+            token
+          );
+
+        } else {
+
+          this.fcmTokenReady = false;
+
+          this.fcmRegistrationError =
+            'FCM token could not be obtained.';
+
+          console.warn(
+            '⚠️ SOS FCM token was not obtained.'
+          );
+
+        }
+
+      })
+      .catch((error) => {
+
+        this.fcmRegistrationLoading = false;
+
+        this.fcmTokenReady = false;
+
+        this.fcmRegistrationError =
+          'FCM notification setup failed.';
+
+        console.error(
+          '❌ SOS FCM setup failed:',
+          error
+        );
+
+      });
+
+
+    // ===================================================
+    // SHOW SOS PASSWORD
+    // ===================================================
+
     this.showSOSPasswordModal = true;
 
   }
@@ -1144,20 +1138,12 @@ export class Dashboard implements OnInit, OnDestroy {
 
     // ===================================================
     // REMOTE SOS NOTIFICATION
-    //
-    // LAPTOP
-    //    ↓
-    // RAILWAY BACKEND
-    //    ↓
-    // FIREBASE ADMIN
-    //    ↓
-    // FCM
-    //    ↓
-    // PHONE
-    //
-    // The department of the currently logged-in
-    // officer is included in the SOS request.
-    // ===================================================
+    // =====================================================
+
+    console.log(
+      '🚨 Sending SOS request to Railway...'
+    );
+
 
     this.emergencyApiService
       .triggerSOS({
@@ -1196,19 +1182,12 @@ export class Dashboard implements OnInit, OnDestroy {
 
         },
 
-
         error: (error) => {
 
           console.error(
             '❌ AquaSentinal SOS notification failed:',
             error
           );
-
-          /*
-           * Keep the SOS UI active even if the remote
-           * notification fails. The Emergency page
-           * will still open.
-           */
 
           this.sosMessage =
             'SOS activated. Emergency page opened, but phone notification could not be delivered.';
