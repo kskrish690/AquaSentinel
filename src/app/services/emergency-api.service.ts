@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class EmergencyApiService {
 
   private readonly API_BASE_URL =
-    'https://airy-respect-production-9e05.up.railway.app';
+    'https://https://airy-respect-production-572b.up.railway.app';
 
   private readonly API_URL =
     `${this.API_BASE_URL}/api/emergency`;
