@@ -19,7 +19,8 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests without an origin, such as Postman or server-to-server requests
+        // Allow requests without an origin,
+        // such as Postman or server-to-server requests
         if (!origin) {
             return callback(null, true);
         }
@@ -30,6 +31,7 @@ app.use(cors({
 
         return callback(new Error('CORS: Origin not allowed'));
     },
+
     methods: [
         'GET',
         'POST',
@@ -38,16 +40,12 @@ app.use(cors({
         'DELETE',
         'OPTIONS'
     ],
+
     allowedHeaders: [
         'Content-Type',
         'Authorization'
     ],
-    credentials: true
-}));
 
-// Handle preflight requests
-app.options('*', cors({
-    origin: allowedOrigins,
     credentials: true
 }));
 
