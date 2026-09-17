@@ -7,15 +7,55 @@ const emergencyRoutes = require('./routes/emergency');
 
 const app = express();
 
+// ==========================================
+// CORS CONFIGURATION
+// ==========================================
+
+const allowedOrigins = [
+    'https://aqua-sentinal.netlify.app',
+    'https://aqua-sen.netlify.app',
+    'http://localhost:4200'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests without an origin, such as Postman or server-to-server requests
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('CORS: Origin not allowed'));
+    },
+    methods: [
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'OPTIONS'
+    ],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization'
+    ],
+    credentials: true
+}));
+
+// Handle preflight requests
+app.options('*', cors({
+    origin: allowedOrigins,
+    credentials: true
+}));
 
 // ==========================================
 // MIDDLEWARE
 // ==========================================
 
-app.use(cors());
-
 app.use(express.json());
-
 
 // ==========================================
 // AUTH ROUTES
@@ -26,7 +66,6 @@ app.use(
     authRoutes
 );
 
-
 // ==========================================
 // EMERGENCY / FIREBASE PUSH ROUTES
 // ==========================================
@@ -36,23 +75,16 @@ app.use(
     emergencyRoutes
 );
 
-
 // ==========================================
 // HEALTH CHECK
 // ==========================================
 
 app.get('/api/health', (req, res) => {
-
     res.json({
-
         success: true,
-
         message: 'AquaSentinal backend is running.'
-
     });
-
 });
-
 
 // ==========================================
 // START SERVER
@@ -61,9 +93,7 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
     console.log(
         `AquaSentinal backend running on port ${PORT}`
     );
-
 });
